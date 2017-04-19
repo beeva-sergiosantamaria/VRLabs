@@ -85,17 +85,6 @@ var foundColor = 0xFFFFFF;
 var intersectCentroColor = 0xffff33;
 var intersectResearchColor = 0x33ff33;
 var intersectDesignColor = 0x3333ff;
-var left_bar, right_bar;
-var min = {x: 100, y: 100, z: 100};
-var touchTweenTo = new TWEEN.Tween(min);
-var max = {x: 120, y: 120, z: 120};
-var SELECTION_TIME = 2000;
-
-//Set up animation cycle used on touched objects
-touchTweenTo.to(max, 200);
-touchTweenTo.easing(TWEEN.Easing.Bounce.InOut);
-touchTweenTo.repeat(Infinity); // repeats forever
-touchTweenTo.start();
 
 $(document).ready(function () {
     //startLogoAnim();
@@ -107,8 +96,8 @@ $(document).ready(function () {
 });
 
 $(document).on("keydown", function (e) {
-    if (e.keyCode === '38') {
-        if (particleCube !== undefined) particlesDisperse(radicalTextNParticles, 'radical');
+    if (e.keyCode == '38') {
+        if (particleCube != undefined) particlesDisperse(radicalTextNParticles, 'radical');
         TweenMax.to(camera, 0.5, {
             fov: "-=5", onUpdate: function () {
                 camera.updateProjectionMatrix();
@@ -116,19 +105,19 @@ $(document).on("keydown", function (e) {
         });
 
     }
-    else if (e.keyCode === '40') {
-        if (particleCube !== undefined) particlesDisperse(researchTextNParticles, 'research');
+    else if (e.keyCode == '40') {
+        if (particleCube != undefined) particlesDisperse(researchTextNParticles, 'research');
         removeLetters3D();
         setTimeout(function () {
             moveLetters3d(letrasResearch);
         }, 100);
     }
-    else if (e.keyCode === '37') {
-        if (particleCube !== undefined) particlesDisperse(2000, 'disperse');
+    else if (e.keyCode == '37') {
+        if (particleCube != undefined) particlesDisperse(2000, 'disperse');
         removeLetters3D();
     }
-    else if (e.keyCode === '39') {
-        if (particleCube !== undefined) particlesDisperse(researchTextNParticles, 'research');
+    else if (e.keyCode == '39') {
+        if (particleCube != undefined) particlesDisperse(researchTextNParticles, 'research');
         removeLetters3D();
         setTimeout(function () {
             moveLetters3d(letrasDesign);
@@ -137,24 +126,6 @@ $(document).on("keydown", function (e) {
 });
 
 function initRender() {
-
-    left_bar = new ProgressBar.Circle('#guide_circle_left', {
-        strokeWidth: 10,
-        easing: 'easeInOut',
-        duration: SELECTION_TIME,
-        color: 'lime',
-        trailWidth: 2,
-        svgStyle: null
-    });
-
-    right_bar = new ProgressBar.Circle('#guide_circle_right', {
-        strokeWidth: 10,
-        easing: 'easeInOut',
-        duration: SELECTION_TIME,
-        color: 'lime',
-        trailWidth: 2,
-        svgStyle: null
-    });
 
     scene = new THREE.Scene();
 
@@ -210,10 +181,8 @@ function initRender() {
 
          camera.add(spotLight);*/
 
-        addTravelPoints();
-    }
-
-    else {
+        // addTravelPoints();
+    } else {
         controls = new THREE.OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
         controls.dampingFactor = 0.70;
@@ -226,8 +195,9 @@ function initRender() {
             })
         );
 
-        addTravelPoints();
+        // addTravelPoints();
     }
+    addTravelPoints();
 
     ambientLight = new THREE.AmbientLight(0xffffff);
     ambientLight.position.set(0, 0.6, 0);
@@ -303,8 +273,8 @@ function buildShape() {
 }
 
 function particlesDisperse(Particles, path) {
-    if (disperseParticles.path !== path && particleCube !== undefined) {
-        if (path !== 'disperse') reorderParticles(disperseParticles.nParticles, 'disperse');
+    if (disperseParticles.path != path && particleCube != undefined) {
+        if (path != 'disperse') reorderParticles(disperseParticles.nParticles, 'disperse');
         setTimeout(function () {
             reorderParticles(Particles, path)
         }, 100);
@@ -312,7 +282,7 @@ function particlesDisperse(Particles, path) {
 }
 
 function reorderParticles(Particles, path) {
-    if (path === 'radical') {
+    if (path == 'radical') {
         if (!particlesAnimation) {
             particleCube.position.set(-2.7, 1, -2.1);
             particleCube.lookAt(camera.position);
@@ -330,11 +300,11 @@ function reorderParticles(Particles, path) {
                     y: radicalText.vertices[a].y,
                     z: radicalText.vertices[a].z
                 }, particleCube.geometry.vertices[a], 0.1 * a, 1000, TWEEN.Easing.Back.Out);
-                if (a === Particles - 1) disperseParticles = {nParticles: Particles, path: 'radical'};
+                if (a == Particles - 1) disperseParticles = {nParticles: Particles, path: 'radical'};
             }
         }
     }
-    else if (path === 'research') {
+    else if (path == 'research') {
         if (!particlesAnimation) {
             particleCube.position.set(-2.7, 1, 1);
             particleCube.lookAt(camera.position);
@@ -352,11 +322,11 @@ function reorderParticles(Particles, path) {
                     y: researchText.vertices[a].y,
                     z: researchText.vertices[a].z
                 }, particleCube.geometry.vertices[a], 0.1 * a, 1000, TWEEN.Easing.Back.Out);
-                if (a === Particles - 1) disperseParticles = {nParticles: Particles, path: 'research'};
+                if (a == Particles - 1) disperseParticles = {nParticles: Particles, path: 'research'};
             }
         }
     }
-    else if (path === 'disperse') {
+    else if (path == 'disperse') {
         if (!particlesAnimation) {
             particleCube.position.set(0, 0, 0);
             particleCube.geometry.vertices = verticesArray;
@@ -373,20 +343,19 @@ function reorderParticles(Particles, path) {
                     y: verticesArray[a].y,
                     z: verticesArray[a].z
                 }, particleCube.geometry.vertices[a], 0.1 * a, 1000, TWEEN.Easing.Back.Out);
-                if (a === Particles - 1) disperseParticles = {nParticles: numeroParticulas, path: 'disperse'};
+                if (a == Particles - 1) disperseParticles = {nParticles: numeroParticulas, path: 'disperse'};
             }
         }
     }
 }
 
-var selectableObjs = [];
 function addModel() {
 
     var onProgress = function (xhr) {
         if (xhr.lengthComputable) {
             var percentComplete = xhr.loaded / xhr.total * 100;
             //console.log(percentComplete);
-            if (percentComplete === 100) {
+            if (percentComplete == 100) {
                 console.log('model loaded!!');
                 setTimeout(function () {
                     addLetters3D(['R', 'a', 'd', 'i', 'c', 'a', 'l'], {x: -2.7, y: 1, z: -1.7}, letrasRadical);
@@ -450,17 +419,11 @@ function addModel() {
             centro.renderOrder = 0;
             centro.name = "centro";
 
-            centro.userData = {touched: false};
-            selectableObjs.push(centro);
-
             interactivos.add(centro);
 
             research = elements.children[7];
             research.renderOrder = 0;
             research.name = "research";
-
-            research.userData = {touched: false};
-            selectableObjs.push(research);
 
             interactivos.add(research);
 
@@ -468,17 +431,11 @@ function addModel() {
             design.renderOrder = 0;
             design.name = "design";
 
-            design.userData = {touched: false};
-            selectableObjs.push(design);
-
             interactivos.add(design);
 
             comunicacion = elements.children[5];
             comunicacion.renderOrder = 0;
             comunicacion.name = "comunicacion";
-
-            comunicacion.userData = {touched: false};
-            selectableObjs.push(comunicacion);
 
             interactivos.add(comunicacion);
 
@@ -509,9 +466,6 @@ function addModel() {
             maker = elements.children[0];
             maker.renderOrder = 0;
             maker.name = "maker";
-
-            maker.userData = {touched: false};
-            selectableObjs.push(maker);
 
             interactivos.add(maker);
 
@@ -647,8 +601,8 @@ function removeSpriteLetters() {
 
 function addScreens() {
 
-    videoMP4 = document.createElement('video').canPlayType('video/mp4') !== '';
-    videoOgg = document.createElement('video').canPlayType('video/ogg') !== '';
+    videoMP4 = document.createElement('video').canPlayType('video/mp4') != '';
+    videoOgg = document.createElement('video').canPlayType('video/ogg') != '';
 
     var url, url2;
     if (videoMP4) {
@@ -744,7 +698,7 @@ function removeMembers() {
     var nummemberActually = membersGroup.children.length;
     for (var a = 0; a < nummemberActually; a++) {
         movement({y: -1}, membersGroup.children[a].position, 0, 500, TWEEN.Easing.Back.In);
-        if (a === nummemberActually - 1) {
+        if (a == nummemberActually - 1) {
             membersGroup = new THREE.Object3D();
             membersGroup.name = 'members';
             membersAdded = false;
@@ -787,7 +741,7 @@ function openInfo() {
     checkstatus.members = false;
     checkstatus.infoCard = false;
     removeSpriteLetters();
-    if (loadcrosshair !== undefined) loadcrosshair.scale.set(1, 1, 1);
+    if (loadcrosshair != undefined) loadcrosshair.scale.set(1, 1, 1);
     movement({y: 1}, infoGroup.position, 1, 500, TWEEN.Easing.Back.Out);
     movement({x: -1.8}, infoGroup.position, 1, 500, TWEEN.Easing.Quartic.Out);
     setTimeout(function () {
@@ -853,18 +807,18 @@ function explodeGeometry() {
 
 function moveLetters3d(object, prevObject) {
     for (var a = 0; a < 12; a++) {
-        if (prevObject !== undefined && prevObject.children[a]) new TWEEN.Tween(prevObject.children[a].position).to({y: -1.5}, 100).easing(TWEEN.Easing.Quartic.Out).onUpdate(function () {
+        if (prevObject != undefined && prevObject.children[a]) new TWEEN.Tween(prevObject.children[a].position).to({y: -1.5}, 100).easing(TWEEN.Easing.Quartic.Out).onUpdate(function () {
         }).delay(10 * a).start();
-        if (object !== undefined && object.children[a]) new TWEEN.Tween(object.children[a].position).to({y: 0.2}, 100).easing(TWEEN.Easing.Back.Out).onUpdate(function () {
+        if (object != undefined && object.children[a]) new TWEEN.Tween(object.children[a].position).to({y: 0.2}, 100).easing(TWEEN.Easing.Back.Out).onUpdate(function () {
         }).delay(10 * a).start();
     }
-    if (object !== undefined) object.lookAt(camera.position);
+    if (object != undefined) object.lookAt(camera.position);
 }
 
 function removeLetters3D(object) {
-    if (object !== undefined) {
+    if (object != undefined) {
         for (var a = 0; a < object.children.length; a++) {
-            if (tweenLettersIn !== undefined) tweenLettersIn.stop();
+            if (tweenLettersIn != undefined) tweenLettersIn.stop();
             //if( activeLetters != undefined ) tweenLettersOut = new TWEEN.Tween(activeLetters.children[a].position).to({ y: -1 }, 200).easing(TWEEN.Easing.Quartic.Out).onUpdate(function () {}).delay( 50 * a).start();
             new TWEEN.Tween(object.children[a].position).to({y: -1.5}, 100).easing(TWEEN.Easing.Quartic.Out).onUpdate(function () {
             }).delay(50 * a).start();
@@ -890,11 +844,11 @@ function onDocumentMouseMove(event) {
     raycasterTravel.setFromCamera(mouse, camera);
     var intersectTravel = raycasterTravel.intersectObjects(travelPoints.children);
     if (intersectTravel.length > 0) {
-        if (intersectedTravel !== intersectTravel[0].object) {
+        if (intersectedTravel != intersectTravel[0].object) {
             intersectedTravel = intersectTravel[0].object;
-            if (intersectedTravel.name === 'makerPoint') addSpritesLetters(['m', 'a', 'k', 'e', 'r', 'blanck', 's', 'p', 'a', 'c', 'e']);
-            if (intersectedTravel.name === 'labsPoint') addSpritesLetters(['blanck', 'blanck', 'blanck', 'blanck', 'l', 'a', 'b', 's']);
-            if (intersectedTravel.name === 'tvPoint') addSpritesLetters(['blanck', 'blanck', 'v', 'i', 'd', 'e', 'o', 's']);
+            if (intersectedTravel.name == 'makerPoint') addSpritesLetters(['m', 'a', 'k', 'e', 'r', 'blanck', 's', 'p', 'a', 'c', 'e']);
+            if (intersectedTravel.name == 'labsPoint') addSpritesLetters(['blanck', 'blanck', 'blanck', 'blanck', 'l', 'a', 'b', 's']);
+            if (intersectedTravel.name == 'tvPoint') addSpritesLetters(['blanck', 'blanck', 'v', 'i', 'd', 'e', 'o', 's']);
         }
         document.body.style.cursor = 'pointer';
     }
@@ -910,12 +864,12 @@ function onDocumentMouseMove(event) {
         raycasterMesas.setFromCamera(mouse, camera);
         var intersections = raycasterMesas.intersectObjects(interactivos.children);
         if (intersections.length > 0) {
-            if (intersected !== intersections[0].object) {
+            if (intersected != intersections[0].object) {
                 intersected = intersections[0].object;
                 if (intersected.name.equals('centro')) {
                     addSpritesLetters(['blanck', 'blanck', 'plus', 'i', 'n', 'f', 'o']);
                     moveLetters3d(letrasRadical, activeLetters);
-                    if (particleCube !== undefined) particlesDisperse(radicalTextNParticles, 'radical');
+                    if (particleCube != undefined) particlesDisperse(radicalTextNParticles, 'radical');
                     if (letrasRadical.children.length > 0) {
                         setTimeout(function () {
                             activeLetters = letrasRadical;
@@ -925,7 +879,7 @@ function onDocumentMouseMove(event) {
                 else if (intersections[0].object.name.equals('design')) {
                     addSpritesLetters(['blanck', 'blanck', 'plus', 'i', 'n', 'f', 'o']);
                     moveLetters3d(letrasDesign, activeLetters);
-                    if (particleCube !== undefined) console.log(intersections[0].object.name);
+                    if (particleCube != undefined) console.log(intersections[0].object.name);
                     if (letrasDesign.children.length > 0) {
                         setTimeout(function () {
                             activeLetters = letrasDesign;
@@ -935,7 +889,7 @@ function onDocumentMouseMove(event) {
                 else if (intersections[0].object.name.equals('research')) {
                     addSpritesLetters(['blanck', 'blanck', 'plus', 'i', 'n', 'f', 'o']);
                     moveLetters3d(letrasResearch, activeLetters);
-                    if (particleCube !== undefined) particlesDisperse(researchTextNParticles, 'radical');
+                    if (particleCube != undefined) particlesDisperse(researchTextNParticles, 'radical');
                     if (letrasResearch.children.length > 0) {
                         setTimeout(function () {
                             activeLetters = letrasResearch;
@@ -948,7 +902,7 @@ function onDocumentMouseMove(event) {
         else if (intersected) {
             moveLetters3d(undefined, activeLetters);
             removeSpriteLetters();
-            if (particleCube !== undefined) particlesDisperse(2000, 'disperse');
+            if (particleCube != undefined) particlesDisperse(2000, 'disperse');
             intersected = null;
             document.body.style.cursor = 'auto';
         }
@@ -980,7 +934,7 @@ function onDocumentMouseMove(event) {
     raycasterExit.setFromCamera(mouse, camera);
     var intersectExit = raycasterExit.intersectObjects(exitGroup.children);
     if (intersectExit.length > 0) {
-        if (intersectedExit !== intersectExit[0].object) {
+        if (intersectedExit != intersectExit[0].object) {
             intersectedExit = intersectExit[0].object;
             exitIcon.material.color.setHex(0x00ff00);
         }
@@ -1003,10 +957,10 @@ function onDocumentMouseDown(e) {
         raycaster.setFromCamera(mouse, camera);
         var intersects = raycaster.intersectObjects(screensGroup.children);
         if (intersects.length > 0) {
-            if (intersected !== intersects[0].object) {
+            if (intersected != intersects[0].object) {
                 intersected = intersects[0].object;
                 if (intersected.name.equals('screen1')) {
-                    if (video !== undefined) {
+                    if (video != undefined) {
                         video2.pause();
                         video.play();
                         movement({
@@ -1022,7 +976,7 @@ function onDocumentMouseDown(e) {
                     }
                 }
                 if (intersected.name.equals("screen2")) {
-                    if (video2 !== undefined) {
+                    if (video2 != undefined) {
                         video.pause();
                         video2.play();
                         movement({
@@ -1216,36 +1170,11 @@ function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
-    if (effect !== undefined) effect.setSize(window.innerWidth, window.innerHeight);
+    if (effect != undefined) effect.setSize(window.innerWidth, window.innerHeight);
 }
 
 function animate() {
-    touchTweenTo.onUpdate(function () {
-        animScale = this;
-    });
 
-    scene.traverse(function (object) {
-        if (object instanceof THREE.Group) {
-            object.rotation.y = object.rotation.y + 0.01;
-
-            if (object.userData.touched) {
-                object.scale.x = animScale.x;
-                object.scale.y = animScale.y;
-                object.scale.z = animScale.z;
-
-
-                if (left_bar.value() === 0) {//don't restart progress bar if already progress
-                    left_bar.animate(1.0, {}, function () {
-                        postSelectAction(object.userData.name);//add callback to left side progress bar to register completed selection
-                    });
-                }
-                if (right_bar.value() === 0) {//don't restart if in progress
-                    right_bar.animate(1.0);
-                }
-
-            }
-        }
-    });
     setTimeout(function () {
         requestAnimationFrame(animate);
 
@@ -1275,26 +1204,6 @@ function getIntersections(objects) {
 
 function render() {
 
-    intersects = getIntersections(selectableObjs);
-
-    if (intersects.length === 0) {//nothing being "touched"
-        left_bar.set(0.0);//reset any active progress bars to 0
-        right_bar.set(0.0);
-
-        //Loop over all OBJ objects (the charms)
-        scene.traverse(function (object) {
-            //Set all charms touch flag to false as nothing is selected.
-            if (object instanceof THREE.Group) {
-                if (intersects.length === 0) {
-                    object.userData.touched = false;
-                }
-            }
-        });
-    } else {//something being touched
-        //Set the touched charm's touch flag to true, so we can give it special treatment in the animation function
-        intersects[0].object.parent.userData.touched = true;
-    }
-
     if (effect) {
         effect.render(scene, camera);
     }
@@ -1304,14 +1213,14 @@ function render() {
 
     sky.rotation.y += 0.0003;
 
-    if (particleCube !== undefined) {
+    if (particleCube != undefined) {
         particleCube.geometry.verticesNeedUpdate = true;
         /*particleCube.lookAt( camera.position );*/
     }
 
-    if (videoTexture !== undefined) videoTexture.update();
+    if (videoTexture != undefined) videoTexture.update();
 
-    if (videoTexture2 !== undefined) videoTexture2.update();
+    if (videoTexture2 != undefined) videoTexture2.update();
 
     if (travelPoints.children[0]) travelPoints.children[0].rotation.y += 0.01;
     if (travelPoints.children[1]) travelPoints.children[1].rotation.y += 0.01;
@@ -1326,9 +1235,9 @@ function render() {
                 if (intersections[0].object.name.equals('centro')) {
                     if (!loadcrosshair.visible) loadcrosshair.visible = true;
                     if (infoGroup.children[0]) console.log(intersections[0].object.name, infoGroup.children[0].name);
-                    if (loadcrosshair !== undefined && loadcrosshair.scale.x > 0.2) loadcrosshair.scale.set(((loadcrosshair.scale.x * 1000) - 10) / 1000, ((loadcrosshair.scale.x * 1000) - 10) / 1000, ((loadcrosshair.scale.x * 1000) - 10) / 1000);
+                    if (loadcrosshair != undefined && loadcrosshair.scale.x > 0.2) loadcrosshair.scale.set(((loadcrosshair.scale.x * 1000) - 10) / 1000, ((loadcrosshair.scale.x * 1000) - 10) / 1000, ((loadcrosshair.scale.x * 1000) - 10) / 1000);
                 }
-                if (loadcrosshair.scale.x === 0.5 && intersections[0].object.name.equals('centro')) {
+                if (loadcrosshair.scale.x == 0.5 && intersections[0].object.name.equals('centro')) {
                     video.pause();
                     video2.pause();
                     removeSpriteLetters();
@@ -1347,14 +1256,14 @@ function render() {
                     if (controls) movement({x: -2, y: 1.1, z: -2}, controls.target, 0, 2000, TWEEN.Easing.Quartic.Out);
                 }
 
-                if (intersected !== intersections[0].object) {
+                if (intersected != intersections[0].object) {
                     intersected = intersections[0].object;
                     if (intersected.name.equals('centro')) {
                         if (!membersAdded) {
                             addSpritesLetters(['i', 'r', 'blanck', 'a', 'blanck', 'r', 'a', 'd', 'i', 'c', 'a', 'l']);
                             moveLetters3d(letrasRadical, activeLetters);
                         }
-                        if (particleCube !== undefined) particlesDisperse(radicalTextNParticles, 'radical');
+                        if (particleCube != undefined) particlesDisperse(radicalTextNParticles, 'radical');
                         if (letrasRadical.children.length > 0) {
                             setTimeout(function () {
                                 activeLetters = letrasRadical;
@@ -1378,17 +1287,14 @@ function render() {
                      }
                      } */
                 }
-            }
-            else {
-                left_bar.set(0.0);//reset any active progress bars to 0
-                right_bar.set(0.0);
+            } else {
 
                 if (intersected) {
                     if (loadcrosshair.visible) loadcrosshair.visible = false;
                     moveLetters3d(undefined, activeLetters);
                     removeSpriteLetters();
-                    if (particleCube !== undefined) particlesDisperse(2000, 'disperse');
-                    if (loadcrosshair !== undefined) loadcrosshair.scale.set(1, 1, 1);
+                    if (particleCube != undefined) particlesDisperse(2000, 'disperse');
+                    if (loadcrosshair != undefined) loadcrosshair.scale.set(1, 1, 1);
                     intersected = null;
                 }
             }
@@ -1399,8 +1305,8 @@ function render() {
             var intersectsScreen = raycasterScreens.intersectObjects(screensGroup.children);
             if (intersectsScreen.length > 0) {
                 if (!loadcrosshair.visible) loadcrosshair.visible = true;
-                if (loadcrosshair !== undefined && loadcrosshair.scale.x > 0) loadcrosshair.scale.set(((loadcrosshair.scale.x * 1000) - 10) / 1000, ((loadcrosshair.scale.x * 1000) - 10) / 1000, ((loadcrosshair.scale.x * 1000) - 10) / 1000);
-                if (loadcrosshair.scale.x === 0.5) {
+                if (loadcrosshair != undefined && loadcrosshair.scale.x > 0) loadcrosshair.scale.set(((loadcrosshair.scale.x * 1000) - 10) / 1000, ((loadcrosshair.scale.x * 1000) - 10) / 1000, ((loadcrosshair.scale.x * 1000) - 10) / 1000);
+                if (loadcrosshair.scale.x == 0.5) {
                     if (intersectsScreen[0].object.name.equals('screen1')) {
                         video.play();
                         video2.pause();
@@ -1420,7 +1326,7 @@ function render() {
                         }, camera.position, 0, 3000, TWEEN.Easing.Quartic.Out);
                     }
                 }
-                if (intersectedScreens !== intersectsScreen[0].object) {
+                if (intersectedScreens != intersectsScreen[0].object) {
                     console.log(intersectsScreen[0].object.name);
                     intersectedScreens = intersectsScreen[0].object;
                     if (intersectedScreens.name.equals('screen1')) {
@@ -1443,7 +1349,7 @@ function render() {
                 if (loadcrosshair.visible) loadcrosshair.visible = false;
                 intersectedScreens = null;
                 removeSpriteLetters();
-                if (loadcrosshair !== undefined) loadcrosshair.scale.set(1, 1, 1);
+                if (loadcrosshair != undefined) loadcrosshair.scale.set(1, 1, 1);
             }
         }
 
@@ -1453,8 +1359,8 @@ function render() {
             var intersectTravel = raycasterTravel.intersectObjects(travelPoints.children);
             if (intersectTravel.length > 0) {
                 if (!loadcrosshair.visible) loadcrosshair.visible = true;
-                if (loadcrosshair !== undefined && loadcrosshair.scale.x > 0.2) loadcrosshair.scale.set(((loadcrosshair.scale.x * 1000) - 10) / 1000, ((loadcrosshair.scale.x * 1000) - 10) / 1000, ((loadcrosshair.scale.x * 1000) - 10) / 1000);
-                if (loadcrosshair.scale.x === 0.5) {
+                if (loadcrosshair != undefined && loadcrosshair.scale.x > 0.2) loadcrosshair.scale.set(((loadcrosshair.scale.x * 1000) - 10) / 1000, ((loadcrosshair.scale.x * 1000) - 10) / 1000, ((loadcrosshair.scale.x * 1000) - 10) / 1000);
+                if (loadcrosshair.scale.x == 0.5) {
                     video.pause();
                     video2.pause();
                     if (infoGroup.children.length > 0) {
@@ -1509,7 +1415,7 @@ function render() {
                     }
                 }
 
-                if (intersectedTravel !== intersectTravel[0].object) {
+                if (intersectedTravel != intersectTravel[0].object) {
                     intersectedTravel = intersectTravel[0].object;
                     if (intersectedTravel.name.equals('makerPoint')) {
                         addSpritesLetters(['m', 'a', 'k', 'e', 'r', 'blanck', 's', 'p', 'a', 'c', 'e']);
@@ -1526,7 +1432,7 @@ function render() {
                 if (loadcrosshair.visible) loadcrosshair.visible = false;
                 intersectedTravel = null;
                 removeSpriteLetters();
-                if (loadcrosshair !== undefined) loadcrosshair.scale.set(1, 1, 1);
+                if (loadcrosshair != undefined) loadcrosshair.scale.set(1, 1, 1);
             }
         }
 
@@ -1537,22 +1443,22 @@ function render() {
             var intersectInfo = raycasterTravel.intersectObjects(infoGroup.children);
             if (intersectInfo.length > 0) {
                 if (!loadcrosshair.visible) loadcrosshair.visible = true;
-                if (loadcrosshair !== undefined) {
+                if (loadcrosshair != undefined) {
                     if (infoGroup.position.y < 0.7) {
                         loadcrosshair.scale.set(((loadcrosshair.scale.x * 1000) - 10) / 1000, ((loadcrosshair.scale.x * 1000) - 10) / 1000, ((loadcrosshair.scale.x * 1000) - 10) / 1000);
                     }
                 }
-                if (loadcrosshair.scale.x === 0.5) {
+                if (loadcrosshair.scale.x == 0.5) {
                     openInfo();
                 }
-                if (intersectInfo[0].object !== intersectedInfo) {
+                if (intersectInfo[0].object != intersectedInfo) {
                     if (infoGroup.position.y < 0.7) addSpritesLetters(['r', 'e', 'a', 'd', 'blanck', 'i', 'n', 'f', 'o']);
                     intersectedInfo = intersectInfo[0].object;
                 }
             }
             else if (intersectedInfo) {
                 if (loadcrosshair.visible) loadcrosshair.visible = false;
-                if (loadcrosshair !== undefined) loadcrosshair.scale.set(1, 1, 1);
+                if (loadcrosshair != undefined) loadcrosshair.scale.set(1, 1, 1);
                 removeSpriteLetters();
                 intersectedInfo = null;
             }
@@ -1565,19 +1471,19 @@ function render() {
             var intersectMembers = raycasterTravel.intersectObjects(membersGroup.children);
             if (intersectMembers.length > 0 && intersectMembers[0].object.name.equals('sergio')) {
                 if (!loadcrosshair.visible) loadcrosshair.visible = true;
-                if (intersectedMembers !== intersectMembers[0].object) {
+                if (intersectedMembers != intersectMembers[0].object) {
                     addSpritesLetters(['e', 'n', 't', 'e', 'r', 'blanck', 'p', 'r', 'o', 'f', 'i', 'l', 'e']);
                     intersectedMembers = intersectMembers[0].object;
                 }
-                if (loadcrosshair !== undefined && loadcrosshair.scale.x > 0.2) loadcrosshair.scale.set(((loadcrosshair.scale.x * 1000) - 10) / 1000, ((loadcrosshair.scale.x * 1000) - 10) / 1000, ((loadcrosshair.scale.x * 1000) - 10) / 1000);
-                if (loadcrosshair.scale.x === 0.3) {
+                if (loadcrosshair != undefined && loadcrosshair.scale.x > 0.2) loadcrosshair.scale.set(((loadcrosshair.scale.x * 1000) - 10) / 1000, ((loadcrosshair.scale.x * 1000) - 10) / 1000, ((loadcrosshair.scale.x * 1000) - 10) / 1000);
+                if (loadcrosshair.scale.x == 0.3) {
                     if (intersectMembers[0].object.name.equals('sergio')) addInfoSection(sergioInfoImages, 'sergioInfo', 300);
                 }
                 ;
             }
             else if (intersectedMembers) {
                 if (loadcrosshair.visible) loadcrosshair.visible = false;
-                if (loadcrosshair !== undefined) loadcrosshair.scale.set(1, 1, 1);
+                if (loadcrosshair != undefined) loadcrosshair.scale.set(1, 1, 1);
                 removeSpriteLetters();
                 intersectedMembers = null;
             }
@@ -1589,16 +1495,16 @@ function render() {
         var intersectExit = raycasterExit.intersectObjects(exitGroup.children);
         if (intersectExit.length > 0) {
             exitIcon.material.color.setHex(0x00ff00);
-            if (intersectedExit !== intersectExit[0].object) intersectedExit = intersectExit[0].object;
-            if (loadcrosshair !== undefined && loadcrosshair.scale.x > 0.2) {
+            if (intersectedExit != intersectExit[0].object) intersectedExit = intersectExit[0].object;
+            if (loadcrosshair != undefined && loadcrosshair.scale.x > 0.2) {
                 loadcrosshair.scale.set(((loadcrosshair.scale.x * 1000) - 10) / 1000, ((loadcrosshair.scale.x * 1000) - 10) / 1000, ((loadcrosshair.scale.x * 1000) - 10) / 1000);
             }
-            if (loadcrosshair.scale.x === 0.5) {
+            if (loadcrosshair.scale.x == 0.5) {
                 hideInfo();
             }
         }
         else if (intersectedExit) {
-            if (loadcrosshair !== undefined) loadcrosshair.scale.set(1, 1, 1);
+            if (loadcrosshair != undefined) loadcrosshair.scale.set(1, 1, 1);
             exitIcon.material.color.setHex(0xffdd44);
             //removeSpriteLetters();
             intersectedExit = null;
