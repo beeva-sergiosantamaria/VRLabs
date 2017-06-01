@@ -127,13 +127,6 @@
   var tweenLettersIn;
 
   var clock = new THREE.Clock();
-  var mouse = new THREE.Vector2();
-  var raycasterMesas = new THREE.Raycaster();
-  var raycasterTravel = new THREE.Raycaster();
-  var raycasterScreens = new THREE.Raycaster();
-  var raycasterInfo = new THREE.Raycaster();
-  var raycasterMembers = new THREE.Raycaster();
-  var raycasterExit = new THREE.Raycaster();
 
   var manager = new THREE.LoadingManager();
 
@@ -974,7 +967,8 @@
     });
     img.map.needsUpdate = true; //ADDED
 
-    var plane = new THREE.Mesh(new THREE.PlaneGeometry(0.3, 0.3), img);
+    var scale = 0.6;
+    var plane = new THREE.Mesh(new THREE.PlaneGeometry(scale, scale/4), img);
     plane.name = name;
     plane.position.set(position.x, position.y, position.z);
     if (name === 'research') {
@@ -1303,30 +1297,6 @@
               }).delay(50 * a).start();
           }
       }
-  }
-
-  function onDocumentMouseDown(e) {
-      
-      //------------------------------------------------------------------------
-      //---------------------- MEMBERS GROUP --------------------------------------
-      if (checkstatus.members) {
-          raycasterMembers.setFromCamera(mouse, camera);
-          var intersectMembers = raycasterTravel.intersectObjects(membersGroup.children);
-          if (intersectMembers.length > 0) {
-              if (intersectMembers[0].object.name == 'sergio') addInfoSection(sergioInfoImages, 'sergioInfo', 300);
-          }
-      }
-
-      //------------------------------------------------------------------------
-      //---------------------- EXIT --------------------------------------------
-
-      raycasterExit.setFromCamera(mouse, camera);
-      var intersectExit = raycasterExit.intersectObjects(exitGroup.children);
-      if (intersectExit.length > 0) {
-          hideInfo();
-      }
-
-      //------------------------------------------------------------------------
   }
 
   function onWindowResize() {
