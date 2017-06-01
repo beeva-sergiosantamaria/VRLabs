@@ -513,10 +513,12 @@ var Reticulum = (function () {
             collisionList.push(threeObject);
         },
         remove: function (threeObject) {
+            console.log('Reticulum REMOVE ', threeObject.name);
             var index = collisionList.indexOf(threeObject);
             threeObject.reticulumData.gazeable = false;
             if (index > -1) {
                 collisionList.splice(index, 1);
+                console.log('Reticulum REMOVE OK');
             }
         },
         update: function () {
