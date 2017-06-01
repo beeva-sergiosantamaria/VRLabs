@@ -306,6 +306,7 @@
         camera.position.y,
         camera.position.z
       );
+
       function setOrientationControls(e) {
         if (!e.alpha) {
           return;
@@ -316,6 +317,7 @@
         element.addEventListener('click', fullscreen, false);
         window.removeEventListener('deviceorientation', setOrientationControls, true);
       }
+
       window.addEventListener('deviceorientation', setOrientationControls, true);
       controlsdevice = new THREE.DeviceOrientationControls(camera, true);
       controlsdevice.connect();
@@ -331,28 +333,29 @@
     // ambientLight.position.set(0, 0.6, 0);
     ambientLight.position.set(0, 1.2, 0);
     scene.add(ambientLight);
-    radicallight = new THREE.PointLight(0xffee66, 0, 2.5, 1);
-    //radicallight.position.set(-2.5, 0.8, -2);
-    radicallight.position.set(-5, 1.6, -4);
-    scene.add(radicallight);
-    // if (!isMobile) {
-    researchlight = new THREE.PointLight(0xff9999, 0, 2.5, 1);
-    //researchlight.position.set(-2.5, 0.8, 0.5);
-    researchlight.position.set(-5, 1.6, 1);
-    scene.add(researchlight);
-    designlight = new THREE.PointLight(0x9999ff, 0, 2.5, 1);
-    // designlight.position.set(-2.5, 0.8, 2.5);
-    designlight.position.set(-5, 1.6, 5);
-    scene.add(designlight);
-    screen1Light = new THREE.PointLight(0xffffff, 0, 1, 1);
-    //screen1Light.position.set(-0.4, 1, 0.74);
-    screen1Light.position.set(-0.8, 1.6, 1.5);
-    scene.add(screen1Light);
-    screen2Light = new THREE.PointLight(0xffffff, 0, 1, 1);
-    //screen2Light.position.set(-0.4, 1, 4.15);
-    screen2Light.position.set(-0.8, 1.6, 8);
-    scene.add(screen2Light);
-    // }
+    
+    if (!isMobile) {
+      radicallight = new THREE.PointLight(0xffee66, 0, 2.5, 1);
+      //radicallight.position.set(-2.5, 0.8, -2);
+      radicallight.position.set(-5, 1.6, -4);
+      scene.add(radicallight);
+      researchlight = new THREE.PointLight(0xff9999, 0, 2.5, 1);
+      //researchlight.position.set(-2.5, 0.8, 0.5);
+      researchlight.position.set(-5, 1.6, 1);
+      scene.add(researchlight);
+      designlight = new THREE.PointLight(0x9999ff, 0, 2.5, 1);
+      // designlight.position.set(-2.5, 0.8, 2.5);
+      designlight.position.set(-5, 1.6, 5);
+      scene.add(designlight);
+      screen1Light = new THREE.PointLight(0xffffff, 0, 1, 1);
+      //screen1Light.position.set(-0.4, 1, 0.74);
+      screen1Light.position.set(-0.8, 1.6, 1.5);
+      scene.add(screen1Light);
+      screen2Light = new THREE.PointLight(0xffffff, 0, 1, 1);
+      //screen2Light.position.set(-0.4, 1, 4.15);
+      screen2Light.position.set(-0.8, 1.6, 8);
+      scene.add(screen2Light);
+    }
     buildShape();
     window.addEventListener('resize', onWindowResize, false);
   }
@@ -451,7 +454,6 @@
   }
 
   function addModel() {
-
       var onProgress = function (xhr) {
         if (xhr.lengthComputable) {
           var percentComplete = xhr.loaded / xhr.total * 100;
@@ -483,190 +485,157 @@
       var mtlLoader = new THREE.MTLLoader();
       mtlLoader.setPath('models/vrLabsModel/');
       mtlLoader.load('planta6.mtl', function (materials) {
-          materials.preload();
-          var objLoader = new THREE.OBJLoader();
-          objLoader.setMaterials(materials);
-          objLoader.setPath('models/vrLabsModel/');
-          objLoader.load('planta6.obj', function (elements) {
-
-              techo = elements.children[13];
-              techo.renderOrder = 0;
-              techo.name = "techo";
-
-              planta.add(techo);
-
-              banco = elements.children[12];
-              banco.renderOrder = 0;
-              banco.name = "banco";
-
-              planta.add(banco);
-
-              cristaleraEntrada = elements.children[11];
-              cristaleraEntrada.renderOrder = 1;
-              cristaleraEntrada.name = "cristaleraEntrada";
-
-              planta.add(cristaleraEntrada);
-
-              pared = elements.children[10];
-              pared.renderOrder = 0;
-              pared.name = "pared";
-
-              planta.add(pared);
-
-              cristaleraAgora = elements.children[9];
-              cristaleraAgora.renderOrder = 1;
-              cristaleraAgora.name = "cristaleraAgora";
-
-              planta.add(cristaleraAgora);
-
-              centro = elements.children[8];
-              centro.renderOrder = 0;
-              centro.name = "centro";
-
-              mesas.add(centro);
-
-              research = elements.children[7];
-              research.renderOrder = 0;
-              research.name = "research";
-              mesas.add(research);
-
-              design = elements.children[6];
-              design.renderOrder = 0;
-              design.name = "design";
-
-              mesas.add(design);
-              Reticulum.add( design, {
-                reticleHoverColor: 0x00fff6,
-                fuseVisible: true,
-                onGazeOver: function() {
-                  // do something when user targets object
-                  // if (this.material.emissive) this.material.emissive.setHex( 0xffcc00 );
-                  // addLetters3D(stringToCharArray("Design"), {x: -2.7, y: 1, z: 3}, letrasDesign);
-                  // moveLetters3d(letrasDesign, activeLetters);
-                },
-                onGazeOut: function() {
-                  // do something when user moves reticle off targeted object
-                  // if (this.material.emissive) this.material.emissive.setHex( 0xcc0000 );
-                  // removeLetters3D(letrasDesign);
-                },
-                onGazeLong: function() {
-                  if (infoGroup.children.length > 0) {
-                    removeMembers();
-                    removeInfoSection();
-                  }
-                  actualLab = 'design';
-                  movement({intensity: 2}, designlight, 0, 2000, TWEEN.Easing.Quartic.Out);
-                  movement({intensity: 0}, radicallight, 0, 2000, TWEEN.Easing.Quartic.Out);
-                  movement({intensity: 0}, researchlight, 0, 2000, TWEEN.Easing.Quartic.Out);
-                  movement({intensity: 0.1}, ambientLight, 0, 2000, TWEEN.Easing.Quartic.Out);
-                  movement({intensity: 0}, screen1Light, 0, 2000, TWEEN.Easing.Quartic.Out);
-                  movement({intensity: 0}, screen2Light, 0, 2000, TWEEN.Easing.Quartic.Out);
-                  // movement({x: -0.6, y: 1.1, z: 2.5}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out);
-                  movement({x: -1.2, y: 1.5, z: 5}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out);
-                  // if (controls) movement({x: -0.7, y: 1, z: 2.5}, controls.target, 0, 2000, TWEEN.Easing.Quartic.Out);
-                  if (controls) movement({x: -1.4, y: 1.6, z: 5}, controls.target, 0, 2000, TWEEN.Easing.Quartic.Out);
-                },
-                onGazeClick: function() {
-                  // have the object react when user clicks / taps on targeted object
-                  if (this.material.emissive) this.material.emissive.setHex( 0x00cccc * Math.random() );
-                }
-              });
-
-              comunicacion = elements.children[5];
-              comunicacion.renderOrder = 0;
-              comunicacion.name = "comunicacion";
-
-              mesas.add(comunicacion);
-              Reticulum.add( comunicacion, {
-                reticleHoverColor: 0x00fff6,
-                fuseVisible: true,
-                onGazeOver: function() {
-                  // do something when user targets object
-                  // if (this.material.emissive) this.material.emissive.setHex( 0xffcc00 );
-                  // addLetters3D(stringToCharArray("Comunicacion"), {x: -2.7, y: 1, z: 3}, letrasComunicacion);
-                  // moveLetters3d(letrasComunicacion, activeLetters);
-                },
-                onGazeOut: function() {
-                  // do something when user moves reticle off targeted object
-                  // if (this.material.emissive) this.material.emissive.setHex( 0xcc0000 );
-                  // removeLetters3D(letrasComunicacion);
-                },
-                onGazeLong: function() {
-                },
-                onGazeClick: function() {
-                }
-              });
-
-              clever = elements.children[4];
-              clever.renderOrder = 0;
-              clever.name = "clever";
-
-              mesas.add(clever);
-              Reticulum.add( clever, {
-                reticleHoverColor: 0x00fff6,
-                fuseVisible: true,
-                onGazeOver: function() {
-                  // do something when user targets object
-                  // if (this.material.emissive) this.material.emissive.setHex( 0xffcc00 );
-                  // addLetters3D(stringToCharArray("Clever"), {x: -2.7, y: 1, z: 3}, letrasClever);
-                  // moveLetters3d(letrasClever, activeLetters);
-                },
-                onGazeOut: function() {
-                  // do something when user moves reticle off targeted object
-                  // if (this.material.emissive) this.material.emissive.setHex( 0xcc0000 );
-                  // removeLetters3D(letrasClever);
-                },
-                onGazeLong: function() {
-                },
-                onGazeClick: function() {
-                }
-              });
-
-              cristaleraFrontal = elements.children[3];
-              cristaleraFrontal.renderOrder = 2;
-              cristaleraFrontal.name = "cristaleraFrontal";
-
-              planta.add(cristaleraFrontal);
-
-              sillas = elements.children[2];
-              sillas.renderOrder = 0;
-              sillas.name = "sillas";
-
-              planta.add(sillas);
-
-//              teles = elements.children[1];
-//              teles.renderOrder = 0;
-//              teles.name = "teles";
-//
-//              planta.add(teles);
-
-              maker = elements.children[0];
-              maker.renderOrder = 0;
-              maker.name = "maker";
-
-              mesas.add(maker);
-              Reticulum.add( maker, {
-                reticleHoverColor: 0x00fff6,
-                fuseVisible: true,
-                onGazeOver: function() {
-                  // addLetters3D(stringToCharArray("Maker"), {x: -2.7, y: 1, z: 3}, letrasMaker);
-                  addLetters3D(stringToCharArray("Maker"), {x: -5.4, y: 1.6, z: 6}, letrasMaker);
-                  moveLetters3d(letrasMaker, activeLetters);
-                },
-                onGazeOut: function() {
-                  removeLetters3D(letrasMaker);
-                },
-                onGazeLong: function() {
-                },
-                onGazeClick: function() {
-                }
-              });
-
-              planta.add(mesas);
-              planta.scale.set(2,2,2);
-              scene.add(planta);
-              //scene.add(mesas);
-          }, onProgress, onError);
+        materials.preload();
+        var objLoader = new THREE.OBJLoader();
+        objLoader.setMaterials(materials);
+        objLoader.setPath('models/vrLabsModel/');
+        objLoader.load('planta6.obj', function (elements) {
+          techo = elements.children[13];
+          techo.renderOrder = 0;
+          techo.name = "techo";
+          planta.add(techo);
+          banco = elements.children[12];
+          banco.renderOrder = 0;
+          banco.name = "banco";
+          planta.add(banco);
+          cristaleraEntrada = elements.children[11];
+          cristaleraEntrada.renderOrder = 1;
+          cristaleraEntrada.name = "cristaleraEntrada";
+          planta.add(cristaleraEntrada);
+          pared = elements.children[10];
+          pared.renderOrder = 0;
+          pared.name = "pared";
+          planta.add(pared);
+          cristaleraAgora = elements.children[9];
+          cristaleraAgora.renderOrder = 1;
+          cristaleraAgora.name = "cristaleraAgora";
+          planta.add(cristaleraAgora);
+          centro = elements.children[8];
+          centro.renderOrder = 0;
+          centro.name = "centro";
+          mesas.add(centro);
+          research = elements.children[7];
+          research.renderOrder = 0;
+          research.name = "research";
+          mesas.add(research);
+          design = elements.children[6];
+          design.renderOrder = 0;
+          design.name = "design";
+          mesas.add(design);
+          Reticulum.add( design, {
+            reticleHoverColor: 0x00fff6,
+            fuseVisible: true,
+            onGazeOver: function() {
+              // do something when user targets object
+              // if (this.material.emissive) this.material.emissive.setHex( 0xffcc00 );
+              // addLetters3D(stringToCharArray("Design"), {x: -2.7, y: 1, z: 3}, letrasDesign);
+              // moveLetters3d(letrasDesign, activeLetters);
+            },
+            onGazeOut: function() {
+              // do something when user moves reticle off targeted object
+              // if (this.material.emissive) this.material.emissive.setHex( 0xcc0000 );
+              // removeLetters3D(letrasDesign);
+            },
+            onGazeLong: function() {
+              if (infoGroup.children.length > 0) {
+                removeMembers();
+                removeInfoSection();
+              }
+              actualLab = 'design';
+              movement({intensity: 2}, designlight, 0, 2000, TWEEN.Easing.Quartic.Out);
+              movement({intensity: 0}, radicallight, 0, 2000, TWEEN.Easing.Quartic.Out);
+              movement({intensity: 0}, researchlight, 0, 2000, TWEEN.Easing.Quartic.Out);
+              movement({intensity: 0.1}, ambientLight, 0, 2000, TWEEN.Easing.Quartic.Out);
+              movement({intensity: 0}, screen1Light, 0, 2000, TWEEN.Easing.Quartic.Out);
+              movement({intensity: 0}, screen2Light, 0, 2000, TWEEN.Easing.Quartic.Out);
+              // movement({x: -0.6, y: 1.1, z: 2.5}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out);
+              movement({x: -1.2, y: 1.5, z: 5}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out);
+              // if (controls) movement({x: -0.7, y: 1, z: 2.5}, controls.target, 0, 2000, TWEEN.Easing.Quartic.Out);
+              if (controls) movement({x: -1.4, y: 1.6, z: 5}, controls.target, 0, 2000, TWEEN.Easing.Quartic.Out);
+            },
+            onGazeClick: function() {
+              // have the object react when user clicks / taps on targeted object
+              if (this.material.emissive) this.material.emissive.setHex( 0x00cccc * Math.random() );
+            }
+          });
+          comunicacion = elements.children[5];
+          comunicacion.renderOrder = 0;
+          comunicacion.name = "comunicacion";
+          mesas.add(comunicacion);
+          Reticulum.add( comunicacion, {
+            reticleHoverColor: 0x00fff6,
+            fuseVisible: true,
+            onGazeOver: function() {
+              // do something when user targets object
+              // if (this.material.emissive) this.material.emissive.setHex( 0xffcc00 );
+              // addLetters3D(stringToCharArray("Comunicacion"), {x: -2.7, y: 1, z: 3}, letrasComunicacion);
+              // moveLetters3d(letrasComunicacion, activeLetters);
+            },
+            onGazeOut: function() {
+              // do something when user moves reticle off targeted object
+              // if (this.material.emissive) this.material.emissive.setHex( 0xcc0000 );
+              // removeLetters3D(letrasComunicacion);
+            },
+            onGazeLong: function() {
+            },
+            onGazeClick: function() {
+            }
+          });
+          clever = elements.children[4];
+          clever.renderOrder = 0;
+          clever.name = "clever";
+          mesas.add(clever);
+          Reticulum.add( clever, {
+            reticleHoverColor: 0x00fff6,
+            fuseVisible: true,
+            onGazeOver: function() {
+              // do something when user targets object
+              // if (this.material.emissive) this.material.emissive.setHex( 0xffcc00 );
+              // addLetters3D(stringToCharArray("Clever"), {x: -2.7, y: 1, z: 3}, letrasClever);
+              // moveLetters3d(letrasClever, activeLetters);
+            },
+            onGazeOut: function() {
+              // do something when user moves reticle off targeted object
+              // if (this.material.emissive) this.material.emissive.setHex( 0xcc0000 );
+              // removeLetters3D(letrasClever);
+            },
+            onGazeLong: function() {
+            },
+            onGazeClick: function() {
+            }
+          });
+          cristaleraFrontal = elements.children[3];
+          cristaleraFrontal.renderOrder = 2;
+          cristaleraFrontal.name = "cristaleraFrontal";
+          planta.add(cristaleraFrontal);
+          sillas = elements.children[2];
+          sillas.renderOrder = 0;
+          sillas.name = "sillas";
+          planta.add(sillas);
+          maker = elements.children[0];
+          maker.renderOrder = 0;
+          maker.name = "maker";
+          mesas.add(maker);
+          Reticulum.add( maker, {
+            reticleHoverColor: 0x00fff6,
+            fuseVisible: true,
+            onGazeOver: function() {
+              // addLetters3D(stringToCharArray("Maker"), {x: -2.7, y: 1, z: 3}, letrasMaker);
+              addLetters3D(stringToCharArray("Maker"), {x: -5.4, y: 1.6, z: 6}, letrasMaker);
+              moveLetters3d(letrasMaker, activeLetters);
+            },
+            onGazeOut: function() {
+              removeLetters3D(letrasMaker);
+            },
+            onGazeLong: function() {
+            },
+            onGazeClick: function() {
+            }
+          });
+          planta.add(mesas);
+          planta.scale.set(2,2,2);
+          scene.add(planta);
+        }, onProgress, onError);
       });
   }
 
@@ -756,29 +725,28 @@
   }
 
   function addSpritesLetters(lettersArray) {
-
-      for (var a = 0; a < lettersArray.length; a++) {
-          var map = new THREE.TextureLoader().load("images/letters/" + lettersArray[a] + ".png");
-          var material = new THREE.SpriteMaterial({map: map, color: 0xffffff, fog: true});
-          var sprite = new THREE.Sprite(material);
-          if (isMobile) {
-              sprite.position.x = 0.03 * a;
-              sprite.position.z = -1.5;
-              sprite.scale.set(0.03, 0.03, 0.03);
-              spriteGroup.add(sprite);
-              spriteGroup.position.x = -0.13;
-              spriteGroup.position.y = -0.06;
-          }
-          else {
-              sprite.position.x = 0.04 * a;
-              sprite.position.z = -0.5;
-              sprite.scale.set(0.05, 0.05, 0.05);
-              spriteGroup.add(sprite);
-              spriteGroup.position.x = -0.6;
-              spriteGroup.position.y = -0.25;
-          }
-          camera.add(spriteGroup);
+    for (var a = 0; a < lettersArray.length; a++) {
+      var map = new THREE.TextureLoader().load("images/letters/" + lettersArray[a] + ".png");
+      var material = new THREE.SpriteMaterial({map: map, color: 0xffffff, fog: true});
+      var sprite = new THREE.Sprite(material);
+      if (isMobile) {
+        sprite.position.x = 0.03 * a;
+        sprite.position.z = -1.5;
+        sprite.scale.set(0.03, 0.03, 0.03);
+        spriteGroup.add(sprite);
+        spriteGroup.position.x = -0.13;
+        spriteGroup.position.y = -0.06;
       }
+      else {
+        sprite.position.x = 0.04 * a;
+        sprite.position.z = -0.5;
+        sprite.scale.set(0.05, 0.05, 0.05);
+        spriteGroup.add(sprite);
+        spriteGroup.position.x = -0.6;
+        spriteGroup.position.y = -0.25;
+      }
+      camera.add(spriteGroup);
+    }
   }
 
   function removeSpriteLetters() {
@@ -822,8 +790,8 @@
       // var screen1Geometry = new THREE.PlaneGeometry(0.4, 0.25, 1, 1);
       var screen1Geometry = new THREE.PlaneGeometry(0.8, 0.5, 2, 1);
       var screen1Material = new THREE.MeshBasicMaterial({
-          map: videoTexture.texture,
-          side: THREE.DoubleSide
+        map: videoTexture.texture,
+        side: THREE.DoubleSide
       });
       screen1Mesh = new THREE.Mesh(screen1Geometry, screen1Material);
       // screen1Mesh.position.set(-0.225, 1.13, 0.74);
@@ -848,7 +816,7 @@
           // if (controls) controls.target.set(screen1Mesh.position.x - 0.1, screen1Mesh.position.y, screen1Mesh.position.z);
           if (controls) controls.target.set(screen1Mesh.position.x - 0.2, screen1Mesh.position.y, screen1Mesh.position.z);
           // movement({x: -0.7, y: 1, z: screen1Mesh.position.z}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, addMediaControls(screen1Mesh, video));
-          movement({x: -1.4, y: 2, z: screen1Mesh.position.z}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, addMediaControls(screen1Mesh, video));
+          movement({x: -1.5, y: 2, z: screen1Mesh.position.z}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, addMediaControls(screen1Mesh, video));
         }
         camera.up = new THREE.Vector3(0,1,0);
         camera.lookAt(screen1Mesh.position);
@@ -861,8 +829,8 @@
     // var screen2Geometry = new THREE.PlaneGeometry(0.4, 0.25, 1, 1);
     var screen2Geometry = new THREE.PlaneGeometry(0.8, 0.5, 2, 1);
     var screen2Material = new THREE.MeshBasicMaterial({
-        map: videoTexture.texture,
-        side: THREE.DoubleSide
+      map: videoTexture.texture,
+      side: THREE.DoubleSide
     });
     screen2Mesh = new THREE.Mesh(screen2Geometry, screen2Material);
     // screen2Mesh.position.set(-0.225, 1.13, 4.15);
@@ -905,18 +873,18 @@
   function addMediaControls(object, video) {
     mediaControlsContainer = new THREE.Object3D();
     // mediaControlsContainer.position.set(-0.25, object.position.y-0.1, object.position.z);
-    mediaControlsContainer.position.set(-0.5, object.position.y-0.2, object.position.z);
+    mediaControlsContainer.position.set(object.position.x, object.position.y, object.position.z);
 
     mediaControlsContainer.rotateY(-Math.PI / 2);
     var mediaControls = [
-      // {name: 'media-play', path: 'play.png', position: {x: -0.15, y: 0, z: 0}},
-      {name: 'media-play', path: 'play.png', position: {x: -0.3, y: 0, z: 0}},
       // {name: 'media-stop', path: 'stop.png', position: {x: -0.08, y: 0, z: 0}},
-      {name: 'media-stop', path: 'stop.png', position: {x: -0.16, y: 0, z: 0}},
+      {name: 'media-stop', path: 'stop.png', position: {x: 0, y: 0, z: -1}},
       // {name: 'media-pause', path: 'pause.png', position: {x: 0, y: 0, z: 0}},
-      {name: 'media-pause', path: 'pause.png', position: {x: 0, y: 0, z: 0}},
+      {name: 'media-pause', path: 'pause.png', position: {x: 0, y: 0, z: -1}},
       // {name: 'media-close', path: 'close.png', position: {x: 0.15, y: 0.2, z: 0}}
-      {name: 'media-close', path: 'close.png', position: {x: 0.16, y: 0, z: 0}}
+      {name: 'media-close', path: 'close.png', position: {x: 0, y: 0, z: -1}},
+      // {name: 'media-play', path: 'play.png', position: {x: -0.15, y: 0, z: 0}}
+      {name: 'media-play', path: 'play.png', position: {x: 0, y: 0, z: 0}}
     ];
     for (var i = 0; i < mediaControls.length; i++) {
       addMediaButton(mediaControls[i].name, mediaControls[i].path, mediaControls[i].position, video);
@@ -924,7 +892,22 @@
     scene.add(mediaControlsContainer)
   }
 
+  function showMediaControls() {
+    movement({x: -0.3, y: 0, z: 0.1}, playButton.position, 0, 500, TWEEN.Easing.Back.Out);
+    movement({x: -0.16, y: 0, z: 0.1}, stopButton.position, 0, 500, TWEEN.Easing.Back.Out);
+    movement({x: 0, y: 0, z: 0.1}, pauseButton.position, 0, 500, TWEEN.Easing.Back.Out);
+    movement({x: 0.16, y: 0, z: 0.1}, closeButton.position, 0, 500, TWEEN.Easing.Back.Out);
+    movement({x: screen1Mesh.position.x, y: screen1Mesh.position.y - 0.3, z: screen1Mesh.position.z + 0.1}, mediaControlsContainer.position, 0, 1500, TWEEN.Easing.Back.Out)
+  }
+
+  var cameraLookingAtScreenRotationValue;
+  function saveCameraLookingAtScreenRotationValue() {
+    cameraLookingAtScreenRotationValue = new THREE.Object3D();
+    cameraLookingAtScreenRotationValue.rotation.copy(camera.rotation);
+  }
+
   var playButton, stopButton, pauseButton, fastForwardButton, rewindButton, closeButton;
+  var videoPlaying = true;
   function addMediaButton(name, path, position, videoObject) {
     var img = new THREE.MeshBasicMaterial({
       map:THREE.ImageUtils.loadTexture("images/mediaControls/" + path),
@@ -961,13 +944,18 @@
       },
       onGazeLong: function() {
         if (name === 'media-play') {
+          showMediaControls();
           videoObject.play();
+          videoPlaying = true;
+          saveCameraLookingAtScreenRotationValue();
         } else if (name === 'media-close') {
           videoObject.pause();
           removeMediaControls();
           exitScreen(videoObject);
+          videoPlaying = false;
         } else {
           videoObject.pause();
+          videoPlaying = false;
         }
       },
       onGazeClick: function() {
@@ -1196,10 +1184,10 @@
 
   function addMember(member, index) {
     var img = new THREE.MeshBasicMaterial({ //CHANGED to MeshBasicMaterial
-        map:THREE.ImageUtils.loadTexture("images/membersPhoto/" + member.name + ".png"),
-        transparent: true,
-        depthWrite: false,
-        color: 0xffffff
+      map:THREE.ImageUtils.loadTexture("images/membersPhoto/" + member.name + ".png"),
+      transparent: true,
+      depthWrite: false,
+      color: 0xffffff
     });
     img.map.needsUpdate = true; //ADDED
 
@@ -1380,6 +1368,8 @@
       }
   }
 
+  var controlsAreMoving = false;
+  var controlsAreCentered = false;
   function render() {
     if (effect) {
       try {
@@ -1411,6 +1401,25 @@
     }
     if (radicalLabel !== undefined) {
       radicalLabel.lookAt(camera.position);
+    }
+
+    if (videoPlaying && cameraLookingAtScreenRotationValue != undefined) {
+      if (!controlsAreMoving) {
+        console.log(cameraLookingAtScreenRotationValue.rotation.z);
+        if (camera.rotation.z < -1.4 && !controlsAreCentered) {
+          controlsAreMoving = true;
+          movement({x: screen1Mesh.position.x, y: screen1Mesh.position.y, z: screen1Mesh.position.z + 0.1}, mediaControlsContainer.position, 0, 500, TWEEN.Easing.Back.Out, function () {
+            controlsAreMoving = false;
+            controlsAreCentered = true;
+          });
+        } else if (camera.rotation.z > cameraLookingAtScreenRotationValue.rotation.z && controlsAreCentered && !controlsAreMoving) {
+          controlsAreMoving = true;
+          movement({x: screen1Mesh.position.x, y: screen1Mesh.position.y - 0.3, z: screen1Mesh.position.z + 0.1}, mediaControlsContainer.position, 0, 500, TWEEN.Easing.Back.Out, function () {
+            controlsAreMoving = false;
+            controlsAreCentered = false;
+          });
+        }
+      }
     }
   }
 
