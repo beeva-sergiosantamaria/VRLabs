@@ -677,36 +677,28 @@
   }
 
   function addScreen1() {
-    if (screen1Mesh == undefined) {
-      // var screen1Geometry = new THREE.PlaneGeometry(0.4, 0.25, 1, 1);
-      var screen1Geometry = new THREE.PlaneGeometry(0.8, 0.5, 2, 1);
-      var screen1Material = new THREE.MeshBasicMaterial({
-        map: videoTexture.texture,
-        side: THREE.DoubleSide
-      });
-      screen1Mesh = new THREE.Mesh(screen1Geometry, screen1Material);
-      // screen1Mesh.position.set(-0.225, 1.13, 0.74);
-      screen1Mesh.position.set(-0.45, 2, 1.5);
-      screen1Mesh.rotateY(-Math.PI / 2);
-      screen1Mesh.name = 'screen1';
-    }
+    var screen1Geometry = new THREE.PlaneGeometry(0.8, 0.5, 2, 1);
+    var screen1Material = new THREE.MeshBasicMaterial({
+      map: videoTexture.texture,
+      side: THREE.DoubleSide
+    });
+    screen1Mesh = new THREE.Mesh(screen1Geometry, screen1Material);
+    screen1Mesh.position.set(-0.45, 2, 1.5);
+    screen1Mesh.rotateY(-Math.PI / 2);
+    screen1Mesh.name = 'screen1';
     
     Reticulum.add( screen1Mesh, {
       reticleHoverColor: 0x00fff6,
       fuseVisible: true,
       onGazeOver: function() {
-        if (this.material.emissive) this.material.emissive.setHex( 0xffcc00 );
       },
       onGazeOut: function() {
-        if (this.material.emissive) this.material.emissive.setHex( 0xcc0000 );
       },
       onGazeLong: function() {
         removeFromReticulum(screen1Mesh);
         if (video != undefined && video2 != undefined) {
           video2.pause();
-          // if (controls) controls.target.set(screen1Mesh.position.x - 0.1, screen1Mesh.position.y, screen1Mesh.position.z);
           if (controls) controls.target.set(screen1Mesh.position.x - 0.2, screen1Mesh.position.y, screen1Mesh.position.z);
-          // movement({x: -0.7, y: 1, z: screen1Mesh.position.z}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, addMediaControls(screen1Mesh, video));
           movement({x: -1.5, y: 2, z: screen1Mesh.position.z}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, addMediaControls(screen1Mesh, video));
         }
         camera.up = new THREE.Vector3(0,1,0);
@@ -717,14 +709,12 @@
   }
 
   function addScreen2() {
-    // var screen2Geometry = new THREE.PlaneGeometry(0.4, 0.25, 1, 1);
     var screen2Geometry = new THREE.PlaneGeometry(0.8, 0.5, 2, 1);
     var screen2Material = new THREE.MeshBasicMaterial({
-      map: videoTexture.texture,
+      map: videoTexture2.texture,
       side: THREE.DoubleSide
     });
     screen2Mesh = new THREE.Mesh(screen2Geometry, screen2Material);
-    // screen2Mesh.position.set(-0.225, 1.13, 4.15);
     screen2Mesh.position.set(-0.45, 2, 8.3);
     screen2Mesh.rotateY(-Math.PI / 2);
     screen2Mesh.name = 'screen2';
@@ -733,20 +723,14 @@
       reticleHoverColor: 0x00fff6,
       fuseVisible: true,
       onGazeOver: function() {
-        // do something when user targets object
-        if (this.material.emissive) this.material.emissive.setHex( 0xffcc00 );
       },
       onGazeOut: function() {
-        // do something when user moves reticle off targeted object
-        if (this.material.emissive) this.material.emissive.setHex( 0xcc0000 );
       },
       onGazeLong: function() {
         removeFromReticulum(screen2Mesh);
         if (video != undefined && video2 != undefined) {
           video.pause();
-          // if (controls) controls.target.set(screen2Mesh.position.x - 0.1, screen2Mesh.position.y, screen2Mesh.position.z);
           if (controls) controls.target.set(screen2Mesh.position.x - 0.2, screen2Mesh.position.y, screen2Mesh.position.z);
-          // movement({x: -0.7, y: 1, z: screen2Mesh.position.z}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, addMediaControls(screen2Mesh, video2));
           movement({x: -1.4, y: 2, z: screen2Mesh.position.z}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, addMediaControls(screen2Mesh, video2));
         }
         camera.up = new THREE.Vector3(0,1,0);
@@ -761,34 +745,29 @@
   }
 
   var mediaControlsContainer;
-  function addMediaControls(object, video) {
+  function addMediaControls(object, videoObject) {
     mediaControlsContainer = new THREE.Object3D();
-    // mediaControlsContainer.position.set(-0.25, object.position.y-0.1, object.position.z);
     mediaControlsContainer.position.set(object.position.x, object.position.y, object.position.z);
 
     mediaControlsContainer.rotateY(-Math.PI / 2);
     var mediaControls = [
-      // {name: 'media-stop', path: 'stop.png', position: {x: -0.08, y: 0, z: 0}},
       {name: 'media-stop', path: 'stop.png', position: {x: 0, y: 0, z: -1}},
-      // {name: 'media-pause', path: 'pause.png', position: {x: 0, y: 0, z: 0}},
       {name: 'media-pause', path: 'pause.png', position: {x: 0, y: 0, z: -1}},
-      // {name: 'media-close', path: 'close.png', position: {x: 0.15, y: 0.2, z: 0}}
       {name: 'media-close', path: 'close.png', position: {x: 0, y: 0, z: -1}},
-      // {name: 'media-play', path: 'play.png', position: {x: -0.15, y: 0, z: 0}}
       {name: 'media-play', path: 'play.png', position: {x: 0, y: 0, z: 0}}
     ];
     for (var i = 0; i < mediaControls.length; i++) {
-      addMediaButton(mediaControls[i].name, mediaControls[i].path, mediaControls[i].position, video);
+      addMediaButton(mediaControls[i].name, mediaControls[i].path, mediaControls[i].position, videoObject);
     }
     scene.add(mediaControlsContainer)
   }
 
-  function showMediaControls() {
-    movement({x: -0.3, y: 0, z: 0.1}, playButton.position, 0, 500, TWEEN.Easing.Back.Out);
-    movement({x: -0.16, y: 0, z: 0.1}, stopButton.position, 0, 500, TWEEN.Easing.Back.Out);
+  function showMediaControls(screenObject) {
+    movement({x: -0.26, y: 0, z: 0.1}, playButton.position, 0, 500, TWEEN.Easing.Back.Out);
+    movement({x: -0.13, y: 0, z: 0.1}, stopButton.position, 0, 500, TWEEN.Easing.Back.Out);
     movement({x: 0, y: 0, z: 0.1}, pauseButton.position, 0, 500, TWEEN.Easing.Back.Out);
-    movement({x: 0.16, y: 0, z: 0.1}, closeButton.position, 0, 500, TWEEN.Easing.Back.Out);
-    movement({x: screen1Mesh.position.x, y: screen1Mesh.position.y - 0.3, z: screen1Mesh.position.z + 0.1}, mediaControlsContainer.position, 0, 1500, TWEEN.Easing.Back.Out)
+    movement({x: 0.13, y: 0, z: 0.1}, closeButton.position, 0, 500, TWEEN.Easing.Back.Out);
+    movement({x: screenObject.position.x, y: screenObject.position.y - 0.3, z: screenObject.position.z + 0.1}, mediaControlsContainer.position, 0, 1500, TWEEN.Easing.Back.Out)
   }
 
   var cameraLookingAtScreenRotationValue;
@@ -798,7 +777,8 @@
   }
 
   var playButton, stopButton, pauseButton, fastForwardButton, rewindButton, closeButton;
-  var videoPlaying = true;
+  var videoPlaying = false;
+  var video2Playing = false;
   function addMediaButton(name, path, position, videoObject) {
     var img = new THREE.MeshBasicMaterial({
       map:THREE.ImageUtils.loadTexture("images/mediaControls/" + path),
@@ -807,11 +787,9 @@
     });
     img.map.needsUpdate = true;
 
-    // var scale = 0.05;
     var scale = 0.1;
     var plane = new THREE.Mesh(new THREE.PlaneGeometry(scale, scale), img);
     plane.name = name;
-    // plane.rotateY(-Math.PI / 2);
     plane.position.set(position.x, position.y, position.z);
     if (name === 'media-play') {
       playButton = plane;
@@ -835,18 +813,25 @@
       },
       onGazeLong: function() {
         if (name === 'media-play') {
-          showMediaControls();
+          if (videoObject === video) {
+            showMediaControls(screen1Mesh);
+            videoPlaying = true;
+          } else if (videoObject === video2) {
+            showMediaControls(screen2Mesh);
+            video2Playing = true;
+          }
           videoObject.play();
-          videoPlaying = true;
           saveCameraLookingAtScreenRotationValue();
         } else if (name === 'media-close') {
           videoObject.pause();
           removeMediaControls();
           exitScreen(videoObject);
           videoPlaying = false;
+          video2Playing = false;
         } else {
           videoObject.pause();
           videoPlaying = false;
+          video2Playing = false;
         }
       },
       onGazeClick: function() {
@@ -1072,11 +1057,9 @@
 
   function removeMembers() {
     var numberOfMembers = memberPlanes.length;
-    console.log(numberOfMembers)
     for (var a = 0; a < numberOfMembers; a++) {
       movement({y: -4}, memberPlanes[a].position, 0, 500, TWEEN.Easing.Back.Out);
       scene.remove(memberPlanes[a]);
-      console.log('removed ', memberPlanes[a].name)
       if (a == numberOfMembers - 1) {
         membersGroup = new THREE.Object3D();
         membersGroup.name = 'members';
@@ -1257,7 +1240,6 @@
 
     if (videoPlaying && cameraLookingAtScreenRotationValue != undefined) {
       if (!controlsAreMoving) {
-        console.log(cameraLookingAtScreenRotationValue.rotation.z);
         if (camera.rotation.z < -1.4 && !controlsAreCentered) {
           controlsAreMoving = true;
           movement({x: screen1Mesh.position.x, y: screen1Mesh.position.y, z: screen1Mesh.position.z + 0.1}, mediaControlsContainer.position, 0, 500, TWEEN.Easing.Back.Out, function () {
@@ -1267,6 +1249,22 @@
         } else if (camera.rotation.z > cameraLookingAtScreenRotationValue.rotation.z && controlsAreCentered && !controlsAreMoving) {
           controlsAreMoving = true;
           movement({x: screen1Mesh.position.x, y: screen1Mesh.position.y - 0.3, z: screen1Mesh.position.z + 0.1}, mediaControlsContainer.position, 0, 500, TWEEN.Easing.Back.Out, function () {
+            controlsAreMoving = false;
+            controlsAreCentered = false;
+          });
+        }
+      }
+    } else if (video2Playing && cameraLookingAtScreenRotationValue != undefined) {
+      if (!controlsAreMoving) {
+        if (camera.rotation.z < -1.4 && !controlsAreCentered) {
+          controlsAreMoving = true;
+          movement({x: screen2Mesh.position.x, y: screen2Mesh.position.y, z: screen2Mesh.position.z + 0.1}, mediaControlsContainer.position, 0, 500, TWEEN.Easing.Back.Out, function () {
+            controlsAreMoving = false;
+            controlsAreCentered = true;
+          });
+        } else if (camera.rotation.z > cameraLookingAtScreenRotationValue.rotation.z && controlsAreCentered && !controlsAreMoving) {
+          controlsAreMoving = true;
+          movement({x: screen2Mesh.position.x, y: screen2Mesh.position.y - 0.3, z: screen2Mesh.position.z + 0.1}, mediaControlsContainer.position, 0, 500, TWEEN.Easing.Back.Out, function () {
             controlsAreMoving = false;
             controlsAreCentered = false;
           });
