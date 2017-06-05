@@ -127,6 +127,8 @@
 
   var clock = new THREE.Clock();
 
+  var font = "helvetiker";
+
   var manager = new THREE.LoadingManager();
   var textureLoader = new THREE.TextureLoader();
 
@@ -189,6 +191,8 @@
   exitGroup.name = 'exitGroup';
 
   var activeLetters;
+
+  var infoGroupIsShowing = false;
 
   var numeroParticulas = 2000;
   var disperseParticles = {nParticles: numeroParticulas, path: 'disperse'};
@@ -975,7 +979,7 @@
     for (var i = 0; i < members.length; i++) {
       addMember(members[i], i);
     }
-    scene.add(membersGroup);
+    // scene.add(membersGroup);
   }
 
   function addMember(member, index) {
@@ -991,8 +995,9 @@
     var plane = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 0.9), img);
     plane.name = member.name;
     plane.position.set(member.position.x, member.position.y, member.position.z);
+    
     membersGroup.add(plane);
-    movement({y: member.position.y}, plane.position, 300 * index, 500, TWEEN.Easing.Back.Out);
+    movement({y: member.position.y}, plane.position, 300 * index, 1000, TWEEN.Easing.Back.Out);
     memberPlanes.push(plane);
     scene.add(plane);
 
@@ -1008,7 +1013,10 @@
         if (this.material.color) this.material.color.setHex( 0xffffff );
       },
       onGazeLong: function() {
-        if (plane.name == 'sergio_recortada') addInfoSection(sergioInfoImages, 'sergioInfo', 300);
+        if (!infoGroupIsShowing) {
+          removeMembers();
+          addRadicalMemberInfoSection(plane);
+        }
       }
     });
   }
@@ -1017,6 +1025,7 @@
     var numberOfMembers = memberPlanes.length;
     for (var a = 0; a < numberOfMembers; a++) {
       movement({y: -4}, memberPlanes[a].position, 0, 500, TWEEN.Easing.Back.Out);
+      Reticulum.remove(memberPlanes[a]);
       scene.remove(memberPlanes[a]);
       if (a == numberOfMembers - 1) {
         membersGroup = new THREE.Object3D();
@@ -1024,60 +1033,239 @@
         memberPlanes = [];
       }
     }
+    // scene.remove(membersGroup);
   }
 
+  function isRadicalMember(memberObject) {
+    for (var i = 0; i < radicalMembers.length; i++) {
+      if (memberObject.name === radicalMembers[i].name) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  var infoCloseButton, infoEmailButton, infoCalendarButton, infoCallButton;
+  function addRadicalMemberInfoSection(memberObject) {
+    infoGroupIsShowing = true;
+    if (infoGroup.children.length > 0) {
+      removeInfoSection();
+    }
+    scene.remove(infoGroup);
+    infoGroup = new THREE.Object3D();
+    infoGroup.name = 'infoGroup';
+    var texture = textureLoader.load("images/info_board.png");
+    var geometry = new THREE.PlaneGeometry(3, 1.8, 3);
+    var material = new THREE.MeshBasicMaterial({
+      map: texture,
+      transparent: true,
+      opacity: 1,
+      color: 0xffffff
+    });
+    var plane = new THREE.Mesh(geometry, material);
+    plane.name = name;
+
+    var closeButtonMaterial = new THREE.MeshBasicMaterial({
+      map: textureLoader.load("images/mediaControls/close.png"),
+      transparent: true,
+      side: THREE.DoubleSide
+    });
+    closeButtonMaterial.map.needsUpdate = true;
+
+    var scale = 0.3;
+    var closeButtonMesh = new THREE.Mesh(new THREE.PlaneGeometry(scale, scale), closeButtonMaterial);
+    closeButtonMesh.position.set(1, 0.5, 0.1);
+
+    Reticulum.add( closeButtonMesh, {
+      reticleHoverColor: 0x00fff6,
+      fuseVisible: true,
+      onGazeLong: function() {
+        removeInfoSection();
+        if (isRadicalMember(memberObject)) {
+          addMembers(radicalMembers);
+        }
+        infoGroupIsShowing = false;
+      }
+    });
+    plane.add(closeButtonMesh);
+
+    var emailButtonMaterial = new THREE.MeshBasicMaterial({
+      map: textureLoader.load("images/email.png"),
+      transparent: true,
+      side: THREE.DoubleSide
+    });
+    emailButtonMaterial.map.needsUpdate = true;
+
+    scale = 0.5;
+    var infoEmailButton = new THREE.Mesh(new THREE.PlaneGeometry(scale, scale), emailButtonMaterial);
+    infoEmailButton.position.set(-0.6, -0.7, 0.1);
+
+    Reticulum.add( infoEmailButton, {
+      reticleHoverColor: 0x00fff6,
+      fuseVisible: true,
+      onGazeLong: function() {
+        alert('send email');
+      }
+    });
+    plane.add(infoEmailButton);
+
+    var calendarButtonMaterial = new THREE.MeshBasicMaterial({
+      map: textureLoader.load("images/calendar.png"),
+      transparent: true,
+      side: THREE.DoubleSide
+    });
+    calendarButtonMaterial.map.needsUpdate = true;
+
+    var infoCalendarButton = new THREE.Mesh(new THREE.PlaneGeometry(scale, scale), calendarButtonMaterial);
+    infoCalendarButton.position.set(0, -0.7, 0.1);
+
+    Reticulum.add( infoCalendarButton, {
+      reticleHoverColor: 0x00fff6,
+      fuseVisible: true,
+      onGazeLong: function() {
+        alert('open calendar');
+      }
+    });
+    plane.add(infoCalendarButton);
+
+    var callButtonMaterial = new THREE.MeshBasicMaterial({
+      map: textureLoader.load("images/call.png"),
+      transparent: true,
+      side: THREE.DoubleSide
+    });
+    callButtonMaterial.map.needsUpdate = true;
+
+    var infoCallButton = new THREE.Mesh(new THREE.PlaneGeometry(scale, scale), callButtonMaterial);
+    infoCallButton.position.set(0.6, -0.7, 0.1);
+
+    Reticulum.add( infoCallButton, {
+      reticleHoverColor: 0x00fff6,
+      fuseVisible: true,
+      onGazeLong: function() {
+        alert('call');
+      }
+    });
+    plane.add(infoCallButton);
+
+    var img = new THREE.MeshBasicMaterial({
+      map: textureLoader.load("images/membersPhoto/" + memberObject.name + ".png"),
+      transparent: true,
+      depthWrite: false,
+      color: 0xffffff
+    });
+
+    var memberPicture = new THREE.Mesh(new THREE.PlaneGeometry(0.4, 0.4), img);
+    memberPicture.position.set(-1, 0.5, 0.1);
+
+    plane.add(memberPicture);
+
+    var memberNameExtended = memberObject.name;
+    // console.log('debug', memberNameExtended)
+    var auxArr = memberNameExtended.split('_');
+    // console.log('debug', auxArr)
+    var memberName = auxArr[0];
+
+    img = new THREE.MeshBasicMaterial({
+      map: textureLoader.load("images/membersPhoto/info/" + memberName + ".png"),
+      transparent: true,
+      depthWrite: false,
+      color: 0xffffff
+    });
+
+    var memberInfo = new THREE.Mesh(new THREE.PlaneGeometry(1.1, 1.1), img);
+    memberInfo.position.set(0, 0.2, 0.1);
+
+    plane.add(memberInfo);
+    // console.log('debug', memberName)
+    var text = createText(memberName);
+    text.position.set( 0, 0.5, 0.1 );
+    plane.add(text);
+
+    infoGroup.add(plane);
+
+    //infoGroup.position.set(-2.3, 0.35 - 2, -1.95);
+    infoGroup.position.set(-4.5, -2, -4);
+    infoGroup.rotation.y = Math.PI / 2;
+    movement({y: 2}, infoGroup.position, 0, 1500, TWEEN.Easing.Back.Out);
+    scene.add(infoGroup);
+  }
+
+  function createText(message) {
+    //create image
+    var bitmap = document.createElement('canvas');
+    var g = bitmap.getContext('2d');
+    bitmap.width = 100;
+    bitmap.height = 100;
+    g.font = 'Bold 20px Arial';
+
+    g.fillStyle = 'white';
+    g.fillText(message, 0, 20);
+    g.strokeStyle = 'black';
+    g.strokeText(message, 0, 20);
+
+    // canvas contents will be used for a texture
+    var texture = new THREE.Texture(bitmap) 
+    texture.needsUpdate = true;
+    var textMesh = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), texture);
+
+    return textMesh;
+  }
+
+
   function addInfoSection(images, name, timeout) {
-      sectionInfoAdded = true;
-      if (infoGroup.children.length > 0) {
-          hideInfo();
-      }
-      scene.remove(infoGroup);
-      infoGroup = new THREE.Object3D();
-      infoGroup.name = 'infoGroup';
-      for (var a = 0; a < 3; a++) {
-        var texture = textureLoader.load("images/sectionInfo/" + images[a] + ".png");
-        var geometry = new THREE.PlaneGeometry(1, 0.6, 1);
-        var material = new THREE.MeshBasicMaterial({
-            map: texture,
-            transparent: true,
-            opacity: 1,
-            color: 0xffffff
-        });
-        var plane = new THREE.Mesh(geometry, material);
-        plane.name = name;
-        infoGroup.add(plane);
-      }
-      infoGroup.position.set(-2.3, 0.35 - 2, -1.95);
-      infoGroup.rotation.y = Math.PI / 2;
-      movement({y: 0.35}, infoGroup.position, 1, 500, TWEEN.Easing.Back.Out);
-      scene.add(infoGroup);
+    sectionInfoAdded = true;
+    infoGroupIsShowing = true;
+    if (infoGroup.children.length > 0) {
+        removeInfoSection();
+    }
+    scene.remove(infoGroup);
+    infoGroup = new THREE.Object3D();
+    infoGroup.name = 'infoGroup';
+    for (var a = 0; a < 3; a++) {
+      var texture = textureLoader.load("images/sectionInfo/" + images[a] + ".png");
+      var geometry = new THREE.PlaneGeometry(2, 2, 2);
+      var material = new THREE.MeshBasicMaterial({
+          map: texture,
+          transparent: true,
+          opacity: 1,
+          color: 0xffffff
+      });
+      var plane = new THREE.Mesh(geometry, material);
+      plane.name = name;
+      infoGroup.add(plane);
+    }
+    //infoGroup.position.set(-2.3, 0.35 - 2, -1.95);
+    infoGroup.position.set(-4.6, -2, -4);
+    infoGroup.rotation.y = Math.PI / 2;
+    movement({y: 1.35}, infoGroup.position, 0, 1000, TWEEN.Easing.Back.Out);
+    scene.add(infoGroup);
   }
 
   function openInfo() {
-      checkstatus.members = false;
-      checkstatus.infoCard = false;
-      removeSpriteLetters();
-      if (infoGroup !== undefined) {
-        movement({y: 1}, infoGroup.position, 1, 500, TWEEN.Easing.Back.Out);
-        movement({x: -1.8}, infoGroup.position, 1, 500, TWEEN.Easing.Quartic.Out);
-        setTimeout(function () {
-          if (infoGroup.children !== undefined && infoGroup.children.length > 1) {
-            movement({x: 1}, infoGroup.children[1].position, 1, 1000, TWEEN.Easing.Quartic.Out);
-            movement({x: -1}, infoGroup.children[2].position, 1, 1000, TWEEN.Easing.Quartic.Out);
-          }
-        }, 700);
-        setTimeout(function () {
-          if (infoGroup.children !== undefined && infoGroup.children.length > 1) {
-            movement({x: 0.77}, infoGroup.children[1].position, 1, 1000, TWEEN.Easing.Quartic.Out);
-            movement({y: -1}, infoGroup.children[1].rotation, 1, 1000, TWEEN.Easing.Quartic.Out);
-            movement({z: 0.42}, infoGroup.children[1].position, 1, 1000, TWEEN.Easing.Quartic.Out);
-            movement({x: -0.77}, infoGroup.children[2].position, 1, 1000, TWEEN.Easing.Quartic.Out);
-            movement({y: 1}, infoGroup.children[2].rotation, 1, 1000, TWEEN.Easing.Quartic.Out);
-            movement({z: 0.42}, infoGroup.children[2].position, 1, 1000, TWEEN.Easing.Quartic.Out);
-          }
-          addExitIcon({x: -1.7, y: 0.5, z: -1.95});
-        }, 1700);
-      }
+    checkstatus.members = false;
+    checkstatus.infoCard = false;
+    removeSpriteLetters();
+    if (infoGroup !== undefined) {
+      movement({y: 1}, infoGroup.position, 1, 500, TWEEN.Easing.Back.Out);
+      movement({x: -1.8}, infoGroup.position, 1, 500, TWEEN.Easing.Quartic.Out);
+      setTimeout(function () {
+        if (infoGroup.children !== undefined && infoGroup.children.length > 1) {
+          movement({x: 1}, infoGroup.children[1].position, 1, 1000, TWEEN.Easing.Quartic.Out);
+          movement({x: -1}, infoGroup.children[2].position, 1, 1000, TWEEN.Easing.Quartic.Out);
+        }
+      }, 700);
+      setTimeout(function () {
+        if (infoGroup.children !== undefined && infoGroup.children.length > 1) {
+          movement({x: 0.77}, infoGroup.children[1].position, 1, 1000, TWEEN.Easing.Quartic.Out);
+          movement({y: -1}, infoGroup.children[1].rotation, 1, 1000, TWEEN.Easing.Quartic.Out);
+          movement({z: 0.42}, infoGroup.children[1].position, 1, 1000, TWEEN.Easing.Quartic.Out);
+          movement({x: -0.77}, infoGroup.children[2].position, 1, 1000, TWEEN.Easing.Quartic.Out);
+          movement({y: 1}, infoGroup.children[2].rotation, 1, 1000, TWEEN.Easing.Quartic.Out);
+          movement({z: 0.42}, infoGroup.children[2].position, 1, 1000, TWEEN.Easing.Quartic.Out);
+        }
+        addExitIcon({x: -1.7, y: 0.5, z: -1.95});
+      }, 1700);
+    }
   }
 
   function hideInfo() {
@@ -1087,16 +1275,16 @@
         movement({y: exitIcon.position.y - 1}, exitIcon.position, 1, 500, TWEEN.Easing.Quartic.Out);
       }
       if (infoGroup !== undefined && infoGroup.children !== undefined && infoGroup.children.length >= 2) {
-        if (infoGroup.children[1].position.x > 0) movement({x: 1}, infoGroup.children[1].position, 1, 1000, TWEEN.Easing.Quartic.Out);
-        movement({y: 0}, infoGroup.children[1].rotation, 1, 1000, TWEEN.Easing.Quartic.Out);
-        movement({z: -0.01}, infoGroup.children[1].position, 1, 1000, TWEEN.Easing.Quartic.Out);
-        if (infoGroup.children[2].position.x < 0) movement({x: -1}, infoGroup.children[2].position, 1, 1000, TWEEN.Easing.Quartic.Out);
-        movement({y: 0}, infoGroup.children[2].rotation, 1, 1000, TWEEN.Easing.Quartic.Out);
-        movement({z: 0.01}, infoGroup.children[2].position, 1, 1000, TWEEN.Easing.Quartic.Out);
-        setTimeout(function () {
-            movement({x: 0}, infoGroup.children[1].position, 1, 1000, TWEEN.Easing.Quartic.Out);
-            movement({x: 0}, infoGroup.children[2].position, 1, 1000, TWEEN.Easing.Quartic.Out);
-        }, 1000)
+        // if (infoGroup.children[1].position.x > 0) movement({x: 1}, infoGroup.children[1].position, 1, 1000, TWEEN.Easing.Quartic.Out);
+        // movement({y: 0}, infoGroup.children[1].rotation, 1, 1000, TWEEN.Easing.Quartic.Out);
+        // movement({z: -0.01}, infoGroup.children[1].position, 1, 1000, TWEEN.Easing.Quartic.Out);
+        // if (infoGroup.children[2].position.x < 0) movement({x: -1}, infoGroup.children[2].position, 1, 1000, TWEEN.Easing.Quartic.Out);
+        // movement({y: 0}, infoGroup.children[2].rotation, 1, 1000, TWEEN.Easing.Quartic.Out);
+        // movement({z: 0.01}, infoGroup.children[2].position, 1, 1000, TWEEN.Easing.Quartic.Out);
+        // setTimeout(function () {
+            // movement({x: 0}, infoGroup.children[1].position, 1, 1000, TWEEN.Easing.Quartic.Out);
+            // movement({x: 0}, infoGroup.children[2].position, 1, 1000, TWEEN.Easing.Quartic.Out);
+        // }, 1000)
         setTimeout(function () {
             movement({y: 0.35}, infoGroup.position, 500, 500, TWEEN.Easing.Back.Out);
             movement({x: -2.3}, infoGroup.position, 0, 500, TWEEN.Easing.Quartic.Out);
@@ -1106,14 +1294,18 @@
   }
 
   function removeInfoSection() {
-      hideInfo();
-      movement({y: -1}, infoGroup.position, 1200, 500, TWEEN.Easing.Back.In);
-      setTimeout(function () {
-          scene.remove(infoGroup);
-          infoGroup = new THREE.Object3D();
-          infoGroup.name = 'infoGroup';
-          sectionInfoAdded = false;
-      }, 1300);
+    if (infoCloseButton) Reticulum.remove(infoCloseButton);
+    if (infoEmailButton) Reticulum.remove(infoEmailButton);
+    if (infoCalendarButton) Reticulum.remove(infoCalendarButton);
+    if (infoCallButton) Reticulum.remove(infoCallButton);
+    hideInfo();
+    movement({y: -2}, infoGroup.position, 0, 1200, TWEEN.Easing.Back.In);
+    setTimeout(function () {
+      scene.remove(infoGroup);
+      infoGroup = new THREE.Object3D();
+      infoGroup.name = 'infoGroup';
+      sectionInfoAdded = false;
+    }, 1300);
   }
 
   function moveLetters3d(object, prevObject) {
@@ -1127,20 +1319,20 @@
   }
 
   function removeLetters3D(object) {
-      if (object != undefined) {
-          for (var a = 0; a < object.children.length; a++) {
-              if (tweenLettersIn != undefined) tweenLettersIn.stop();
-              new TWEEN.Tween(object.children[a].position).to({y: -1.5}, 100).easing(TWEEN.Easing.Quartic.Out).onUpdate(function () {
-              }).delay(50 * a).start();
-          }
+    if (object != undefined) {
+      for (var a = 0; a < object.children.length; a++) {
+          if (tweenLettersIn != undefined) tweenLettersIn.stop();
+          new TWEEN.Tween(object.children[a].position).to({y: -1.5}, 100).easing(TWEEN.Easing.Quartic.Out).onUpdate(function () {
+          }).delay(50 * a).start();
       }
+    }
   }
 
   function onWindowResize() {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      if (effect != undefined) effect.setSize(window.innerWidth, window.innerHeight);
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    if (effect != undefined) effect.setSize(window.innerWidth, window.innerHeight);
   }
 
   function animate() {
@@ -1244,42 +1436,6 @@
       .start();
   }
 
-  function textSprite(text) {
-    var font = "Helvetica",
-        size = 1,
-        color = "#676767";
-
-    font = "bold " + size + "px " + font;
-
-    var canvas = document.createElement('canvas');
-    var context = canvas.getContext('2d');
-    context.font = font;
-
-    // get size data (height depends only on font size)
-    var metrics = context.measureText(text),
-        textWidth = metrics.width;
-
-    canvas.width = textWidth + 1;
-    canvas.height = size + 3;
-
-    context.font = font;
-    context.fillStyle = color;
-    context.fillText(text, 0, size + 3);
-
-    // canvas contents will be used for a texture
-    var texture = new THREE.Texture(canvas);
-    texture.needsUpdate = true;
-
-    var mesh = new THREE.Mesh(
-    new THREE.PlaneGeometry(canvas.width, canvas.height),
-    new THREE.MeshBasicMaterial({
-        map: texture,
-        side: THREE.DoubleSide
-    }));
-
-    return mesh;
-  }
-
   function makeTextSprite( message, parameters ) {
     if ( parameters === undefined ) parameters = {};
     var fontface = parameters.hasOwnProperty("fontface") ? parameters["fontface"] : "Arial";
@@ -1302,11 +1458,10 @@
     context.fillText( message, borderThickness, fontsize + borderThickness);    
     var texture = new THREE.Texture(canvas) 
     texture.needsUpdate = true;    
-    var spriteMaterial = new THREE.SpriteMaterial( { map: texture, useScreenCoordinates: true } );
+    var spriteMaterial = new THREE.SpriteMaterial( { map: texture, useScreenCoordinates: false } );
     var sprite = new THREE.Sprite( spriteMaterial );
     sprite.scale.set(0.5 * fontsize, 0.25 * fontsize, 0.75 * fontsize);
-    sprite.position.set(position.x, position.y, position.z);
-    scene.add(sprite);
+    return sprite;
   }
 
   // function for drawing rounded rectangles
