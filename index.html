@@ -204,6 +204,8 @@
   var verticesArray = [];
   var particlesAnimation = true;
 
+  var positionsList = [];
+
 
   $(document).ready(function () {
       // startLogoAnim();
@@ -231,6 +233,7 @@
     camera = new THREE.PerspectiveCamera(60, (width / height), 0.01, 10000000);
     // camera.position.set(-0.8, 1, -0.8);
     camera.position.set(-1.6, 1.5, -1.6);
+    positionsList.push({x: -1.6, y: 1.5, z: -1.6});
     // *******************************
     // --- Reticulum ---
     // initiate Reticulum so it loads up 
@@ -296,6 +299,7 @@
       controls.enableZoom = false;
       controls.target.set(camera.position.x, camera.position.y, camera.position.z + 0.5);          
     }
+    addHomeButton();
     addTravelPoints();
     ambientLight = new THREE.AmbientLight(0xffffff);
     ambientLight.position.set(0, 1.2, 0);
@@ -324,12 +328,12 @@
   }
 
   function particlesDisperse(Particles, path) {
-      if (disperseParticles.path != path && particleCube != undefined) {
-          if (path != 'disperse') reorderParticles(disperseParticles.nParticles, 'disperse');
-          setTimeout(function () {
-              reorderParticles(Particles, path)
-          }, 100);
-      }
+    if (disperseParticles.path != path && particleCube != undefined) {
+      if (path != 'disperse') reorderParticles(disperseParticles.nParticles, 'disperse');
+      setTimeout(function () {
+        reorderParticles(Particles, path)
+      }, 100);
+    }
   }
 
   function reorderParticles(Particles, path) {
@@ -466,9 +470,13 @@
               removeMembers();
               removeInfoSection();
               actualLab = 'design';
-              movement({x: -1.2, y: 1.5, z: 5}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out);
+              movement({x: -1.2, y: 1.5, z: 5}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
+                movement({x: camera.position.x, y: 0.1, z: camera.position.z + 0.5}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
+              });
+              positionsList.push({x: -1.2, y: 1.5, z: 5});
+              
               // if (contros) movement({x: -0.7, y: 1, z: 2.5}, controls.target, 0, 2000, TWEEN.Easing.Quartic.Out);
-              if (controls) movement({x: -1.4, y: 1.6, z: 5}, controls.target, 0, 2000, TWEEN.Easing.Quartic.Out);
+              if (controls) movement({x: -1.2, y: 1.6, z: 5}, controls.target, 0, 2000, TWEEN.Easing.Quartic.Out);
             }
           });
           comunicacion = elements.children[5];
@@ -679,7 +687,11 @@
         if (video != undefined && video2 != undefined) {
           video2.pause();
           if (controls) controls.target.set(screen1Mesh.position.x - 0.2, screen1Mesh.position.y, screen1Mesh.position.z);
-          movement({x: -1.5, y: 2, z: screen1Mesh.position.z}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, addMediaControls(screen1Mesh, video));
+          movement({x: -1.5, y: 1.5, z: screen1Mesh.position.z}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, addMediaControls(screen1Mesh, video), function () {
+            movement({x: camera.position.x, y: 0.1, z: camera.position.z + 0.5}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
+          });
+          positionsList.push({x: -1.5, y: 1.5, z: screen1Mesh.position.z});
+          
         }
         camera.up = new THREE.Vector3(0,1,0);
         camera.lookAt(screen1Mesh.position);
@@ -707,7 +719,11 @@
         if (video != undefined && video2 != undefined) {
           video.pause();
           if (controls) controls.target.set(screen2Mesh.position.x - 0.2, screen2Mesh.position.y, screen2Mesh.position.z);
-          movement({x: -1.4, y: 2, z: screen2Mesh.position.z}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, addMediaControls(screen2Mesh, video2));
+          movement({x: -1.4, y: 1.5, z: screen2Mesh.position.z}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, addMediaControls(screen2Mesh, video2), function () {
+            movement({x: camera.position.x, y: 0.1, z: camera.position.z + 0.5}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
+          });
+          positionsList.push({x: -1.4, y: 1.5, z: screen2Mesh.position.z});
+          
         }
         camera.up = new THREE.Vector3(0,1,0);
         camera.lookAt(screen2Mesh.position);
@@ -752,7 +768,7 @@
     cameraLookingAtScreenRotationValue.rotation.copy(camera.rotation);
   }
 
-  var playButton, stopButton, pauseButton, fastForwardButton, rewindButton, closeButton;
+  var playButton, stopButton, pauseButton, closeButton;
   var videoPlaying = false;
   var video2Playing = false;
   function addMediaButton(name, path, position, videoObject) {
@@ -814,15 +830,27 @@
   }
 
   function removeMediaControls() {
+    Reticulum.remove(playButton); 
+    Reticulum.remove(stopButton); 
+    Reticulum.remove(pauseButton); 
+    Reticulum.remove(closeButton); 
     scene.remove(mediaControlsContainer);
   }
 
   function exitScreen(videoObject) {
     if (videoObject === video) {
-      movement({x: -1.2, y: 1.6, z: 1.6}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out);
+      movement({x: -1.2, y: 1.6, z: 1.6}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
+        movement({x: camera.position.x, y: 0.1, z: camera.position.z + 0.5}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
+      });
+      positionsList.push({x: -1.2, y: 1.6, z: 1.6});
+      
       if (controls) controls.target.set(researchLabel.position.x + 0.2, 1.6, researchLabel.position.z);
     } else if (videoObject === video2) {
-      movement({x: -1.2, y: 1.6, z: 5}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out);
+      movement({x: -1.2, y: 1.6, z: 5}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
+        movement({x: camera.position.x, y: 0.1, z: camera.position.z + 0.5}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
+      });
+      positionsList.push({x: -1.2, y: 1.6, z: 5});
+      
       if (controls) controls.target.set(-1.8, 1.6, 5);
     }
   }
@@ -859,6 +887,49 @@
     return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
   }
 
+  function changeScale(object, scaleX, scaleY, scaleZ) {
+    object.scale.set(scaleX, scaleY, scaleZ);
+  }
+
+  function changeScaleSingle(object, scale) {
+    changeScale(object, scale, scale, scale);
+  }
+
+  var homeButton;
+  function addHomeButton() {
+    var img = new THREE.MeshBasicMaterial({
+      map: textureLoader.load("images/home_button" + extension),
+      transparent: true,
+      color: 0xffffff
+    });
+    img.map.needsUpdate = true;
+
+    var scale = 0.6;
+    homeButton = new THREE.Mesh(new THREE.PlaneGeometry(scale, scale), img);
+    homeButton.position.set(camera.position.x, 0.1, camera.position.z + 0.5);
+    var xAxis = new THREE.Vector3(1,0,0);
+    // var yAxis = new THREE.Vector3(0,1,0);
+    // var zAxis = new THREE.Vector3(0,0,1);
+    rotateAroundWorldAxis(homeButton, xAxis, -90 * Math.PI / 180);
+    
+    scene.add(homeButton);
+
+    Reticulum.add( homeButton, {
+      reticleHoverColor: 0x00fff6,
+      fuseVisible: true,
+      onGazeOver: function() {
+        changeScaleSingle(homeButton, 1.5);
+      },
+      onGazeOut: function() {
+        changeScaleSingle(homeButton, 1);
+      },
+      onGazeLong: function() {
+        // go back
+        goBack();
+      }
+    });
+  }
+
   var researchLabel;
   var radicalLabel;
   function addLabel(name, position) {
@@ -890,12 +961,20 @@
           addMembers(researchMembers);
           actualLab = 'research';
           checkstatus.screens = false;
-          movement({x: -1.2, y: 2, z: 1.6}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out);
+          movement({x: -1.2, y: 1.5, z: 1.6}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
+            movement({x: camera.position.x, y: 0.1, z: camera.position.z + 0.5}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
+          });
+          positionsList.push({x: -1.2, y: 1.5, z: 1.6});
+          
         } else if (name === 'radical') {
           addMembers(radicalMembers);
           actualLab = 'centro';
           checkstatus.screens = false;
-          movement({x: -2, y: 2, z: -4}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out);
+          movement({x: -2, y: 1.5, z: -4}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
+            movement({x: camera.position.x, y: 0.1, z: camera.position.z + 0.5}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
+          });
+          positionsList.push({x: -2, y: 1.5, z: -4});
+          
         }
         
         if (controls) controls.target.set(plane.position.x + 0.2, 2, plane.position.z);
@@ -948,7 +1027,11 @@
             removeMembers();
             removeInfoSection();
           }
-          movement({x: -1.2, y: 2, z: cube.position.z}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out);
+          movement({x: -1.2, y: 1.6, z: cube.position.z}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
+            movement({x: camera.position.x, y: 0.1, z: camera.position.z + 0.5}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
+          });
+          positionsList.push({x: -1.2, y: 1.6, z: cube.position.z});
+          
           if (cube.name == 'tvPoint') {
             checkstatus.screens = true;
           } else {
@@ -1195,10 +1278,6 @@
     memberInfo.position.set(0, 0.2, 0.1);
 
     plane.add(memberInfo);
-    // console.log('debug', memberName)
-    var text = createText(memberName);
-    text.position.set( 0, 0.5, 0.1 );
-    plane.add(text);
 
     infoGroup.add(plane);
 
@@ -1207,28 +1286,6 @@
     movement({y: 2}, infoGroup.position, 0, 1500, TWEEN.Easing.Back.Out, function () { infoIsOpening = false });
     scene.add(infoGroup);
   }
-
-  function createText(message) {
-    //create image
-    var bitmap = document.createElement('canvas');
-    var g = bitmap.getContext('2d');
-    bitmap.width = 100;
-    bitmap.height = 100;
-    g.font = 'Bold 20px Arial';
-
-    g.fillStyle = 'white';
-    g.fillText(message, 0, 20);
-    g.strokeStyle = 'black';
-    g.strokeText(message, 0, 20);
-
-    // canvas contents will be used for a texture
-    var texture = new THREE.Texture(bitmap) 
-    texture.needsUpdate = true;
-    var textMesh = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), texture);
-
-    return textMesh;
-  }
-
 
   function addInfoSection(images, name, timeout) {
     sectionInfoAdded = true;
@@ -1354,19 +1411,16 @@
   }
 
   function animate() {
-
-      requestAnimationFrame(animate);
-
-      Reticulum.update();
-
-      render();
-
-      TWEEN.update();
-
-      if (controls) controls.update(clock.getDelta());
-      if (controlsdevice) {
-        controlsdevice.update();
-      }
+    requestAnimationFrame(animate);
+    Reticulum.update();
+    camera.updateMatrixWorld();
+    
+    if (controls) controls.update(clock.getDelta());
+    if (controlsdevice) {
+      controlsdevice.update();
+    }
+    render();
+    TWEEN.update();
   }
 
   var controlsAreMoving = false;
@@ -1402,6 +1456,10 @@
     }
     if (radicalLabel !== undefined) {
       radicalLabel.lookAt(camera.position);
+    }
+    if (homeButton !== undefined) {
+      homeButton.rotation.setFromRotationMatrix(camera.matrix);
+      homeButton.lookAt(camera.position);
     }
 
     if (videoPlaying && cameraLookingAtScreenRotationValue != undefined) {
