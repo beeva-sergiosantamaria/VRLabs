@@ -136,6 +136,8 @@
   var manager = new THREE.LoadingManager();
   var textureLoader = new THREE.TextureLoader();
 
+  var device = new THREEx.DeviceOrientationState();
+
   var radicalMembers = [
     {name: 'alvaro', position: {x: -5.8, y: 1.6, z: -2.4}},
     {name: 'sergio', position: {x: -6.4, y: 1.6, z: -4.2}},
@@ -1459,8 +1461,13 @@
       radicalLabel.lookAt(camera.position);
     }
     if (homeButton !== undefined) {
-      homeButton.rotation.setFromRotationMatrix(camera.matrix);
-      homeButton.lookAt(camera.position);
+      if (controls) {
+        homeButton.rotation.setFromRotationMatrix(camera.matrix);
+        homeButton.lookAt(camera.position);
+      }
+      if (controlsdevice) {
+        homeButton.rotation.y = device.angleY();
+      }
     }
 
     if (videoPlaying && cameraLookingAtScreenRotationValue != undefined) {
