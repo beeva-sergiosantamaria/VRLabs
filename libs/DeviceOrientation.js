@@ -3,6 +3,7 @@ THREE.DeviceOrientationControls = function( object ) {
     var scope = this;
 
     this.object = object;
+    if (this.object.rotation)
     this.object.rotation.reorder( "YXZ" );
 
     this.enabled = true;
