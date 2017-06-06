@@ -17,7 +17,6 @@ THREE.DeviceOrientationControls = function( object ) {
     var onDeviceOrientationChangeEvent = function( event ) {
 
         scope.deviceOrientation = event;
-        console.log('debug', scope.deviceorientation);
 
     };
 
@@ -92,11 +91,6 @@ THREE.DeviceOrientationControls = function( object ) {
         this.alphaOffsetAngle = angle;
         this.update();
 
-    };
-
-    this.getDeviceOrientation = function() {
-        if ( this.enabled === false ) return 0;
-        return this.deviceOrientation;
     };
 
     this.dispose = function() {
