@@ -127,7 +127,11 @@
 
   var clock = new THREE.Clock();
 
-  var font = "helvetiker";
+  var rootDirectory = "images/membersPhoto/";
+  var subFolder = "recortadas/";
+  var subFolderCircular = "circular/";
+  var subFolderInfo = "info/";
+  var extension = ".png";
 
   var manager = new THREE.LoadingManager();
   var textureLoader = new THREE.TextureLoader();
@@ -977,11 +981,6 @@
     // scene.add(membersGroup);
   }
 
-  var rootDirectory = "images/membersPhoto/";
-  var subFolder = "recortadas/";
-  var subFolderCircular = "circular/";
-  var subFolderInfo = "info/";
-  var extension = extension;
   function addMember(member, index) {
     var img = new THREE.MeshBasicMaterial({
       map: textureLoader.load(rootDirectory + subFolderCircular + member.name + extension),
