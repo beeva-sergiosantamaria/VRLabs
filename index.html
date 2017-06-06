@@ -467,16 +467,6 @@
             reticleHoverColor: 0x00fff6,
             fuseVisible: true,
             onGazeLong: function() {
-              removeMembers();
-              removeInfoSection();
-              actualLab = 'design';
-              movement({x: -1.2, y: 1.5, z: 5}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
-                movement({x: camera.position.x, y: 0.2, z: camera.position.z + 0.5}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
-              });
-              positionsList.unshift({x: -1.2, y: 1.5, z: 5});
-              
-              // if (contros) movement({x: -0.7, y: 1, z: 2.5}, controls.target, 0, 2000, TWEEN.Easing.Quartic.Out);
-              if (controls) movement({x: -1.2, y: 1.6, z: 5}, controls.target, 0, 2000, TWEEN.Easing.Quartic.Out);
             }
           });
           comunicacion = elements.children[5];
