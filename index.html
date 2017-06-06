@@ -233,7 +233,7 @@
     camera = new THREE.PerspectiveCamera(60, (width / height), 0.01, 10000000);
     // camera.position.set(-0.8, 1, -0.8);
     camera.position.set(-1.6, 1.5, -1.6);
-    positionsList.push({x: -1.6, y: 1.5, z: -1.6});
+    positionsList.unshift({x: -1.6, y: 1.5, z: -1.6});
     // *******************************
     // --- Reticulum ---
     // initiate Reticulum so it loads up 
@@ -473,7 +473,7 @@
               movement({x: -1.2, y: 1.5, z: 5}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
                 movement({x: camera.position.x, y: 0.2, z: camera.position.z + 0.5}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
               });
-              positionsList.push({x: -1.2, y: 1.5, z: 5});
+              positionsList.unshift({x: -1.2, y: 1.5, z: 5});
               
               // if (contros) movement({x: -0.7, y: 1, z: 2.5}, controls.target, 0, 2000, TWEEN.Easing.Quartic.Out);
               if (controls) movement({x: -1.2, y: 1.6, z: 5}, controls.target, 0, 2000, TWEEN.Easing.Quartic.Out);
@@ -690,7 +690,7 @@
           movement({x: -1.5, y: 1.5, z: screen1Mesh.position.z}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, addMediaControls(screen1Mesh, video), function () {
             movement({x: camera.position.x, y: 0.2, z: camera.position.z + 0.5}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
           });
-          positionsList.push({x: -1.5, y: 1.5, z: screen1Mesh.position.z});
+          positionsList.unshift({x: -1.5, y: 1.5, z: screen1Mesh.position.z});
           
         }
         camera.up = new THREE.Vector3(0,1,0);
@@ -722,7 +722,7 @@
           movement({x: -1.4, y: 1.5, z: screen2Mesh.position.z}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, addMediaControls(screen2Mesh, video2), function () {
             movement({x: camera.position.x, y: 0.2, z: camera.position.z + 0.5}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
           });
-          positionsList.push({x: -1.4, y: 1.5, z: screen2Mesh.position.z});
+          positionsList.unshift({x: -1.4, y: 1.5, z: screen2Mesh.position.z});
           
         }
         camera.up = new THREE.Vector3(0,1,0);
@@ -842,14 +842,14 @@
       movement({x: -1.2, y: 1.6, z: 1.6}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
         movement({x: camera.position.x, y: 0.2, z: camera.position.z + 0.5}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
       });
-      positionsList.push({x: -1.2, y: 1.6, z: 1.6});
+      positionsList.unshift({x: -1.2, y: 1.6, z: 1.6});
       
       if (controls) controls.target.set(researchLabel.position.x + 0.2, 1.6, researchLabel.position.z);
     } else if (videoObject === video2) {
       movement({x: -1.2, y: 1.6, z: 5}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
         movement({x: camera.position.x, y: 0.2, z: camera.position.z + 0.5}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
       });
-      positionsList.push({x: -1.2, y: 1.6, z: 5});
+      positionsList.unshift({x: -1.2, y: 1.6, z: 5});
       
       if (controls) controls.target.set(-1.8, 1.6, 5);
     }
@@ -931,6 +931,17 @@
     });
   }
 
+  function goBack() {
+    if (positionsList.length > 1) {
+      var lastPosition = positionsList.pop();
+      console.log('last position', lastPosition);
+      movement({x: lastPosition.x, y: lastPosition.y, z: lastPosition.z}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
+        movement({x: camera.position.x, y: 0.2, z: camera.position.z + 0.5}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
+      });
+    }
+    console.log('remaining positionsList', positionsList);
+  }
+
   var researchLabel;
   var radicalLabel;
   function addLabel(name, position) {
@@ -965,7 +976,7 @@
           movement({x: -1.2, y: 1.5, z: 1.6}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
             movement({x: camera.position.x, y: 0.2, z: camera.position.z + 0.5}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
           });
-          positionsList.push({x: -1.2, y: 1.5, z: 1.6});
+          positionsList.unshift({x: -1.2, y: 1.5, z: 1.6});
           
         } else if (name === 'radical') {
           addMembers(radicalMembers);
@@ -974,7 +985,7 @@
           movement({x: -2, y: 1.5, z: -4}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
             movement({x: camera.position.x, y: 0.2, z: camera.position.z + 0.5}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
           });
-          positionsList.push({x: -2, y: 1.5, z: -4});
+          positionsList.unshift({x: -2, y: 1.5, z: -4});
           
         }
         
@@ -1031,7 +1042,7 @@
           movement({x: -1.2, y: 1.6, z: cube.position.z}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
             movement({x: camera.position.x, y: 0.2, z: camera.position.z + 0.5}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
           });
-          positionsList.push({x: -1.2, y: 1.6, z: cube.position.z});
+          positionsList.unshift({x: -1.2, y: 1.6, z: cube.position.z});
           
           if (cube.name == 'tvPoint') {
             checkstatus.screens = true;
