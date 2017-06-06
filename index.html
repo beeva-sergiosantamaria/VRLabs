@@ -133,19 +133,19 @@
   var textureLoader = new THREE.TextureLoader();
 
   var radicalMembers = [
-    {name: 'alvaro_recortada', position: {x: -5.8, y: 1.6, z: -2.4}},
-    {name: 'sergio_recortada', position: {x: -6.4, y: 1.6, z: -4.2}},
-    {name: 'adrian_recortada', position: {x: -5.8, y: 1.6, z: -5.4}},
-    {name: 'ira_recortada', position: {x: -4, y: 1.6, z: -5.6}},
-    {name: 'salva_recortada', position: {x: -4, y: 1.6, z: -2.2}},
-    {name: 'jota_recortada', position: {x: -3.6, y: 1.6, z: -3.8}}
+    {name: 'alvaro', position: {x: -5.8, y: 1.6, z: -2.4}},
+    {name: 'sergio', position: {x: -6.4, y: 1.6, z: -4.2}},
+    {name: 'adrian', position: {x: -5.8, y: 1.6, z: -5.4}},
+    {name: 'ira', position: {x: -4, y: 1.6, z: -5.6}},
+    {name: 'salva', position: {x: -4, y: 1.6, z: -2.2}},
+    {name: 'jota', position: {x: -3.6, y: 1.6, z: -3.8}}
   ];
   var researchMembers = [
-    {name: 'mario_recortada', position: {x: -6, y: 1.6, z: 2.2}},
-    {name: 'fernando_recortada', position: {x: -6, y: 1.6, z: 0.5}},
-    {name: 'ricardo_recortada', position: {x: -4.6, y: 1.6, z: 0.2}},
-    {name: 'enrique_recortada', position: {x: -3.6, y: 1.6, z: -0.2}},
-    {name: 'samuel_recortada', position: {x: -3.4, y: 1.6, z: 2.4}}
+    {name: 'mario', position: {x: -6, y: 1.6, z: 2.2}},
+    {name: 'fernando', position: {x: -6, y: 1.6, z: 0.5}},
+    {name: 'ricardo', position: {x: -4.6, y: 1.6, z: 0.2}},
+    {name: 'enrique', position: {x: -3.6, y: 1.6, z: -0.2}},
+    {name: 'samuel', position: {x: -3.4, y: 1.6, z: 2.4}}
   ];
 
   var checkstatus = {
@@ -472,7 +472,7 @@
           mesas.add(comunicacion);
           Reticulum.add( comunicacion, {
             reticleHoverColor: 0x00fff6,
-            fuseVisible: true,
+            fuseVisible: false,
             onGazeLong: function() {
             }
           });
@@ -482,7 +482,7 @@
           mesas.add(clever);
           Reticulum.add( clever, {
             reticleHoverColor: 0x00fff6,
-            fuseVisible: true,
+            fuseVisible: false,
             onGazeLong: function() {
             }
           });
@@ -500,7 +500,7 @@
           mesas.add(maker);
           Reticulum.add( maker, {
             reticleHoverColor: 0x00fff6,
-            fuseVisible: true,
+            fuseVisible: false,
             onGazeLong: function() {
             }
           });
@@ -672,7 +672,6 @@
       onGazeLong: function() {
         removeFromReticulum(screen1Mesh);
         if (video != undefined && video2 != undefined) {
-          console.log('moving to screen 1')
           video2.pause();
           if (controls) controls.target.set(screen1Mesh.position.x - 0.2, screen1Mesh.position.y, screen1Mesh.position.z);
           movement({x: -1.5, y: 2, z: screen1Mesh.position.z}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, addMediaControls(screen1Mesh, video));
@@ -701,7 +700,6 @@
       onGazeLong: function() {
         removeFromReticulum(screen2Mesh);
         if (video != undefined && video2 != undefined) {
-          console.log('moving to screen 2')
           video.pause();
           if (controls) controls.target.set(screen2Mesh.position.x - 0.2, screen2Mesh.position.y, screen2Mesh.position.z);
           movement({x: -1.4, y: 2, z: screen2Mesh.position.z}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, addMediaControls(screen2Mesh, video2));
@@ -714,9 +712,7 @@
   }
 
   function removeFromReticulum(meshObject) {
-    console.log('removing', meshObject.name)
     Reticulum.remove(meshObject);
-    console.log('removing', 'OK')
   }
 
   var mediaControlsContainer;
@@ -739,7 +735,6 @@
   }
 
   function showMediaControls(screenObject) {
-    console.log('showing controls for ', screenObject.name)
     movement({x: -0.26, y: 0, z: 0}, playButton.position, 0, 500, TWEEN.Easing.Back.Out);
     movement({x: -0.13, y: 0, z: 0}, stopButton.position, 0, 500, TWEEN.Easing.Back.Out);
     movement({x: 0, y: 0, z: 0}, pauseButton.position, 0, 500, TWEEN.Easing.Back.Out);
@@ -983,8 +978,11 @@
   }
 
   function addMember(member, index) {
+    var rootDirectory = "images/membersPhoto/";
+    var subfolder = "recortadas/";
+    var extension = ".png";
     var img = new THREE.MeshBasicMaterial({ //CHANGED to MeshBasicMaterial
-      map: textureLoader.load("images/membersPhoto/" + member.name + ".png"),
+      map: textureLoader.load(rootDirectory + subfolder + member.name + extension),
       transparent: true,
       depthWrite: false,
       color: 0xffffff
@@ -1015,7 +1013,11 @@
       onGazeLong: function() {
         if (!infoGroupIsShowing) {
           removeMembers();
-          addRadicalMemberInfoSection(plane);
+          if (isRadicalMember(plane)) {
+            addRadicalMemberInfoSection(plane);
+          } else if (isResearchMember(plane)) {
+            addResearchMemberInfoSection(plane);
+          }
         }
       }
     });
@@ -1045,8 +1047,25 @@
     return false;
   }
 
+  function isResearchMember(memberObject) {
+    for (var i = 0; i < researchMembers.length; i++) {
+      if (memberObject.name === researchMembers[i].name) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   var infoCloseButton, infoEmailButton, infoCalendarButton, infoCallButton;
   function addRadicalMemberInfoSection(memberObject) {
+    addMemberInfoSection(memberObject, -4.5, -2, -4);
+  }
+
+  function addResearchMemberInfoSection(memberObject) {
+    addMemberInfoSection(memberObject, -4.5, -2, 1.5);
+  }
+
+  function addMemberInfoSection(memberObject, x, y, z) {
     infoGroupIsShowing = true;
     if (infoGroup.children.length > 0) {
       removeInfoSection();
@@ -1078,11 +1097,13 @@
 
     Reticulum.add( closeButtonMesh, {
       reticleHoverColor: 0x00fff6,
-      fuseVisible: true,
-      onGazeLong: function() {
+      fuseVisible: false,
+      onGazeOver: function() {
         removeInfoSection();
         if (isRadicalMember(memberObject)) {
           addMembers(radicalMembers);
+        } else if (isResearchMember(memberObject)) {
+          addMembers(researchMembers);
         }
         infoGroupIsShowing = false;
       }
@@ -1148,22 +1169,18 @@
     plane.add(infoCallButton);
 
     var img = new THREE.MeshBasicMaterial({
-      map: textureLoader.load("images/membersPhoto/" + memberObject.name + ".png"),
+      map: textureLoader.load("images/membersPhoto/circular/" + memberObject.name + ".png"),
       transparent: true,
       depthWrite: false,
       color: 0xffffff
     });
 
-    var memberPicture = new THREE.Mesh(new THREE.PlaneGeometry(0.4, 0.4), img);
+    var memberPicture = new THREE.Mesh(new THREE.PlaneGeometry(0.5, 0.5), img);
     memberPicture.position.set(-1, 0.5, 0.1);
 
     plane.add(memberPicture);
 
-    var memberNameExtended = memberObject.name;
-    // console.log('debug', memberNameExtended)
-    var auxArr = memberNameExtended.split('_');
-    // console.log('debug', auxArr)
-    var memberName = auxArr[0];
+    var memberName = memberObject.name;
 
     img = new THREE.MeshBasicMaterial({
       map: textureLoader.load("images/membersPhoto/info/" + memberName + ".png"),
@@ -1183,8 +1200,7 @@
 
     infoGroup.add(plane);
 
-    //infoGroup.position.set(-2.3, 0.35 - 2, -1.95);
-    infoGroup.position.set(-4.5, -2, -4);
+    infoGroup.position.set(x, y, z);
     infoGroup.rotation.y = Math.PI / 2;
     movement({y: 2}, infoGroup.position, 0, 1500, TWEEN.Easing.Back.Out);
     scene.add(infoGroup);
