@@ -138,13 +138,13 @@
     {name: 'adrian', position: {x: -5.8, y: 1.6, z: -5.4}},
     {name: 'ira', position: {x: -4, y: 1.6, z: -5.6}},
     {name: 'salva', position: {x: -4, y: 1.6, z: -2.2}},
-    {name: 'jota', position: {x: -3.6, y: 1.6, z: -3.8}}
+    {name: 'jota', position: {x: -3.6, y: 1.3, z: -3.8}}
   ];
   var researchMembers = [
     {name: 'mario', position: {x: -6, y: 1.6, z: 2.2}},
-    {name: 'fernando', position: {x: -6, y: 1.6, z: 0.5}},
+    {name: 'fernando', position: {x: -6, y: 1.6, z: 0.7}},
     {name: 'ricardo', position: {x: -4.6, y: 1.6, z: 0.2}},
-    {name: 'enrique', position: {x: -3.6, y: 1.6, z: -0.2}},
+    {name: 'enrique', position: {x: -3.6, y: 1.6, z: -0.3}},
     {name: 'samuel', position: {x: -3.4, y: 1.6, z: 2.4}}
   ];
 
@@ -599,7 +599,7 @@
 
   function addSpritesLetters(lettersArray) {
     for (var a = 0; a < lettersArray.length; a++) {
-      var map = new THREE.TextureLoader().load("images/letters/" + lettersArray[a] + ".png");
+      var map = new THREE.TextureLoader().load("images/letters/" + lettersArray[a] + extension);
       var material = new THREE.SpriteMaterial({map: map, color: 0xffffff, fog: true});
       var sprite = new THREE.Sprite(material);
       if (isMobile) {
@@ -859,7 +859,7 @@
   var radicalLabel;
   function addLabel(name, position) {
     var img = new THREE.MeshBasicMaterial({
-      map: textureLoader.load("images/labelLabs"+ toTitleCase(name) +".png"),
+      map: textureLoader.load("images/labelLabs"+ toTitleCase(name) + extension),
       transparent: true,
       color: 0xffffff
     });
@@ -977,19 +977,20 @@
     // scene.add(membersGroup);
   }
 
+  var rootDirectory = "images/membersPhoto/";
+  var subFolder = "recortadas/";
+  var subFolderCircular = "circular/";
+  var subFolderInfo = "info/";
+  var extension = extension;
   function addMember(member, index) {
-    var rootDirectory = "images/membersPhoto/";
-    var subfolder = "recortadas/";
-    var extension = ".png";
-    var img = new THREE.MeshBasicMaterial({ //CHANGED to MeshBasicMaterial
-      map: textureLoader.load(rootDirectory + subfolder + member.name + extension),
+    var img = new THREE.MeshBasicMaterial({
+      map: textureLoader.load(rootDirectory + subFolderCircular + member.name + extension),
       transparent: true,
       depthWrite: false,
       color: 0xffffff
     });
-    img.map.needsUpdate = true; //ADDED
+    img.map.needsUpdate = true;
 
-    //var plane = new THREE.Mesh(new THREE.PlaneGeometry(0.5, 0.5), img);
     var plane = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 0.9), img);
     plane.name = member.name;
     plane.position.set(member.position.x, member.position.y, member.position.z);
@@ -1003,11 +1004,9 @@
       reticleHoverColor: 0x00fff6,
       fuseVisible: true,
       onGazeOver: function() {
-        // do something when user targets object
         if (this.material.color) this.material.color.setHex( 0xffcc00 );
       },
       onGazeOut: function() {
-        // do something when user moves reticle off targeted object
         if (this.material.color) this.material.color.setHex( 0xffffff );
       },
       onGazeLong: function() {
@@ -1065,8 +1064,10 @@
     addMemberInfoSection(memberObject, -4.5, -2, 1.5);
   }
 
+  var infoIsOpening = false;
   function addMemberInfoSection(memberObject, x, y, z) {
     infoGroupIsShowing = true;
+    infoIsOpening = true;
     if (infoGroup.children.length > 0) {
       removeInfoSection();
     }
@@ -1099,13 +1100,15 @@
       reticleHoverColor: 0x00fff6,
       fuseVisible: false,
       onGazeOver: function() {
-        removeInfoSection();
-        if (isRadicalMember(memberObject)) {
-          addMembers(radicalMembers);
-        } else if (isResearchMember(memberObject)) {
-          addMembers(researchMembers);
+        if (!infoIsOpening) {
+          removeInfoSection();
+          if (isRadicalMember(memberObject)) {
+            addMembers(radicalMembers);
+          } else if (isResearchMember(memberObject)) {
+            addMembers(researchMembers);
+          }
+          infoGroupIsShowing = false;
         }
-        infoGroupIsShowing = false;
       }
     });
     plane.add(closeButtonMesh);
@@ -1169,7 +1172,7 @@
     plane.add(infoCallButton);
 
     var img = new THREE.MeshBasicMaterial({
-      map: textureLoader.load("images/membersPhoto/circular/" + memberObject.name + ".png"),
+      map: textureLoader.load(rootDirectory + subFolder + memberObject.name + extension),
       transparent: true,
       depthWrite: false,
       color: 0xffffff
@@ -1183,7 +1186,7 @@
     var memberName = memberObject.name;
 
     img = new THREE.MeshBasicMaterial({
-      map: textureLoader.load("images/membersPhoto/info/" + memberName + ".png"),
+      map: textureLoader.load(rootDirectory + subFolderInfo + memberName + extension),
       transparent: true,
       depthWrite: false,
       color: 0xffffff
@@ -1202,7 +1205,7 @@
 
     infoGroup.position.set(x, y, z);
     infoGroup.rotation.y = Math.PI / 2;
-    movement({y: 2}, infoGroup.position, 0, 1500, TWEEN.Easing.Back.Out);
+    movement({y: 2}, infoGroup.position, 0, 1500, TWEEN.Easing.Back.Out, function () { infoIsOpening = false });
     scene.add(infoGroup);
   }
 
@@ -1238,7 +1241,7 @@
     infoGroup = new THREE.Object3D();
     infoGroup.name = 'infoGroup';
     for (var a = 0; a < 3; a++) {
-      var texture = textureLoader.load("images/sectionInfo/" + images[a] + ".png");
+      var texture = textureLoader.load("images/sectionInfo/" + images[a] + extension);
       var geometry = new THREE.PlaneGeometry(2, 2, 2);
       var material = new THREE.MeshBasicMaterial({
           map: texture,
