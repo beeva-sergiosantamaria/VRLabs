@@ -1459,14 +1459,12 @@
       radicalLabel.lookAt(camera.position);
     }
     if (homeButton !== undefined) {
-      console.log('homeButton exists')
       if (controls) {
-        console.log('controls exists')
         homeButton.rotation.setFromRotationMatrix(camera.matrix);
         homeButton.lookAt(camera.position);
       }
       if (controlsdevice) {
-        console.log('debug', controlsdevice);
+        // update home button rotation
       }
     }
 
