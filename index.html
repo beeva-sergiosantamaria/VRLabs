@@ -885,7 +885,7 @@
     changeScale(object, scale, scale, scale);
   }
 
-  var homeButton, homeButtonControls;
+  var homeButton;
   function addHomeButton() {
     var img = new THREE.MeshBasicMaterial({
       map: textureLoader.load("images/home_button" + extension),
@@ -919,7 +919,6 @@
         goBack();
       }
     });
-    homeButtonControls = new THREE.DeviceOrientationControls(homeButton, true);
   }
 
   function goBack() {
@@ -1466,8 +1465,8 @@
         homeButton.rotation.setFromRotationMatrix(camera.matrix);
         homeButton.lookAt(camera.position);
       }
-      if (homeButtonControls) {
-        homeButtonControls.update();
+      if (controlsdevice) {
+        console.log('debug', controlsdevice);
       }
     }
 
