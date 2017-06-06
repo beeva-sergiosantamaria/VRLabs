@@ -93,6 +93,10 @@ THREE.DeviceOrientationControls = function( object ) {
 
     };
 
+    this.getDeviceOrientation = function() {
+        return scope.deviceOrientation;
+    };
+
     this.dispose = function() {
 
         this.disconnect();
