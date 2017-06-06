@@ -17,6 +17,7 @@ THREE.DeviceOrientationControls = function( object ) {
     var onDeviceOrientationChangeEvent = function( event ) {
 
         scope.deviceOrientation = event;
+        console.log('debug', scope.deviceorientation);
 
     };
 
@@ -94,7 +95,8 @@ THREE.DeviceOrientationControls = function( object ) {
     };
 
     this.getDeviceOrientation = function() {
-        return scope.deviceOrientation;
+        if ( this.enabled === false ) return 0;
+        return this.deviceOrientation;
     };
 
     this.dispose = function() {
