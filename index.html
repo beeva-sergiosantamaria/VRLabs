@@ -687,10 +687,10 @@
         if (video != undefined && video2 != undefined) {
           video2.pause();
           if (controls) controls.target.set(screen1Mesh.position.x - 0.2, screen1Mesh.position.y, screen1Mesh.position.z);
-          movement({x: -1.5, y: 1.6, z: screen1Mesh.position.z}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, addMediaControls(screen1Mesh, video), function () {
+          movement({x: -1.5, y: 2, z: screen1Mesh.position.z}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, addMediaControls(screen1Mesh, video), function () {
             movement({x: camera.position.x, y: 0.2, z: camera.position.z + 0.5}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
           });
-          positionsList.unshift({x: -1.5, y: 1.6, z: screen1Mesh.position.z});
+          positionsList.unshift({x: -1.5, y: 2, z: screen1Mesh.position.z});
           
         }
         camera.up = new THREE.Vector3(0,1,0);
@@ -719,10 +719,10 @@
         if (video != undefined && video2 != undefined) {
           video.pause();
           if (controls) controls.target.set(screen2Mesh.position.x - 0.2, screen2Mesh.position.y, screen2Mesh.position.z);
-          movement({x: -1.4, y: 1.6, z: screen2Mesh.position.z}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, addMediaControls(screen2Mesh, video2), function () {
+          movement({x: -1.4, y: 2, z: screen2Mesh.position.z}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, addMediaControls(screen2Mesh, video2), function () {
             movement({x: camera.position.x, y: 0.2, z: camera.position.z + 0.5}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
           });
-          positionsList.unshift({x: -1.4, y: 1.6, z: screen2Mesh.position.z});
+          positionsList.unshift({x: -1.4, y: 2, z: screen2Mesh.position.z});
           
         }
         camera.up = new THREE.Vector3(0,1,0);
