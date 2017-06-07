@@ -204,7 +204,6 @@
   var verticesArray = [];
   var particlesAnimation = true;
 
-  var positionsList = [];
 
 
   $(document).ready(function () {
@@ -218,6 +217,7 @@
 
   var reticulumNear = 0.2;
   var reticulumFar = 6;
+  var initialPosition = {x: -1.6, y: 1.5, z: -1.6};
   function initRender() {
     scene = new THREE.Scene();
     renderer = new THREE.WebGLRenderer({antialias: true, preserveDrawingBuffer: true, alpha: true});
@@ -232,8 +232,7 @@
     container.appendChild(element);
     camera = new THREE.PerspectiveCamera(60, (width / height), 0.01, 10000000);
     // camera.position.set(-0.8, 1, -0.8);
-    camera.position.set(-1.6, 1.5, -1.6);
-    positionsList.unshift({x: -1.6, y: 1.5, z: -1.6});
+    camera.position.set(initialPosition.x, initialPosition.y, initialPosition.z);
     // *******************************
     // --- Reticulum ---
     // initiate Reticulum so it loads up 
@@ -400,119 +399,116 @@
   }
 
   function addModel() {
-      var onProgress = function (xhr) {
-        if (xhr.lengthComputable) {
-          var percentComplete = xhr.loaded / xhr.total * 100;
-          if (percentComplete == 100) {
-            setTimeout(function () {
-              addScreens();
-            }, 1000);
-          }
+    var onProgress = function (xhr) {
+      if (xhr.lengthComputable) {
+        var percentComplete = xhr.loaded / xhr.total * 100;
+        if (percentComplete == 100) {
+          setTimeout(function () {
+            addScreens();
+          }, 1000);
         }
-      };
-      var onError = function (xhr) {
-        console.log('error', xhr)
-      };
-
-      addLetters3D(stringToCharArray("Radical"), {x: -5.4, y: 1.6, z: -3.4}, letrasRadical);
-      addLetters3D(stringToCharArray("Research"), {x: -5.4, y: 1.6, z: 2}, letrasResearch);
-      addLetters3D(stringToCharArray("Design"), {x: -5.4, y: 1.6, z: 6}, letrasDesign);
-      addLetters3D(stringToCharArray("Comunicacion"), {x: -5.4, y: 1.6, z:63}, letrasComunicacion);
-      addLetters3D(stringToCharArray("Clever"), {x: -5.4, y: 1.6, z: 6}, letrasClever);
-      addLetters3D(stringToCharArray("Maker"), {x: -5.4, y: 1.6, z: 6}, letrasMaker);
-
-      THREE.Loader.Handlers.add(/\.dds$/i, new THREE.DDSLoader());
-      var mtlLoader = new THREE.MTLLoader();
-      mtlLoader.setPath('models/vrLabsModel/');
-      mtlLoader.load('planta6.mtl', function (materials) {
-        materials.preload();
-        var objLoader = new THREE.OBJLoader();
-        objLoader.setMaterials(materials);
-        objLoader.setPath('models/vrLabsModel/');
-        objLoader.load('planta6.obj', function (elements) {
-          techo = elements.children[13];
-          techo.renderOrder = 0;
-          techo.name = "techo";
-          planta.add(techo);
-          banco = elements.children[12];
-          banco.renderOrder = 0;
-          banco.name = "banco";
-          planta.add(banco);
-          cristaleraEntrada = elements.children[11];
-          cristaleraEntrada.renderOrder = 1;
-          cristaleraEntrada.name = "cristaleraEntrada";
-          planta.add(cristaleraEntrada);
-          pared = elements.children[10];
-          pared.renderOrder = 0;
-          pared.name = "pared";
-          planta.add(pared);
-          cristaleraAgora = elements.children[9];
-          cristaleraAgora.renderOrder = 1;
-          cristaleraAgora.name = "cristaleraAgora";
-          planta.add(cristaleraAgora);
-          centro = elements.children[8];
-          centro.renderOrder = 0;
-          centro.name = "centro";
-          mesas.add(centro);
-          research = elements.children[7];
-          research.renderOrder = 0;
-          research.name = "research";
-          mesas.add(research);
-          design = elements.children[6];
-          design.renderOrder = 0;
-          design.name = "design";
-          mesas.add(design);
-          
-          Reticulum.add( design, {
-            reticleHoverColor: 0x00fff6,
-            fuseVisible: true,
-            onGazeLong: function() {
-            }
-          });
-          comunicacion = elements.children[5];
-          comunicacion.renderOrder = 0;
-          comunicacion.name = "comunicacion";
-          mesas.add(comunicacion);
-          Reticulum.add( comunicacion, {
-            reticleHoverColor: 0x00fff6,
-            fuseVisible: false,
-            onGazeLong: function() {
-            }
-          });
-          clever = elements.children[4];
-          clever.renderOrder = 0;
-          clever.name = "clever";
-          mesas.add(clever);
-          Reticulum.add( clever, {
-            reticleHoverColor: 0x00fff6,
-            fuseVisible: false,
-            onGazeLong: function() {
-            }
-          });
-          cristaleraFrontal = elements.children[3];
-          cristaleraFrontal.renderOrder = 2;
-          cristaleraFrontal.name = "cristaleraFrontal";
-          planta.add(cristaleraFrontal);
-          sillas = elements.children[2];
-          sillas.renderOrder = 0;
-          sillas.name = "sillas";
-          planta.add(sillas);
-          maker = elements.children[0];
-          maker.renderOrder = 0;
-          maker.name = "maker";
-          mesas.add(maker);
-          Reticulum.add( maker, {
-            reticleHoverColor: 0x00fff6,
-            fuseVisible: false,
-            onGazeLong: function() {
-            }
-          });
-          planta.add(mesas);
-          planta.scale.set(2,2,2);
-          //planta.scale.set(2,2.5,2);
-          scene.add(planta);
-        }, onProgress, onError);
-      });
+      }
+    };
+    var onError = function (xhr) {
+      console.log('error', xhr)
+    };
+    addLetters3D(stringToCharArray("Radical"), {x: -5.4, y: 1.6, z: -3.4}, letrasRadical);
+    addLetters3D(stringToCharArray("Research"), {x: -5.4, y: 1.6, z: 2}, letrasResearch);
+    addLetters3D(stringToCharArray("Design"), {x: -5.4, y: 1.6, z: 6}, letrasDesign);
+    addLetters3D(stringToCharArray("Comunicacion"), {x: -5.4, y: 1.6, z:63}, letrasComunicacion);
+    addLetters3D(stringToCharArray("Clever"), {x: -5.4, y: 1.6, z: 6}, letrasClever);
+    addLetters3D(stringToCharArray("Maker"), {x: -5.4, y: 1.6, z: 6}, letrasMaker);
+    THREE.Loader.Handlers.add(/\.dds$/i, new THREE.DDSLoader());
+    var mtlLoader = new THREE.MTLLoader();
+    mtlLoader.setPath('models/vrLabsModel/');
+    mtlLoader.load('planta6.mtl', function (materials) {
+      materials.preload();
+      var objLoader = new THREE.OBJLoader();
+      objLoader.setMaterials(materials);
+      objLoader.setPath('models/vrLabsModel/');
+      objLoader.load('planta6.obj', function (elements) {
+        techo = elements.children[13];
+        techo.renderOrder = 0;
+        techo.name = "techo";
+        planta.add(techo);
+        banco = elements.children[12];
+        banco.renderOrder = 0;
+        banco.name = "banco";
+        planta.add(banco);
+        cristaleraEntrada = elements.children[11];
+        cristaleraEntrada.renderOrder = 1;
+        cristaleraEntrada.name = "cristaleraEntrada";
+        planta.add(cristaleraEntrada);
+        pared = elements.children[10];
+        pared.renderOrder = 0;
+        pared.name = "pared";
+        planta.add(pared);
+        cristaleraAgora = elements.children[9];
+        cristaleraAgora.renderOrder = 1;
+        cristaleraAgora.name = "cristaleraAgora";
+        planta.add(cristaleraAgora);
+        centro = elements.children[8];
+        centro.renderOrder = 0;
+        centro.name = "centro";
+        mesas.add(centro);
+        research = elements.children[7];
+        research.renderOrder = 0;
+        research.name = "research";
+        mesas.add(research);
+        design = elements.children[6];
+        design.renderOrder = 0;
+        design.name = "design";
+        mesas.add(design);          
+        Reticulum.add( design, {
+          reticleHoverColor: 0x00fff6,
+          fuseVisible: true,
+          onGazeLong: function() {
+          }
+        });
+        comunicacion = elements.children[5];
+        comunicacion.renderOrder = 0;
+        comunicacion.name = "comunicacion";
+        mesas.add(comunicacion);
+        Reticulum.add( comunicacion, {
+          reticleHoverColor: 0x00fff6,
+          fuseVisible: false,
+          onGazeLong: function() {
+          }
+        });
+        clever = elements.children[4];
+        clever.renderOrder = 0;
+        clever.name = "clever";
+        mesas.add(clever);
+        Reticulum.add( clever, {
+          reticleHoverColor: 0x00fff6,
+          fuseVisible: false,
+          onGazeLong: function() {
+          }
+        });
+        cristaleraFrontal = elements.children[3];
+        cristaleraFrontal.renderOrder = 2;
+        cristaleraFrontal.name = "cristaleraFrontal";
+        planta.add(cristaleraFrontal);
+        sillas = elements.children[2];
+        sillas.renderOrder = 0;
+        sillas.name = "sillas";
+        planta.add(sillas);
+        maker = elements.children[0];
+        maker.renderOrder = 0;
+        maker.name = "maker";
+        mesas.add(maker);
+        Reticulum.add( maker, {
+          reticleHoverColor: 0x00fff6,
+          fuseVisible: false,
+          onGazeLong: function() {
+          }
+        });
+        planta.add(mesas);
+        planta.scale.set(2,2,2);
+        //planta.scale.set(2,2.5,2);
+        scene.add(planta);
+      }, onProgress, onError);
+    });
   }
 
   function addExitIcon(position) {
@@ -680,7 +676,6 @@
           movement({x: -1.5, y: 2, z: screen1Mesh.position.z}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, addMediaControls(screen1Mesh, video), function () {
             movement({x: camera.position.x, y: 0.2, z: camera.position.z + 0.5}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
           });
-          positionsList.unshift({x: -1.5, y: 2, z: screen1Mesh.position.z});
           
         }
         camera.up = new THREE.Vector3(0,1,0);
@@ -712,7 +707,6 @@
           movement({x: -1.4, y: 2, z: screen2Mesh.position.z}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, addMediaControls(screen2Mesh, video2), function () {
             movement({x: camera.position.x, y: 0.2, z: camera.position.z + 0.5}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
           });
-          positionsList.unshift({x: -1.4, y: 2, z: screen2Mesh.position.z});
           
         }
         camera.up = new THREE.Vector3(0,1,0);
@@ -832,14 +826,12 @@
       movement({x: -1.2, y: 1.6, z: 1.6}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
         movement({x: camera.position.x, y: 0.2, z: camera.position.z + 0.5}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
       });
-      positionsList.unshift({x: -1.2, y: 1.6, z: 1.6});
       
       if (controls) controls.target.set(researchLabel.position.x + 0.2, 1.6, researchLabel.position.z);
     } else if (videoObject === video2) {
       movement({x: -1.2, y: 1.6, z: 5}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
         movement({x: camera.position.x, y: 0.2, z: camera.position.z + 0.5}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
       });
-      positionsList.unshift({x: -1.2, y: 1.6, z: 5});
       
       if (controls) controls.target.set(-1.8, 1.6, 5);
     }
@@ -902,6 +894,7 @@
     // var yAxis = new THREE.Vector3(0,1,0);
     // var zAxis = new THREE.Vector3(0,0,1);
     rotateAroundWorldAxis(homeButton, xAxis, 90 * Math.PI / 180);
+    homeButton.rotation.z += 90 * Math.PI / 180;
     
     scene.add(homeButton);
 
@@ -915,20 +908,16 @@
         changeScaleSingle(homeButton, 1);
       },
       onGazeLong: function() {
-        // go back
-        goBack();
+        goHome();
       }
     });
   }
 
-  function goBack() {
-    if (positionsList.length > 1) {
-      var lastPosition = positionsList.pop();
-      movement({x: lastPosition.x, y: lastPosition.y, z: lastPosition.z}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
-        movement({x: camera.position.x, y: 0.2, z: camera.position.z + 0.5}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
-      });
-      removeMembers();
-    }
+  function goHome() {
+    movement({x: initialPosition.x, y: initialPosition.y, z: initialPosition.z}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
+      movement({x: camera.position.x, y: 0.2, z: camera.position.z + 0.5}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
+    });
+    removeMembers();
   }
 
   var researchLabel;
@@ -965,7 +954,6 @@
           movement({x: -1.2, y: 1.5, z: 1.6}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
             movement({x: camera.position.x, y: 0.2, z: camera.position.z + 0.5}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
           });
-          positionsList.unshift({x: -1.2, y: 1.5, z: 1.6});
           
         } else if (name === 'radical') {
           addMembers(radicalMembers);
@@ -974,7 +962,6 @@
           movement({x: -2, y: 1.5, z: -4}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
             movement({x: camera.position.x, y: 0.2, z: camera.position.z + 0.5}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
           });
-          positionsList.unshift({x: -2, y: 1.5, z: -4});
           
         }
         
@@ -1031,7 +1018,6 @@
           movement({x: -1.2, y: 1.6, z: cube.position.z}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
             movement({x: camera.position.x, y: 0.2, z: camera.position.z + 0.5}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
           });
-          positionsList.unshift({x: -1.2, y: 1.6, z: cube.position.z});
           
           if (cube.name == 'tvPoint') {
             checkstatus.screens = true;
@@ -1464,15 +1450,7 @@
         homeButton.lookAt(camera.position);
       }
       if (controlsdevice) {
-        // update home button rotation
-        // console.log('controlsdevice', controlsdevice)
-        // console.log('controlsdevice.deviceOrientation', controlsdevice.deviceOrientation)
-        // homeButton.rotation.x = controlsdevice.deviceOrientation.beta * Math.PI / 180;;
-        // homeButton.rotation.y = controlsdevice.deviceOrientation.gamma * Math.PI / 180;;
         homeButton.rotation.z = controlsdevice.deviceOrientation.alpha * Math.PI / 180 - 360;
-        // console.log('controlsdevice.screenOrientation', controlsdevice.screenOrientation)
-        // console.log('controlsdevice.alpha', controlsdevice.alpha)
-        // console.log('controlsdevice.alphaOffsetAngle', controlsdevice.alphaOffsetAngle)
       }
     }
 
