@@ -113,7 +113,7 @@
     numVertices, effect, intersected, intersectedScreens, intersectedTravel, intersectedInfo, intersectedMembers,
     intersectedExit, sky, plane, particleCube, radicalText,
     radicalTextNParticles, researchText, researchTextNParticles, interval, ambientLight, radicallight, researchlight, designlight,
-    screen1Light, screen2Light, actualLab, exitIcon, arrowIconGeometry,
+    screen1Light, screen2Light, exitIcon, arrowIconGeometry,
     width = window.innerWidth,
     height = window.innerHeight;
 
@@ -150,6 +150,22 @@
     {name: 'ricardo', position: {x: -4.6, y: 1.6, z: 0.2}},
     {name: 'enrique', position: {x: -3.6, y: 1.6, z: -0.3}},
     {name: 'samuel', position: {x: -3.4, y: 1.6, z: 2.4}}
+  ];
+  var jefesAndVenturesMembers = [
+    {name: 'carlosm', position: {x: -6, y: 1.6, z: 6}},
+    {name: 'lucas', position: {x: -6, y: 1.6, z: 4.5}},
+    {name: 'nieves', position: {x: -4.6, y: 1.6, z: 6.2}},
+    {name: 'jesus', position: {x: -4.6, y: 1.6, z: 4}},
+    {name: 'carlosg', position: {x: -3.6, y: 1.6, z: 6.3}},
+    {name: 'marian', position: {x: -3.2, y: 1.3, z: 5.5}},
+    {name: 'pablo', position: {x: -3.6, y: 1.6, z: 4}}
+  ];
+  var comunicacionMembers = [
+    {name: 'marta', position: {x: -6, y: 1.6, z: 12}},
+    {name: 'javi', position: {x: -4.6, y: 1.6, z: 13.7}},
+    {name: 'patri', position: {x: -4.6, y: 1.6, z: 11.8}},
+    {name: 'ade', position: {x: -3.4, y: 1.6, z: 14.1}},
+    {name: 'kat', position: {x: -3.4, y: 1.6, z: 11.5}}
   ];
 
   var checkstatus = {
@@ -217,7 +233,7 @@
 
   var reticulumNear = 0.2;
   var reticulumFar = 6;
-  var initialPosition = {x: -1.6, y: 1.5, z: -1.6};
+  var initialPosition = {x: -1.6, y: 1.8, z: -1.6};
   function initRender() {
     scene = new THREE.Scene();
     renderer = new THREE.WebGLRenderer({antialias: true, preserveDrawingBuffer: true, alpha: true});
@@ -336,12 +352,12 @@
   }
 
   function reorderParticles(Particles, path) {
-      if (path == 'radical') {
+      if (path == 'labelLabsRadical') {
           if (!particlesAnimation) {
               particleCube.position.set(-2.7, 1, -2.1);
               particleCube.lookAt(camera.position);
               particleCube.geometry.vertices = radicalText.vertices;
-              disperseParticles = {nParticles: Particles, path: 'radical'};
+              disperseParticles = {nParticles: Particles, path: 'labelLabsRadical'};
           } else if (particlesAnimation) {
               movement({x: -2.7, y: 1, z: -2.1}, particleCube.position, 0, 500, TWEEN.Easing.Back.Out);
               setTimeout(function () {
@@ -353,15 +369,15 @@
                       y: radicalText.vertices[a].y,
                       z: radicalText.vertices[a].z
                   }, particleCube.geometry.vertices[a], 0.1 * a, 1000, TWEEN.Easing.Back.Out);
-                  if (a == Particles - 1) disperseParticles = {nParticles: Particles, path: 'radical'};
+                  if (a == Particles - 1) disperseParticles = {nParticles: Particles, path: 'labelLabsRadical'};
               }
           }
-      } else if (path == 'research') {
+      } else if (path == 'labelLabsResearch') {
           if (!particlesAnimation) {
               particleCube.position.set(-2.7, 1, 1);
               particleCube.lookAt(camera.position);
               particleCube.geometry.vertices = researchText.vertices;
-              disperseParticles = {nParticles: Particles, path: 'research'};
+              disperseParticles = {nParticles: Particles, path: 'labelLabsResearch'};
           } else if (particlesAnimation) {
               movement({x: -2.7, y: 1, z: 1}, particleCube.position, 0, 500, TWEEN.Easing.Back.Out);
               setTimeout(function () {
@@ -373,7 +389,7 @@
                       y: researchText.vertices[a].y,
                       z: researchText.vertices[a].z
                   }, particleCube.geometry.vertices[a], 0.1 * a, 1000, TWEEN.Easing.Back.Out);
-                  if (a == Particles - 1) disperseParticles = {nParticles: Particles, path: 'research'};
+                  if (a == Particles - 1) disperseParticles = {nParticles: Particles, path: 'labelLabsResearch'};
               }
           }
       } else if (path == 'disperse') {
@@ -412,12 +428,6 @@
     var onError = function (xhr) {
       console.log('error', xhr)
     };
-    addLetters3D(stringToCharArray("Radical"), {x: -5.4, y: 1.6, z: -3.4}, letrasRadical);
-    addLetters3D(stringToCharArray("Research"), {x: -5.4, y: 1.6, z: 2}, letrasResearch);
-    addLetters3D(stringToCharArray("Design"), {x: -5.4, y: 1.6, z: 6}, letrasDesign);
-    addLetters3D(stringToCharArray("Comunicacion"), {x: -5.4, y: 1.6, z:63}, letrasComunicacion);
-    addLetters3D(stringToCharArray("Clever"), {x: -5.4, y: 1.6, z: 6}, letrasClever);
-    addLetters3D(stringToCharArray("Maker"), {x: -5.4, y: 1.6, z: 6}, letrasMaker);
     THREE.Loader.Handlers.add(/\.dds$/i, new THREE.DDSLoader());
     var mtlLoader = new THREE.MTLLoader();
     mtlLoader.setPath('models/vrLabsModel/');
@@ -459,32 +469,17 @@
         design.renderOrder = 0;
         design.name = "design";
         mesas.add(design);          
-        Reticulum.add( design, {
-          reticleHoverColor: 0x00fff6,
-          fuseVisible: true,
-          onGazeLong: function() {
-          }
-        });
+        
         comunicacion = elements.children[5];
         comunicacion.renderOrder = 0;
         comunicacion.name = "comunicacion";
         mesas.add(comunicacion);
-        Reticulum.add( comunicacion, {
-          reticleHoverColor: 0x00fff6,
-          fuseVisible: false,
-          onGazeLong: function() {
-          }
-        });
+        
         clever = elements.children[4];
         clever.renderOrder = 0;
         clever.name = "clever";
         mesas.add(clever);
-        Reticulum.add( clever, {
-          reticleHoverColor: 0x00fff6,
-          fuseVisible: false,
-          onGazeLong: function() {
-          }
-        });
+        
         cristaleraFrontal = elements.children[3];
         cristaleraFrontal.renderOrder = 2;
         cristaleraFrontal.name = "cristaleraFrontal";
@@ -497,12 +492,7 @@
         maker.renderOrder = 0;
         maker.name = "maker";
         mesas.add(maker);
-        Reticulum.add( maker, {
-          reticleHoverColor: 0x00fff6,
-          fuseVisible: false,
-          onGazeLong: function() {
-          }
-        });
+        
         planta.add(mesas);
         planta.scale.set(2,2,2);
         //planta.scale.set(2,2.5,2);
@@ -848,21 +838,17 @@
 
   function addTravelPoints() {
     var locationPoints = [
-      {name: 'makerPoint', position: {x: -2, y: 1, z: -7}}, 
-      {name: 'tvPoint', position: {x: -2, y: 1, z: 5}}, 
-      {name: 'radical', position: {x: -3.1, y: 1.2, z: -3.7}},
-      {name: 'research', position: {x: -2.6, y: 1.2, z: 1}}
+      {name: 'labelMaker', position: {x: -2.6, y: 1.2, z: -7}}, 
+      {name: 'labelJefes', position: {x: -2.6, y: 1.2, z: 5}}, 
+      {name: 'labelNobody', position: {x: -2.6, y: 1.2, z: 8.7}}, 
+      {name: 'labelComunicacion', position: {x: -2.6, y: 1.2, z: 12.7}}, 
+      {name: 'labelLabsRadical', position: {x: -3.1, y: 1.2, z: -3.7}},
+      {name: 'labelLabsResearch', position: {x: -2.6, y: 1.2, z: 1}}
     ];
 
-    for (var i = 0; i < locationPoints.length - 1; i++) {
-      if (i < 2) {
-        addTravelPoint(locationPoints[i].name, locationPoints[i].position);
-      } else {
-        addLabel(locationPoints[i].name, locationPoints[i].position);
-      }
+    for (var i = 0; i < locationPoints.length; i++) {
+      addLabel(locationPoints[i].name, locationPoints[i].position);
     }
-
-    addLabel(locationPoints[locationPoints.length - 1].name, locationPoints[locationPoints.length - 1].position);
   }
 
   function toTitleCase(str) {
@@ -920,11 +906,10 @@
     removeMembers();
   }
 
-  var researchLabel;
-  var radicalLabel;
+  var researchLabel, radicalLabel, makerLabel, nobodyLabel, jefesLabel, comunicacionLabel;
   function addLabel(name, position) {
     var img = new THREE.MeshBasicMaterial({
-      map: textureLoader.load("images/labelLabs"+ toTitleCase(name) + extension),
+      map: textureLoader.load("images/"+ name + extension),
       transparent: true,
       color: 0xffffff
     });
@@ -934,10 +919,18 @@
     var plane = new THREE.Mesh(new THREE.PlaneGeometry(scale, scale/4), img);
     plane.name = name;
     plane.position.set(position.x, position.y, position.z);
-    if (name === 'research') {
+    if (name === 'labelLabsResearch') {
       researchLabel = plane;
-    } else if (name === 'radical') {
+    } else if (name === 'labelLabsRadical') {
       radicalLabel = plane;
+    } else if (name === 'labelMaker') {
+      makerLabel = plane;
+    } else if (name === 'labelJefes') {
+      jefesLabel = plane;
+    } else if (name === 'labelNobody') {
+      nobodyLabel = plane;
+    } else if (name === 'labelComunicacion') {
+      comunicacionLabel = plane;
     }
     scene.add(plane);
 
@@ -947,86 +940,21 @@
       onGazeLong: function() {
         removeMembers();
         removeInfoSection();
-        if (name === 'research') {
+        if (name === 'labelLabsResearch') {
           addMembers(researchMembers);
-          actualLab = 'research';
-          checkstatus.screens = false;
-          movement({x: -1.2, y: 1.5, z: 1.6}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
-            movement({x: camera.position.x, y: 0.2, z: camera.position.z + 0.5}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
-          });
-          
-        } else if (name === 'radical') {
+        } else if (name === 'labelLabsRadical') {
           addMembers(radicalMembers);
-          actualLab = 'centro';
-          checkstatus.screens = false;
-          movement({x: -2, y: 1.5, z: -4}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
-            movement({x: camera.position.x, y: 0.2, z: camera.position.z + 0.5}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
-          });
-          
+        } else if (name === 'labelJefes') {
+          addMembers(jefesAndVenturesMembers);
+        } else if (name === 'labelComunicacion') {
+          addMembers(comunicacionMembers);
         }
+        movement({x: plane.position.x + 1, y: 1.8, z: plane.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
+          movement({x: camera.position.x, y: 0.2, z: camera.position.z + 0.5}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
+        });
         
         if (controls) controls.target.set(plane.position.x + 0.2, 2, plane.position.z);
       }
-    });
-  }
-
-  function addTravelPoint(name, position) {
-    var objLoader = new THREE.OBJLoader();
-    objLoader.setPath('models/');
-    objLoader.load('arrow.obj', function (elements) {
-      arrowIconGeometry = elements.children[0].geometry;
-      var geometry = arrowIconGeometry;
-      var material = new THREE.MeshBasicMaterial({color: 0xffdd44});
-      var cube = new THREE.Mesh(geometry, material);
-      cube.position.set(position.x, position.y, position.z);        
-      
-      cube.name = name;
-      // rotacion
-      var xAxis = new THREE.Vector3(1,0,0);
-      var yAxis = new THREE.Vector3(0,1,0);
-      var zAxis = new THREE.Vector3(0,0,1);
-      rotateAroundWorldAxis(cube, xAxis, 180 * Math.PI / 180);
-      rotateAroundWorldAxis(cube, yAxis, 120 * Math.PI / 180);
-      rotateAroundWorldAxis(cube, zAxis, 90 * Math.PI / 180);
-      scene.add(cube);
-
-      Reticulum.add( cube, {
-        reticleHoverColor: 0x00fff6,
-        fuseVisible: true,
-        onGazeOver: function() {
-          if (cube.name == 'radical') {
-            addLetters3D(stringToCharArray("Radical"), {x: cube.position.x, y: cube.position.y, z: cube.position.z}, letrasRadical);
-            moveLetters3d(letrasRadical, activeLetters);
-          }
-          if (cube.name == 'research') {
-            addLetters3D(stringToCharArray("Research"), {x: cube.position.x, y: cube.position.y, z: cube.position.z}, letrasResearch);
-            moveLetters3d(letrasResearch, activeLetters);
-          }
-        },
-        onGazeOut: function() {
-          if (cube.name == 'radical') {
-            removeLetters3D(letrasRadical);
-          } else if (cube.name == 'research') {
-            removeLetters3D(letrasResearch);
-          }
-        },
-        onGazeLong: function() {
-          if (infoGroup.children.length > 0) {
-            removeMembers();
-            removeInfoSection();
-          }
-          movement({x: -1.2, y: 1.6, z: cube.position.z}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
-            movement({x: camera.position.x, y: 0.2, z: camera.position.z + 0.5}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
-          });
-          
-          if (cube.name == 'tvPoint') {
-            checkstatus.screens = true;
-          } else {
-            checkstatus.screens = false;
-          }
-          if (controls) controls.target.set(cube.position.x + 0.2, 2, cube.position.z);
-        }
-      });
     });
   }
 
@@ -1044,7 +972,6 @@
 
   var memberPlanes = [];
   function addMembers(members) {
-    checkstatus.mesas = false;
     for (var i = 0; i < members.length; i++) {
       addMember(members[i], i);
     }
@@ -1085,6 +1012,10 @@
             addRadicalMemberInfoSection(plane);
           } else if (isResearchMember(plane)) {
             addResearchMemberInfoSection(plane);
+          } else if (isJefesAndVenturesMember(plane)) {
+            addJefesAndVenturesMemberInfoSection(plane);
+          } else if (isComunicacionMember(plane)) {
+            addComunicacionMemberInfoSection(plane);
           }
         }
       }
@@ -1124,6 +1055,24 @@
     return false;
   }
 
+  function isJefesAndVenturesMember(memberObject) {
+    for (var i = 0; i < jefesAndVenturesMembers.length; i++) {
+      if (memberObject.name === jefesAndVenturesMembers[i].name) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function isComunicacionMember(memberObject) {
+    for (var i = 0; i < comunicacionMembers.length; i++) {
+      if (memberObject.name === comunicacionMembers[i].name) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   var infoCloseButton, infoEmailButton, infoCalendarButton, infoCallButton;
   function addRadicalMemberInfoSection(memberObject) {
     addMemberInfoSection(memberObject, -4.5, -2, -4);
@@ -1131,6 +1080,14 @@
 
   function addResearchMemberInfoSection(memberObject) {
     addMemberInfoSection(memberObject, -4.5, -2, 1.5);
+  }
+
+  function addJefesAndVenturesMemberInfoSection(memberObject) {
+    addMemberInfoSection(memberObject, -4.5, -2, 5.5);
+  }
+
+  function addComunicacionMemberInfoSection(memberObject) {
+    addMemberInfoSection(memberObject, -4.5, -2, 12.7);
   }
 
   var infoIsOpening = false;
@@ -1175,6 +1132,10 @@
             addMembers(radicalMembers);
           } else if (isResearchMember(memberObject)) {
             addMembers(researchMembers);
+          } else if (isJefesAndVenturesMember(memberObject)) {
+            addMembers(jefesAndVenturesMembers);
+          } else if (isComunicacionMember(memberObject)) {
+            addMembers(comunicacionMembers);
           }
           infoGroupIsShowing = false;
         }
@@ -1197,7 +1158,6 @@
       reticleHoverColor: 0x00fff6,
       fuseVisible: true,
       onGazeLong: function() {
-//        alert('send email');
       }
     });
     plane.add(infoEmailButton);
@@ -1216,7 +1176,6 @@
       reticleHoverColor: 0x00fff6,
       fuseVisible: true,
       onGazeLong: function() {
-//        alert('open calendar');
       }
     });
     plane.add(infoCalendarButton);
@@ -1235,13 +1194,12 @@
       reticleHoverColor: 0x00fff6,
       fuseVisible: true,
       onGazeLong: function() {
-//        alert('call');
       }
     });
     plane.add(infoCallButton);
 
     var img = new THREE.MeshBasicMaterial({
-      map: textureLoader.load(rootDirectory + subFolder + memberObject.name + extension),
+      map: textureLoader.load(rootDirectory + subFolderCircular + memberObject.name + extension),
       transparent: true,
       depthWrite: false,
       color: 0xffffff
@@ -1304,8 +1262,6 @@
   }
 
   function openInfo() {
-    checkstatus.members = false;
-    checkstatus.infoCard = false;
     removeSpriteLetters();
     if (infoGroup !== undefined) {
       movement({y: 1}, infoGroup.position, 1, 500, TWEEN.Easing.Back.Out);
@@ -1331,8 +1287,6 @@
   }
 
   function hideInfo() {
-      checkstatus.members = true;
-      checkstatus.infoCard = true;
       if (exitGroup !== undefined && exitGroup.children !== undefined && exitGroup.children.length > 0) {
         movement({y: exitIcon.position.y - 1}, exitIcon.position, 1, 500, TWEEN.Easing.Quartic.Out);
       }
@@ -1443,6 +1397,18 @@
     }
     if (radicalLabel !== undefined) {
       radicalLabel.lookAt(camera.position);
+    }
+    if (makerLabel !== undefined) {
+      makerLabel.lookAt(camera.position);
+    }
+    if (jefesLabel !== undefined) {
+      jefesLabel.lookAt(camera.position);
+    }
+    if (nobodyLabel !== undefined) {
+      nobodyLabel.lookAt(camera.position);
+    }
+    if (comunicacionLabel !== undefined) {
+      comunicacionLabel.lookAt(camera.position);
     }
     if (homeButton !== undefined) {
       if (controls) {
