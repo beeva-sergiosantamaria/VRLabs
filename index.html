@@ -675,8 +675,8 @@
     mediaControlsContainer.add(plane);
 
     Reticulum.add( plane, {
-      reticleHoverColor: 0x00fff6,
-      fuseColor: 0x00fff6,
+      reticleHoverColor: name === 'media-close' ? 0xeb2348 : 0x00fff6,
+      fuseColor: name === 'media-close' ? 0xeb2348 : 0x00fff6,
       fuseVisible: true,
       onGazeOver: function() {
         if (this.material.color) this.material.color.setHex( 0xffcc00 );
@@ -1039,7 +1039,7 @@
     closeButtonMesh.position.set(1.2, 0.65, 0.1);
 
     Reticulum.add( closeButtonMesh, {
-      reticleHoverColor: 0x00fff6,
+      reticleHoverColor: 0xeb2348,
       fuseDuration: 1,
       fuseColor: 0xeb2348,
       fuseVisible: true,
