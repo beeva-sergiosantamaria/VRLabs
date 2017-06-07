@@ -10,6 +10,12 @@
     <meta name="mobile-web-app-capable" content="yes">
 </head>
 <body class="darkBack">
+<div id="allowVideoScreen" class="allowVideo">
+  <div class="videoInstructions">VrLabs needs permissions to play videos</div>
+    <div id="acceptButton" class="acceptButton">
+    <div>Accept</div>
+  </div>
+</div>
 <iframe id="youtubeVideo" width="0" height="0" style="position: absolute; display: none;" src=""></iframe>
 <canvas id="fireWorks" class="fireworks"></canvas>
 <div id="logoBox" class="mainSection">
@@ -223,6 +229,21 @@
       initRender();
       animate();
   });
+  $('#acceptButton').on({ 'touchstart' : function(){ 
+        console.log('detecta touch');
+        checkstatus = {
+            mesas: true,
+            infoCard: true,
+            members: true,
+            travel: true,
+            screens: false
+        }
+        $('#allowVideoScreen').css('display', 'none');
+        video.play();
+        video2.play();
+        video.pause();
+        video2.pause();
+    } });
 
   function initRender() {
     scene = new THREE.Scene();
