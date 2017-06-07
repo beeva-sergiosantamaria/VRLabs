@@ -566,7 +566,7 @@
           video2.pause();
           if (controls) controls.target.set(screen1Mesh.position.x - 0.2, screen1Mesh.position.y, screen1Mesh.position.z);
           movement({x: -1.5, y: 2, z: screen1Mesh.position.z}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, addMediaControls(screen1Mesh, video), function () {
-            movement({x: camera.position.x, y: 0.2, z: camera.position.z + 0.5}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
+            updateHomeButtonPosition();
           });
           
         }
@@ -597,7 +597,7 @@
           video.pause();
           if (controls) controls.target.set(screen2Mesh.position.x - 0.2, screen2Mesh.position.y, screen2Mesh.position.z);
           movement({x: -1.4, y: 2, z: screen2Mesh.position.z}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, addMediaControls(screen2Mesh, video2), function () {
-            movement({x: camera.position.x, y: 0.2, z: camera.position.z + 0.5}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
+            updateHomeButtonPosition();
           });
           
         }
@@ -716,13 +716,13 @@
   function exitScreen(videoObject) {
     if (videoObject === video) {
       movement({x: -1.2, y: 1.6, z: 1.6}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
-        movement({x: camera.position.x, y: 0.2, z: camera.position.z + 0.5}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
+        updateHomeButtonPosition();
       });
       
       if (controls) controls.target.set(researchLabel.position.x + 0.2, 1.6, researchLabel.position.z);
     } else if (videoObject === video2) {
       movement({x: -1.2, y: 1.6, z: 5}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
-        movement({x: camera.position.x, y: 0.2, z: camera.position.z + 0.5}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
+        updateHomeButtonPosition();
       });
       
       if (controls) controls.target.set(-1.8, 1.6, 5);
@@ -803,8 +803,8 @@
 
   function goHome() {
     movement({x: initialPosition.x, y: initialPosition.y, z: initialPosition.z}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
-      movement({x: camera.position.x, y: 0.2, z: camera.position.z + 0.5}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
-      controls.target.set(camera.position.x, camera.position.y, camera.position.z + 0.5);
+      updateHomeButtonPosition();
+      if (controls) controls.target.set(camera.position.x, camera.position.y, camera.position.z + 0.5);
     });
     removeMembers();
   }
@@ -854,12 +854,12 @@
         }
         if (name !== 'labelMaker') {
           movement({x: plane.position.x + 1, y: 1.8, z: plane.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
-            movement({x: camera.position.x, y: 0.2, z: camera.position.z + 0.5}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
+            updateHomeButtonPosition();
           });
           if (controls) controls.target.set(plane.position.x + 0.2, 2, plane.position.z);
         } else {
           movement({x: -6, y: 1.8, z: -10}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
-            movement({x: camera.position.x, y: 0.2, z: camera.position.z + 0.5}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
+            updateHomeButtonPosition();
           });
           if (controls) controls.target.set(-6, 2, -10);
         }
@@ -1394,6 +1394,10 @@
     ctx.closePath();
     ctx.fill();
     ctx.stroke();   
+  }
+
+  function updateHomeButtonPosition() {
+    movement({x: camera.position.x, y: 0.2, z: camera.position.z + 0.5}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
   }
 </script>
 </body>
