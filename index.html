@@ -1467,6 +1467,9 @@
         // update home button rotation
         console.log('controlsdevice', controlsdevice)
         console.log('controlsdevice.deviceOrientation', controlsdevice.deviceOrientation)
+        homeButton.rotation.x = controlsdevice.deviceorientation.beta * Math.PI / 180;;
+        // homeButton.rotation.y = controlsdevice.deviceorientation.gamma * Math.PI / 180;;
+        // homeButton.rotation.z = controlsdevice.deviceorientation.alpha * Math.PI / 180;;
         console.log('controlsdevice.screenOrientation', controlsdevice.screenOrientation)
         console.log('controlsdevice.alpha', controlsdevice.alpha)
         console.log('controlsdevice.alphaOffsetAngle', controlsdevice.alphaOffsetAngle)
