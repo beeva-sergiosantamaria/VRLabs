@@ -1032,8 +1032,9 @@
 
     Reticulum.add( closeButtonMesh, {
       reticleHoverColor: 0x00fff6,
+      fuseDuration: 1,
       fuseVisible: false,
-      onGazeClick: function() {
+      onGazeLong: function() {
         if (!infoIsOpening) {
           removeInfoSection();
           if (isRadicalMember(memberObject)) {
