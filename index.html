@@ -168,18 +168,8 @@
     {name: 'kat', position: {x: -3.4, y: 1.6, z: 11.5}}
   ];
 
-  var checkstatus = {
-    mesas: true,
-    infoCard: true,
-    members: true,
-    travel: true,
-    screens: false
-  };
-
   var radicalInfoImages = ['radicalInfo1', 'radicalInfo2', 'radicalInfo3'];
   var sergioInfoImages = ['sergioInfo1', 'sergioInfo2', 'sergioInfo3'];
-
-  var sectionInfoAdded = false;
 
   var planta = new THREE.Object3D();
   planta.name = "estructura";
@@ -219,8 +209,6 @@
   var min = -3, max = 3;
   var verticesArray = [];
   var particlesAnimation = true;
-
-
 
   $(document).ready(function () {
       // startLogoAnim();
@@ -312,7 +300,7 @@
       controls.enableDamping = true;
       controls.dampingFactor = 0.70;
       controls.enableZoom = false;
-      controls.target.set(camera.position.x, camera.position.y, camera.position.z + 0.5);          
+      controls.target.set(camera.position.x, camera.position.y, camera.position.z + 0.5);
     }
     addHomeButton();
     addTravelPoints();
@@ -340,78 +328,6 @@
     sky.name = "sky";
     scene.add(sky);
     addModel();
-  }
-
-  function particlesDisperse(Particles, path) {
-    if (disperseParticles.path != path && particleCube != undefined) {
-      if (path != 'disperse') reorderParticles(disperseParticles.nParticles, 'disperse');
-      setTimeout(function () {
-        reorderParticles(Particles, path)
-      }, 100);
-    }
-  }
-
-  function reorderParticles(Particles, path) {
-      if (path == 'labelLabsRadical') {
-          if (!particlesAnimation) {
-              particleCube.position.set(-2.7, 1, -2.1);
-              particleCube.lookAt(camera.position);
-              particleCube.geometry.vertices = radicalText.vertices;
-              disperseParticles = {nParticles: Particles, path: 'labelLabsRadical'};
-          } else if (particlesAnimation) {
-              movement({x: -2.7, y: 1, z: -2.1}, particleCube.position, 0, 500, TWEEN.Easing.Back.Out);
-              setTimeout(function () {
-                  particleCube.lookAt(camera.position);
-              }, 100);
-              for (var a = 0; a < Particles; a++) {
-                  movement({
-                      x: radicalText.vertices[a].x,
-                      y: radicalText.vertices[a].y,
-                      z: radicalText.vertices[a].z
-                  }, particleCube.geometry.vertices[a], 0.1 * a, 1000, TWEEN.Easing.Back.Out);
-                  if (a == Particles - 1) disperseParticles = {nParticles: Particles, path: 'labelLabsRadical'};
-              }
-          }
-      } else if (path == 'labelLabsResearch') {
-          if (!particlesAnimation) {
-              particleCube.position.set(-2.7, 1, 1);
-              particleCube.lookAt(camera.position);
-              particleCube.geometry.vertices = researchText.vertices;
-              disperseParticles = {nParticles: Particles, path: 'labelLabsResearch'};
-          } else if (particlesAnimation) {
-              movement({x: -2.7, y: 1, z: 1}, particleCube.position, 0, 500, TWEEN.Easing.Back.Out);
-              setTimeout(function () {
-                  particleCube.lookAt(camera.position);
-              }, 100);
-              for (var a = 0; a < Particles; a++) {
-                  movement({
-                      x: researchText.vertices[a].x,
-                      y: researchText.vertices[a].y,
-                      z: researchText.vertices[a].z
-                  }, particleCube.geometry.vertices[a], 0.1 * a, 1000, TWEEN.Easing.Back.Out);
-                  if (a == Particles - 1) disperseParticles = {nParticles: Particles, path: 'labelLabsResearch'};
-              }
-          }
-      } else if (path == 'disperse') {
-          if (!particlesAnimation) {
-              particleCube.position.set(0, 0, 0);
-              particleCube.geometry.vertices = verticesArray;
-              disperseParticles = {nParticles: numeroParticulas, path: 'disperse'};
-          } else if (particlesAnimation) {
-              movement({x: 0, y: 0, z: 0}, particleCube.position, 0, 500, TWEEN.Easing.Back.Out);
-              setTimeout(function () {
-                  particleCube.lookAt(camera.position);
-              }, 100);
-              for (var a = 0; a < Particles; a++) {
-                  movement({
-                      x: verticesArray[a].x,
-                      y: verticesArray[a].y,
-                      z: verticesArray[a].z
-                  }, particleCube.geometry.vertices[a], 0.1 * a, 1000, TWEEN.Easing.Back.Out);
-                  if (a == Particles - 1) disperseParticles = {nParticles: numeroParticulas, path: 'disperse'};
-              }
-          }
-      }
   }
 
   function addModel() {
@@ -501,121 +417,107 @@
     });
   }
 
-  function addExitIcon(position) {
-    var objLoader = new THREE.OBJLoader();
-    objLoader.setPath('models/');
-    objLoader.load('exitModel.obj', function (elements) {
-      var exitMaterial = new THREE.MeshBasicMaterial({color: 0xffdd44});
-      exitIcon = new THREE.Mesh(elements.children[0].geometry, exitMaterial);
-      exitIcon.position.set(position.x, position.y + 1, position.z);
-      exitIcon.scale.set(0.1, 0.2, 0.2);
-      exitGroup.add(exitIcon);
-      scene.add(exitGroup);
-      movement({y: position.y}, exitIcon.position, 300, 1000, TWEEN.Easing.Back.Out);
-    });
-  }
+//  function addLetters3D(lettersArray, position, object) {
+//    var loader = new THREE.FontLoader();
+//    loader.load('scene/fonts/droid_sans_bold.typeface.js', function (font) {
+//      for (var a = 0; a < lettersArray.length; a++) {
+//        var radicalTextModel = new THREE.TextGeometry(lettersArray[a], {
+//          font: font,
+//          size: 0.05,
+//          height: 0.01,
+//          curveSegments: 3,
+//          bevelEnabled: true,
+//          bevelThickness: 0.01,
+//          bevelSize: 0.01
+//        });
+//        var materialFront = new THREE.MeshBasicMaterial({color: 0xffdd44});
+//        var materialSide = new THREE.MeshBasicMaterial({color: 0x333333});
+//        var materialArray = [materialFront, materialSide];
+//        var textMaterial = new THREE.MeshFaceMaterial(materialArray);
+//        var radicalTextMesh = new THREE.Mesh(radicalTextModel, textMaterial);
+//        radicalTextMesh.position.x = 0.1 * a;
+//        radicalTextMesh.position.y = -2;
+//        radicalTextModel.computeBoundingBox();
+//        object.add(radicalTextMesh);
+//      }
+//    });
+//    object.position.set(position.x, position.y, position.z);
+//    object.lookAt(camera.position);
+//    object.name = 'letras3D';
+//    scene.add(object);
+//  }
 
-  function addLetters3D(lettersArray, position, object) {
-    var loader = new THREE.FontLoader();
-    loader.load('scene/fonts/droid_sans_bold.typeface.js', function (font) {
-      for (var a = 0; a < lettersArray.length; a++) {
-        var radicalTextModel = new THREE.TextGeometry(lettersArray[a], {
-          font: font,
-          size: 0.05,
-          height: 0.01,
-          curveSegments: 3,
-          bevelEnabled: true,
-          bevelThickness: 0.01,
-          bevelSize: 0.01
-        });
-        var materialFront = new THREE.MeshBasicMaterial({color: 0xffdd44});
-        var materialSide = new THREE.MeshBasicMaterial({color: 0x333333});
-        var materialArray = [materialFront, materialSide];
-        var textMaterial = new THREE.MeshFaceMaterial(materialArray);
-        var radicalTextMesh = new THREE.Mesh(radicalTextModel, textMaterial);
-        radicalTextMesh.position.x = 0.1 * a;
-        radicalTextMesh.position.y = -2;
-        radicalTextModel.computeBoundingBox();
-        object.add(radicalTextMesh);
-      }
-    });
-    object.position.set(position.x, position.y, position.z);
-    object.lookAt(camera.position);
-    object.name = 'letras3D';
-    scene.add(object);
-  }
+//  function addParticleSystem() {
+//    var loader = new THREE.FontLoader();
+//    loader.load('scene/fonts/droid_sans_bold.typeface.js', function (font) {
+//      radicalText = new THREE.TextGeometry('CreativeTech + UX + Mobility', {
+//        font: font,
+//        size: 0.1,
+//        height: 0,
+//        curveSegments: 1
+//      });
+//      researchText = new THREE.TextGeometry('Research', {
+//        font: font,
+//        size: 0.1,
+//        height: 0,
+//        curveSegments: 1
+//      });
+//      var modifier = new THREE.SubdivisionModifier(1);
+//      modifier.modify(radicalText);
+//      modifier.modify(researchText);
+//      radicalTextNParticles = radicalText.vertices.length;
+//      researchTextNParticles = researchText.vertices.length;
+//    });
+//    var boxGeometry = new THREE.Geometry();
+//    for (var p = 0; p < numeroParticulas; p++) {
+//      var pX = Math.random() * (max - min + 1) + min,
+//          pY = Math.random() * (max - min + 1) + min,
+//          pZ = Math.random() * (max - min + 1) + min,
+//          particle = new THREE.Vector3(pX, pY, pZ);
+//      verticesArray.push({x: pX, y: pY, z: pZ});
+//      boxGeometry.vertices.push(particle);
+//    }
+//    var particleMaterial = new THREE.ParticleBasicMaterial({
+//      size: 0.02,
+//      color: 0x333333,
+//      transparency: true,
+//      opacity: 0.5
+//    });
+//    particleCube = new THREE.Points(boxGeometry, particleMaterial);
+//    particleCube.position.set(0, 0, 0);
+//    scene.add(particleCube);
+//  }
 
-  function addParticleSystem() {
-    var loader = new THREE.FontLoader();
-    loader.load('scene/fonts/droid_sans_bold.typeface.js', function (font) {
-      radicalText = new THREE.TextGeometry('CreativeTech + UX + Mobility', {
-        font: font,
-        size: 0.1,
-        height: 0,
-        curveSegments: 1
-      });
-      researchText = new THREE.TextGeometry('Research', {
-        font: font,
-        size: 0.1,
-        height: 0,
-        curveSegments: 1
-      });
-      var modifier = new THREE.SubdivisionModifier(1);
-      modifier.modify(radicalText);
-      modifier.modify(researchText);
-      radicalTextNParticles = radicalText.vertices.length;
-      researchTextNParticles = researchText.vertices.length;
-    });
-    var boxGeometry = new THREE.Geometry();
-    for (var p = 0; p < numeroParticulas; p++) {
-      var pX = Math.random() * (max - min + 1) + min,
-          pY = Math.random() * (max - min + 1) + min,
-          pZ = Math.random() * (max - min + 1) + min,
-          particle = new THREE.Vector3(pX, pY, pZ);
-      verticesArray.push({x: pX, y: pY, z: pZ});
-      boxGeometry.vertices.push(particle);
-    }
-    var particleMaterial = new THREE.ParticleBasicMaterial({
-      size: 0.02,
-      color: 0x333333,
-      transparency: true,
-      opacity: 0.5
-    });
-    particleCube = new THREE.Points(boxGeometry, particleMaterial);
-    particleCube.position.set(0, 0, 0);
-    scene.add(particleCube);
-  }
+//  function addSpritesLetters(lettersArray) {
+//    for (var a = 0; a < lettersArray.length; a++) {
+//      var map = new THREE.TextureLoader().load("images/letters/" + lettersArray[a] + extension);
+//      var material = new THREE.SpriteMaterial({map: map, color: 0xffffff, fog: true});
+//      var sprite = new THREE.Sprite(material);
+//      if (isMobile) {
+//        sprite.position.x = 0.03 * a;
+//        sprite.position.z = -1.5;
+//        sprite.scale.set(0.03, 0.03, 0.03);
+//        spriteGroup.add(sprite);
+//        spriteGroup.position.x = -0.13;
+//        spriteGroup.position.y = -0.06;
+//      }
+//      else {
+//        sprite.position.x = 0.04 * a;
+//        sprite.position.z = -0.5;
+//        sprite.scale.set(0.05, 0.05, 0.05);
+//        spriteGroup.add(sprite);
+//        spriteGroup.position.x = -0.6;
+//        spriteGroup.position.y = -0.25;
+//      }
+//      camera.add(spriteGroup);
+//    }
+//  }
 
-  function addSpritesLetters(lettersArray) {
-    for (var a = 0; a < lettersArray.length; a++) {
-      var map = new THREE.TextureLoader().load("images/letters/" + lettersArray[a] + extension);
-      var material = new THREE.SpriteMaterial({map: map, color: 0xffffff, fog: true});
-      var sprite = new THREE.Sprite(material);
-      if (isMobile) {
-        sprite.position.x = 0.03 * a;
-        sprite.position.z = -1.5;
-        sprite.scale.set(0.03, 0.03, 0.03);
-        spriteGroup.add(sprite);
-        spriteGroup.position.x = -0.13;
-        spriteGroup.position.y = -0.06;
-      }
-      else {
-        sprite.position.x = 0.04 * a;
-        sprite.position.z = -0.5;
-        sprite.scale.set(0.05, 0.05, 0.05);
-        spriteGroup.add(sprite);
-        spriteGroup.position.x = -0.6;
-        spriteGroup.position.y = -0.25;
-      }
-      camera.add(spriteGroup);
-    }
-  }
-
-  function removeSpriteLetters() {
-    camera.remove(spriteGroup);
-    spriteGroup = new THREE.Object3D();
-    spriteGroup.name = 'spriteGroup';
-  }
+//  function removeSpriteLetters() {
+//    camera.remove(spriteGroup);
+//    spriteGroup = new THREE.Object3D();
+//    spriteGroup.name = 'spriteGroup';
+//  }
 
   function addScreens() {
     videoMP4 = document.createElement('video').canPlayType('video/mp4') !== '';
@@ -902,6 +804,7 @@
   function goHome() {
     movement({x: initialPosition.x, y: initialPosition.y, z: initialPosition.z}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
       movement({x: camera.position.x, y: 0.2, z: camera.position.z + 0.5}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
+      controls.target.set(camera.position.x, camera.position.y, camera.position.z + 0.5);
     });
     removeMembers();
   }
@@ -949,11 +852,17 @@
         } else if (name === 'labelComunicacion') {
           addMembers(comunicacionMembers);
         }
-        movement({x: plane.position.x + 1, y: 1.8, z: plane.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
-          movement({x: camera.position.x, y: 0.2, z: camera.position.z + 0.5}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
-        });
-        
-        if (controls) controls.target.set(plane.position.x + 0.2, 2, plane.position.z);
+        if (name !== 'labelMaker') {
+          movement({x: plane.position.x + 1, y: 1.8, z: plane.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
+            movement({x: camera.position.x, y: 0.2, z: camera.position.z + 0.5}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
+          });
+          if (controls) controls.target.set(plane.position.x + 0.2, 2, plane.position.z);
+        } else {
+          movement({x: -6, y: 1.8, z: -10}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
+            movement({x: camera.position.x, y: 0.2, z: camera.position.z + 0.5}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
+          });
+          if (controls) controls.target.set(-6, 2, -10);
+        }
       }
     });
   }
@@ -975,7 +884,6 @@
     for (var i = 0; i < members.length; i++) {
       addMember(members[i], i);
     }
-    // scene.add(membersGroup);
   }
 
   function addMember(member, index) {
@@ -1233,7 +1141,6 @@
   }
 
   function addInfoSection(images, name, timeout) {
-    sectionInfoAdded = true;
     infoGroupIsShowing = true;
     if (infoGroup.children.length > 0) {
         removeInfoSection();
@@ -1259,31 +1166,6 @@
     infoGroup.rotation.y = Math.PI / 2;
     movement({y: 1.35}, infoGroup.position, 0, 1000, TWEEN.Easing.Back.Out);
     scene.add(infoGroup);
-  }
-
-  function openInfo() {
-    removeSpriteLetters();
-    if (infoGroup !== undefined) {
-      movement({y: 1}, infoGroup.position, 1, 500, TWEEN.Easing.Back.Out);
-      movement({x: -1.8}, infoGroup.position, 1, 500, TWEEN.Easing.Quartic.Out);
-      setTimeout(function () {
-        if (infoGroup.children !== undefined && infoGroup.children.length > 1) {
-          movement({x: 1}, infoGroup.children[1].position, 1, 1000, TWEEN.Easing.Quartic.Out);
-          movement({x: -1}, infoGroup.children[2].position, 1, 1000, TWEEN.Easing.Quartic.Out);
-        }
-      }, 700);
-      setTimeout(function () {
-        if (infoGroup.children !== undefined && infoGroup.children.length > 1) {
-          movement({x: 0.77}, infoGroup.children[1].position, 1, 1000, TWEEN.Easing.Quartic.Out);
-          movement({y: -1}, infoGroup.children[1].rotation, 1, 1000, TWEEN.Easing.Quartic.Out);
-          movement({z: 0.42}, infoGroup.children[1].position, 1, 1000, TWEEN.Easing.Quartic.Out);
-          movement({x: -0.77}, infoGroup.children[2].position, 1, 1000, TWEEN.Easing.Quartic.Out);
-          movement({y: 1}, infoGroup.children[2].rotation, 1, 1000, TWEEN.Easing.Quartic.Out);
-          movement({z: 0.42}, infoGroup.children[2].position, 1, 1000, TWEEN.Easing.Quartic.Out);
-        }
-        addExitIcon({x: -1.7, y: 0.5, z: -1.95});
-      }, 1700);
-    }
   }
 
   function hideInfo() {
@@ -1320,7 +1202,7 @@
       scene.remove(infoGroup);
       infoGroup = new THREE.Object3D();
       infoGroup.name = 'infoGroup';
-      sectionInfoAdded = false;
+      infoGroupIsShowing = false;
     }, 1300);
   }
 
