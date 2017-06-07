@@ -1450,7 +1450,8 @@
         homeButton.lookAt(camera.position);
       }
       if (controlsdevice) {
-        homeButton.rotation.z = controlsdevice.deviceOrientation.alpha * Math.PI / 180 - 360;
+        // homeButton.rotation.z = controlsdevice.deviceOrientation.alpha * Math.PI / 180 - 360;
+        homeButton.rotation.z = 360 - controlsdevice.deviceOrientation.alpha * Math.PI / 180;
       }
     }
 
