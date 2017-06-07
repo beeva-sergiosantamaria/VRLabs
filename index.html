@@ -211,8 +211,8 @@
   var particlesAnimation = true;
   
   var reticulumNear = 0.2;
-  var reticulumFar = 6;
-  var initialPosition = {x: -1.6, y: 1.8, z: -1.6};
+  var reticulumFar = 7;
+  var initialPosition = {x: -1.6, y: 1.8, z: -11};
   var defaultFuseColor = 0x00fff6;
 
   $(document).ready(function () {
@@ -249,11 +249,11 @@
       reticle: {
         visible: true,
         restPoint: 1, //Defines the reticle's resting point when no object has been targeted
-        color: 0xcc0000,
+        color: 0xff00e7,
         innerRadius: 0.001,
         outerRadius: 0.006,
         hover: {
-          color: 0xcc0000,
+          color: 0xff00e7,
           innerRadius: 0.02,
           outerRadius: 0.024,
           speed: 5,
@@ -675,6 +675,7 @@
     mediaControlsContainer.add(plane);
 
     Reticulum.add( plane, {
+      fuseDuration: 1,
       reticleHoverColor: name === 'media-close' ? 0xeb2348 : 0x00fff6,
       fuseColor: name === 'media-close' ? 0xeb2348 : 0x00fff6,
       fuseVisible: true,
@@ -745,11 +746,11 @@
 
   function addTravelPoints() {
     var locationPoints = [
-      {name: 'labelMaker', position: {x: -2.6, y: 1.2, z: -7}}, 
+      {name: 'labelMaker', position: {x: -2.6, y: 1.2, z: -11}}, 
       {name: 'labelJefes', position: {x: -2.6, y: 1.2, z: 5}}, 
       {name: 'labelNobody', position: {x: -2.6, y: 1.2, z: 8.7}}, 
       {name: 'labelComunicacion', position: {x: -2.6, y: 1.2, z: 12.7}}, 
-      {name: 'labelLabsRadical', position: {x: -3.1, y: 1.2, z: -3.7}},
+      {name: 'labelLabsRadical', position: {x: -3.1, y: 1.2, z: -5}},
       {name: 'labelLabsResearch', position: {x: -2.6, y: 1.2, z: 1}}
     ];
 
@@ -792,8 +793,8 @@
     scene.add(homeButton);
 
     Reticulum.add( homeButton, {
-      reticleHoverColor: 0x00fff6,
-      fuseColor: 0x00fff6,
+      reticleHoverColor: 0xfdff00,
+      fuseColor: 0x660066,
       fuseVisible: true,
       onGazeOver: function() {
         changeScaleSingle(homeButton, 1.5);
@@ -912,8 +913,8 @@
     scene.add(plane);
 
     Reticulum.add( plane, {
-      reticleHoverColor: 0x00fff6,
-      fuseColor: 0x00fff6,
+      reticleHoverColor: 0x008000,
+      fuseColor: 0x008000,
       fuseVisible: true,
       onGazeOver: function() {
         if (this.material.color) this.material.color.setHex( 0xffcc00 );
