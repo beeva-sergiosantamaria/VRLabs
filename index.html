@@ -1033,7 +1033,7 @@
     Reticulum.add( closeButtonMesh, {
       reticleHoverColor: 0x00fff6,
       fuseVisible: false,
-      onGazeOver: function() {
+      onGazeClick: function() {
         if (!infoIsOpening) {
           removeInfoSection();
           if (isRadicalMember(memberObject)) {
@@ -1168,35 +1168,11 @@
     scene.add(infoGroup);
   }
 
-  function hideInfo() {
-      if (exitGroup !== undefined && exitGroup.children !== undefined && exitGroup.children.length > 0) {
-        movement({y: exitIcon.position.y - 1}, exitIcon.position, 1, 500, TWEEN.Easing.Quartic.Out);
-      }
-      if (infoGroup !== undefined && infoGroup.children !== undefined && infoGroup.children.length >= 2) {
-        // if (infoGroup.children[1].position.x > 0) movement({x: 1}, infoGroup.children[1].position, 1, 1000, TWEEN.Easing.Quartic.Out);
-        // movement({y: 0}, infoGroup.children[1].rotation, 1, 1000, TWEEN.Easing.Quartic.Out);
-        // movement({z: -0.01}, infoGroup.children[1].position, 1, 1000, TWEEN.Easing.Quartic.Out);
-        // if (infoGroup.children[2].position.x < 0) movement({x: -1}, infoGroup.children[2].position, 1, 1000, TWEEN.Easing.Quartic.Out);
-        // movement({y: 0}, infoGroup.children[2].rotation, 1, 1000, TWEEN.Easing.Quartic.Out);
-        // movement({z: 0.01}, infoGroup.children[2].position, 1, 1000, TWEEN.Easing.Quartic.Out);
-        // setTimeout(function () {
-            // movement({x: 0}, infoGroup.children[1].position, 1, 1000, TWEEN.Easing.Quartic.Out);
-            // movement({x: 0}, infoGroup.children[2].position, 1, 1000, TWEEN.Easing.Quartic.Out);
-        // }, 1000)
-        setTimeout(function () {
-            movement({y: 0.35}, infoGroup.position, 500, 500, TWEEN.Easing.Back.Out);
-            movement({x: -2.3}, infoGroup.position, 0, 500, TWEEN.Easing.Quartic.Out);
-            scene.remove(exitGroup);
-        }, 2200);
-      }
-  }
-
   function removeInfoSection() {
     if (infoCloseButton) Reticulum.remove(infoCloseButton);
     if (infoEmailButton) Reticulum.remove(infoEmailButton);
     if (infoCalendarButton) Reticulum.remove(infoCalendarButton);
     if (infoCallButton) Reticulum.remove(infoCallButton);
-    hideInfo();
     movement({y: -2}, infoGroup.position, 0, 1200, TWEEN.Easing.Back.In);
     setTimeout(function () {
       scene.remove(infoGroup);
@@ -1204,26 +1180,6 @@
       infoGroup.name = 'infoGroup';
       infoGroupIsShowing = false;
     }, 1300);
-  }
-
-  function moveLetters3d(object, prevObject) {
-      for (var a = 0; a < 12; a++) {
-          if (prevObject != undefined && prevObject.children[a]) new TWEEN.Tween(prevObject.children[a].position).to({y: -1.5}, 100).easing(TWEEN.Easing.Quartic.Out).onUpdate(function () {
-          }).delay(10 * a).start();
-          if (object != undefined && object.children[a]) new TWEEN.Tween(object.children[a].position).to({y: 0.2}, 100).easing(TWEEN.Easing.Back.Out).onUpdate(function () {
-          }).delay(10 * a).start();
-      }
-      if (object != undefined) object.lookAt(camera.position);
-  }
-
-  function removeLetters3D(object) {
-    if (object != undefined) {
-      for (var a = 0; a < object.children.length; a++) {
-          if (tweenLettersIn != undefined) tweenLettersIn.stop();
-          new TWEEN.Tween(object.children[a].position).to({y: -1.5}, 100).easing(TWEEN.Easing.Quartic.Out).onUpdate(function () {
-          }).delay(50 * a).start();
-      }
-    }
   }
 
   function onWindowResize() {
@@ -1238,7 +1194,9 @@
     Reticulum.update();
     camera.updateMatrixWorld();
     
-    if (controls) controls.update(clock.getDelta());
+    if (controls) {
+      controls.update(clock.getDelta());
+    }
     if (controlsdevice) {
       controlsdevice.update();
     }
@@ -1303,36 +1261,38 @@
       }
     }
 
-    if (videoPlaying && cameraLookingAtScreenRotationValue != undefined) {
-      if (!controlsAreMoving) {
-        if (camera.rotation.z < -1.4 && !controlsAreCentered) {
-          controlsAreMoving = true;
-          movement({x: screen1Mesh.position.x, y: screen1Mesh.position.y, z: screen1Mesh.position.z + 0.1}, mediaControlsContainer.position, 0, 500, TWEEN.Easing.Back.Out, function () {
-            controlsAreMoving = false;
-            controlsAreCentered = true;
-          });
-        } else if (camera.rotation.z > cameraLookingAtScreenRotationValue.rotation.z && controlsAreCentered && !controlsAreMoving) {
-          controlsAreMoving = true;
-          movement({x: screen1Mesh.position.x, y: screen1Mesh.position.y - 0.3, z: screen1Mesh.position.z + 0.1}, mediaControlsContainer.position, 0, 500, TWEEN.Easing.Back.Out, function () {
-            controlsAreMoving = false;
-            controlsAreCentered = false;
-          });
+    if (controls) {
+      if (videoPlaying && cameraLookingAtScreenRotationValue != undefined) {
+        if (!controlsAreMoving) {
+          if (camera.rotation.z < -1.4 && !controlsAreCentered) {
+            controlsAreMoving = true;
+            movement({x: screen1Mesh.position.x, y: screen1Mesh.position.y, z: screen1Mesh.position.z + 0.1}, mediaControlsContainer.position, 0, 500, TWEEN.Easing.Back.Out, function () {
+              controlsAreMoving = false;
+              controlsAreCentered = true;
+            });
+          } else if (camera.rotation.z > cameraLookingAtScreenRotationValue.rotation.z && controlsAreCentered && !controlsAreMoving) {
+            controlsAreMoving = true;
+            movement({x: screen1Mesh.position.x, y: screen1Mesh.position.y - 0.3, z: screen1Mesh.position.z + 0.1}, mediaControlsContainer.position, 0, 500, TWEEN.Easing.Back.Out, function () {
+              controlsAreMoving = false;
+              controlsAreCentered = false;
+            });
+          }
         }
-      }
-    } else if (video2Playing && cameraLookingAtScreenRotationValue != undefined) {
-      if (!controlsAreMoving) {
-        if (camera.rotation.z < -1.4 && !controlsAreCentered) {
-          controlsAreMoving = true;
-          movement({x: screen2Mesh.position.x, y: screen2Mesh.position.y, z: screen2Mesh.position.z + 0.1}, mediaControlsContainer.position, 0, 500, TWEEN.Easing.Back.Out, function () {
-            controlsAreMoving = false;
-            controlsAreCentered = true;
-          });
-        } else if (camera.rotation.z > cameraLookingAtScreenRotationValue.rotation.z && controlsAreCentered && !controlsAreMoving) {
-          controlsAreMoving = true;
-          movement({x: screen2Mesh.position.x, y: screen2Mesh.position.y - 0.3, z: screen2Mesh.position.z + 0.1}, mediaControlsContainer.position, 0, 500, TWEEN.Easing.Back.Out, function () {
-            controlsAreMoving = false;
-            controlsAreCentered = false;
-          });
+      } else if (video2Playing && cameraLookingAtScreenRotationValue != undefined) {
+        if (!controlsAreMoving) {
+          if (camera.rotation.z < -1.4 && !controlsAreCentered) {
+            controlsAreMoving = true;
+            movement({x: screen2Mesh.position.x, y: screen2Mesh.position.y, z: screen2Mesh.position.z + 0.1}, mediaControlsContainer.position, 0, 500, TWEEN.Easing.Back.Out, function () {
+              controlsAreMoving = false;
+              controlsAreCentered = true;
+            });
+          } else if (camera.rotation.z > cameraLookingAtScreenRotationValue.rotation.z && controlsAreCentered && !controlsAreMoving) {
+            controlsAreMoving = true;
+            movement({x: screen2Mesh.position.x, y: screen2Mesh.position.y - 0.3, z: screen2Mesh.position.z + 0.1}, mediaControlsContainer.position, 0, 500, TWEEN.Easing.Back.Out, function () {
+              controlsAreMoving = false;
+              controlsAreCentered = false;
+            });
+          }
         }
       }
     }
