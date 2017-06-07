@@ -209,6 +209,11 @@
   var min = -3, max = 3;
   var verticesArray = [];
   var particlesAnimation = true;
+  
+  var reticulumNear = 0.2;
+  var reticulumFar = 6;
+  var initialPosition = {x: -1.6, y: 1.8, z: -1.6};
+  var defaultFuseColor = 0x00fff6;
 
   $(document).ready(function () {
       // startLogoAnim();
@@ -219,9 +224,6 @@
       animate();
   });
 
-  var reticulumNear = 0.2;
-  var reticulumFar = 6;
-  var initialPosition = {x: -1.6, y: 1.8, z: -1.6};
   function initRender() {
     scene = new THREE.Scene();
     renderer = new THREE.WebGLRenderer({antialias: true, preserveDrawingBuffer: true, alpha: true});
@@ -261,7 +263,7 @@
       fuse: {
         visible: false,
         duration: 2,
-        color: 0x00fff6,
+        color: defaultFuseColor,
         innerRadius: 0.045,
         outerRadius: 0.06,
         vibrate: 100, //Set to 0 or [] to disable
@@ -559,6 +561,7 @@
     
     Reticulum.add( screen1Mesh, {
       reticleHoverColor: 0x00fff6,
+      fuseColor: 0x00fff6,
       fuseVisible: true,
       onGazeLong: function() {
         removeFromReticulum(screen1Mesh);
@@ -590,6 +593,7 @@
     
     Reticulum.add( screen2Mesh, {
       reticleHoverColor: 0x00fff6,
+      fuseColor: 0x00fff6,
       fuseVisible: true,
       onGazeLong: function() {
         removeFromReticulum(screen2Mesh);
@@ -672,6 +676,7 @@
 
     Reticulum.add( plane, {
       reticleHoverColor: 0x00fff6,
+      fuseColor: 0x00fff6,
       fuseVisible: true,
       onGazeOver: function() {
         if (this.material.color) this.material.color.setHex( 0xffcc00 );
@@ -788,6 +793,7 @@
 
     Reticulum.add( homeButton, {
       reticleHoverColor: 0x00fff6,
+      fuseColor: 0x00fff6,
       fuseVisible: true,
       onGazeOver: function() {
         changeScaleSingle(homeButton, 1.5);
@@ -839,6 +845,7 @@
 
     Reticulum.add( plane, {
       reticleHoverColor: 0x00fff6,
+      fuseColor: 0x00fff6,
       fuseVisible: true,
       onGazeLong: function() {
         removeMembers();
@@ -906,6 +913,7 @@
 
     Reticulum.add( plane, {
       reticleHoverColor: 0x00fff6,
+      fuseColor: 0x00fff6,
       fuseVisible: true,
       onGazeOver: function() {
         if (this.material.color) this.material.color.setHex( 0xffcc00 );
@@ -1026,14 +1034,15 @@
     });
     closeButtonMaterial.map.needsUpdate = true;
 
-    var scale = 0.3;
+    var scale = 0.2;
     var closeButtonMesh = new THREE.Mesh(new THREE.PlaneGeometry(scale, scale), closeButtonMaterial);
-    closeButtonMesh.position.set(1, 0.5, 0.1);
+    closeButtonMesh.position.set(1.2, 0.65, 0.1);
 
     Reticulum.add( closeButtonMesh, {
       reticleHoverColor: 0x00fff6,
       fuseDuration: 1,
-      fuseVisible: false,
+      fuseColor: 0xeb2348,
+      fuseVisible: true,
       onGazeLong: function() {
         if (!infoIsOpening) {
           removeInfoSection();
@@ -1059,12 +1068,13 @@
     });
     emailButtonMaterial.map.needsUpdate = true;
 
-    scale = 0.5;
+    scale = 0.3;
     var infoEmailButton = new THREE.Mesh(new THREE.PlaneGeometry(scale, scale), emailButtonMaterial);
-    infoEmailButton.position.set(-0.6, -0.7, 0.1);
+    infoEmailButton.position.set(-1, -0.6, 0.1);
 
     Reticulum.add( infoEmailButton, {
       reticleHoverColor: 0x00fff6,
+      fuseColor: 0x00fff6,
       fuseVisible: true,
       onGazeLong: function() {
       }
@@ -1079,10 +1089,11 @@
     calendarButtonMaterial.map.needsUpdate = true;
 
     var infoCalendarButton = new THREE.Mesh(new THREE.PlaneGeometry(scale, scale), calendarButtonMaterial);
-    infoCalendarButton.position.set(0, -0.7, 0.1);
+    infoCalendarButton.position.set(0, -0.6, 0.1);
 
     Reticulum.add( infoCalendarButton, {
       reticleHoverColor: 0x00fff6,
+      fuseColor: 0x00fff6,
       fuseVisible: true,
       onGazeLong: function() {
       }
@@ -1097,10 +1108,11 @@
     callButtonMaterial.map.needsUpdate = true;
 
     var infoCallButton = new THREE.Mesh(new THREE.PlaneGeometry(scale, scale), callButtonMaterial);
-    infoCallButton.position.set(0.6, -0.7, 0.1);
+    infoCallButton.position.set(1, -0.6, 0.1);
 
     Reticulum.add( infoCallButton, {
       reticleHoverColor: 0x00fff6,
+      fuseColor: 0x00fff6,
       fuseVisible: true,
       onGazeLong: function() {
       }
