@@ -309,6 +309,7 @@
     ambientLight = new THREE.AmbientLight(0xffffff);
     ambientLight.position.set(0, 1.2, 0);
     scene.add(ambientLight);
+    updateLabelSizes();
     
     buildShape();
     window.addEventListener('resize', onWindowResize, false);
@@ -745,7 +746,7 @@
   }
 
   function addTravelPoints() {
-    var locationPoints = [
+    var labelPoints = [
       {name: 'labelMaker', position: {x: -2.6, y: 1.2, z: -11}}, 
       {name: 'labelJefes', position: {x: -2.6, y: 1.2, z: 5}}, 
       {name: 'labelNobody', position: {x: -2.6, y: 1.2, z: 8.7}}, 
@@ -754,8 +755,8 @@
       {name: 'labelLabsResearch', position: {x: -2.6, y: 1.2, z: 1}}
     ];
 
-    for (var i = 0; i < locationPoints.length; i++) {
-      addLabel(locationPoints[i].name, locationPoints[i].position);
+    for (var i = 0; i < labelPoints.length; i++) {
+      addLabel(labelPoints[i].name, labelPoints[i].position);
     }
   }
 
@@ -810,6 +811,7 @@
 
   function goHome() {
     movement({x: initialPosition.x, y: initialPosition.y, z: initialPosition.z}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
+      updateLabelSizes();
       updateHomeButtonPosition();
       if (controls) controls.target.set(camera.position.x, camera.position.y, camera.position.z + 0.5);
     });
@@ -849,6 +851,7 @@
       fuseColor: 0x00fff6,
       fuseVisible: true,
       onGazeLong: function() {
+        changeScaleSingle(plane, 1);
         removeMembers();
         removeInfoSection();
         if (name === 'labelLabsResearch') {
@@ -862,17 +865,34 @@
         }
         if (name !== 'labelMaker') {
           movement({x: plane.position.x + 1, y: 1.8, z: plane.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
+            updateLabelSizes();
             updateHomeButtonPosition();
           });
           if (controls) controls.target.set(plane.position.x + 0.2, 2, plane.position.z);
         } else {
-          movement({x: -6, y: 1.8, z: -10}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
+          movement({x: -4, y: 1.8, z: -10}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
+            updateLabelSizes();
             updateHomeButtonPosition();
           });
-          if (controls) controls.target.set(-6, 2, -10);
+          if (controls) controls.target.set(-4, 2, -10);
         }
       }
     });
+  }
+
+  function updateLabelSizes() {
+    var labelArray = [researchLabel, radicalLabel, makerLabel, nobodyLabel, jefesLabel, comunicacionLabel];
+    var cameraPosition = camera.position;
+    var big = 4;
+    var normal = 1;
+    var threshold = 2;
+    for (var i = 0; i < labelArray.length; i++) {
+      if (distance(cameraPosition, labelArray[i].position) > threshold) {
+        changeScaleSingle(labelArray[i], big);
+      } else {
+        changeScaleSingle(labelArray[i], normal);
+      }
+    }
   }
 
   var rotWorldMatrix;
@@ -889,6 +909,7 @@
 
   var memberPlanes = [];
   function addMembers(members) {
+    memberPlanes = [];
     for (var i = 0; i < members.length; i++) {
       addMember(members[i], i);
     }
@@ -1372,6 +1393,13 @@
 
   function updateHomeButtonPosition() {
     movement({x: camera.position.x, y: 0.2, z: camera.position.z + 0.5}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
+  }
+
+  function distance(positionA, positionB) {
+    var difX = positionA.x-positionB.x;
+    var difY = positionA.y-positionB.y;
+    var difZ = positionA.z-positionB.z;
+    return Math.sqrt(difX*difX + difY*difY + difZ*difZ);
   }
 </script>
 </body>
