@@ -216,7 +216,7 @@
   
   var reticulumNear = 0.2;
   var reticulumFar = 7;
-  var initialPosition = {x: -1.6, y: 1.8, z: -11};
+  var initialPosition = {x: -1.6, y: 1.8, z: -10};
   var defaultFuseColor = 0x00fff6;
   var screensAdded = false;
 
@@ -677,11 +677,11 @@
           if (!wallMenuIsOpen) {
             var labelPoints = [
               {name: 'labelMaker', position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z}}, 
+              {name: 'labelLabsRadical', position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z}},
+              {name: 'labelLabsResearch', position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z}}, 
               {name: 'labelJefes', position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z}}, 
               {name: 'labelNobody', position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z}}, 
-              {name: 'labelComunicacion', position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z}}, 
-              {name: 'labelLabsRadical', position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z}},
-              {name: 'labelLabsResearch', position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z}},
+              {name: 'labelComunicacion', position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z}},
               {name: 'labelAgora', position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z}}
             ];
             distributeObjectsAcrossCircumference(wallMenu, labelPoints);
@@ -695,7 +695,7 @@
 
   function closeWallMenu() {
     wallMenuIsMoving = true;
-    var directAccessLabels = [researchLabelDirect, radicalLabelDirect, makerLabelDirect, nobodyLabelDirect, jefesLabelDirect, comunicacionLabelDirect, agoraLabelDirect];
+    var directAccessLabels = [makerLabelDirect, radicalLabelDirect, researchLabelDirect, jefesLabelDirect, nobodyLabelDirect, comunicacionLabelDirect, agoraLabelDirect];
     for (var i = 0; i < directAccessLabels.length; i++) {
       Reticulum.remove(directAccessLabels[i]);
       (function(ind) {
