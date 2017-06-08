@@ -707,22 +707,23 @@
   function checkDeviceOrientationAndCloseWallMenu() {
     var threshold = 60;
     var lowerLimit = deviceAlphaValueForWallMenu - threshold;
-    console.log('debug', 'lowerLimit: '+lowerLimit)
     if (lowerLimit < 0) {
       var diff = Math.abs(lowerLimit);
       lowerLimit = 360 - threshold - diff;
       console.log('debug', 'lowerLimit was negative, now it is ' + lowerLimit)
     }
     var upperLimit = deviceAlphaValueForWallMenu + threshold;
-    console.log('debug', 'upperLimit: '+upperLimit)
     if (upperLimit > 360) {
       var diff = Math.abs(360 - upperLimit);
       upperLimit = threshold + diff;
       console.log('debug', 'upperLimit was greater then 360, now it is ' + upperLimit)
     }
-    if (deviceAlphaValueForWallMenu < lowerLimit || deviceAlphaValueForWallMenu > upperLimit) {
-      closeWallMenu();
-    }
+//     if (deviceAlphaValueForWallMenu < lowerLimit || deviceAlphaValueForWallMenu > upperLimit) {
+//       closeWallMenu();
+//     }
+    console.log('debug', 'deviceAlphaValueForWallMenu: '+deviceAlphaValueForWallMenu)
+    console.log('debug', 'lowerLimit: '+lowerLimit)
+    console.log('debug', 'upperLimit: '+upperLimit)
   }
 
   function closeWallMenu() {
