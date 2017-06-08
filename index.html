@@ -680,12 +680,6 @@
       fuseColor: 0x660066,
       fuseDuration: 1,
       fuseVisible: true,
-      onGazeOver: function() {
-        if (controlsdevice) {
-          deviceAlphaValueForWallMenu = controlsdevice.deviceOrientation.alpha; // 0 <= deviceAlphaValueForWallMenu <= 360
-          console.log('debug', 'deviceAlphaValueForWallMenu ' + deviceAlphaValueForWallMenu);
-        }
-      },
       onGazeLong: function() {
         if (controlsdevice) {
           deviceAlphaValueForWallMenu = controlsdevice.deviceOrientation.alpha; // 0 <= deviceAlphaValueForWallMenu <= 360
