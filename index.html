@@ -706,7 +706,7 @@
   function checkDeviceOrientationAndCloseWallMenu() {
     console.log('debug', 'deviceAlphaValueForWallMenu ' + deviceAlphaValueForWallMenu);
     var threshold = 90;
-    var currentValue = controlsdevice.deviceOrientation.alpha;
+    var currentValue = controlsdevice.deviceOrientation.alpha * Math.PI / 180;
     var leftLimit;
     var rightLimit;
     if (deviceAlphaValueForWallMenu > 0 && deviceAlphaValueForWallMenu < threshold) {
