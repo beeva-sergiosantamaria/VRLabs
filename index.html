@@ -258,6 +258,7 @@
       proximity: false,
       near: reticulumNear, //near factor of the raycaster (shouldn't be negative and should be smaller than the far property)
       far: reticulumFar,
+      vibrate: 0,
       reticle: {
         visible: true,
         restPoint: 1, //Defines the reticle's resting point when no object has been targeted
@@ -271,6 +272,12 @@
           speed: 5,
           vibrate: 0 //Set to 0 or [] to disable
         }
+      },
+      click: {
+        vibrate: 0
+      },
+      hover: {
+        vibrate: 0
       },
       fuse: {
         visible: false,
