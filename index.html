@@ -720,6 +720,10 @@
     if (rightLimit > 359) {
       rightLimit -= 359;
     }
+    if (leftLimit > rightLimit) {
+      console.log('debug', 'swapped')
+      rightLimit = [leftLimit, leftLimit = rightLimit][0];
+    }
 //    if (deviceAlphaValueForWallMenu > 0) {
 //      leftLimit = deviceAlphaValueForWallMenu - threshold;
 //      if (leftLimit < 0) {
