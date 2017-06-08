@@ -657,6 +657,7 @@
   var wallMenu;
   var wallMenuIsMoving = false;
   var wallMenuIsOpen = false;
+  var deviceAlphaValueForWallMenu;
   function addWallMenu() {
     var img = new THREE.MeshBasicMaterial({
       map: textureLoader.load("images/beevaLabs" + extension),
@@ -679,6 +680,9 @@
       fuseColor: 0x660066,
       fuseDuration: 1,
       fuseVisible: true,
+      onGazeOver: function() {
+        if (controlsdevice) deviceAlphaValueForWallMenu = controlsdevice.deviceOrientation.alpha;
+      },
       onGazeLong: function() {
         if (!wallMenuIsMoving) {
           if (!wallMenuIsOpen) {
@@ -698,6 +702,27 @@
         }
       }
     });
+  }
+
+  function checkDeviceOrientationAndCloseWallMenu() {
+    var threshold = 30;
+    var lowerLimit = deviceAlphaValueForWallMenu - threshold;
+    console.log('debug', 'lowerLimit: '+lowerLimit)
+    if (lowerLimit < 0) {
+      var diff = Math.abs(lowerLimit);
+      lowerLimit = 360 - threshold - diff;
+      console.log('debug', 'lowerLimit was negative, now it is ' + lowerLimit)
+    }
+    var upperLimit = deviceAlphaValueForWallMenu + threshold;
+    console.log('debug', 'upperLimit: '+upperLimit)
+    if (upperLimit > 360) {
+      var diff = Math.abs(360 - upperLimit);
+      upperLimit = threshold + diff;
+      console.log('debug', 'upperLimit was greater then 360, now it is ' + upperLimit)
+    }
+    if (deviceAlphaValueForWallMenu < lowerLimit || deviceAlphaValueForWallMenu > upperLimit) {
+      closeWallMenu();
+    }
   }
 
   function closeWallMenu() {
@@ -1385,9 +1410,8 @@
         homeButton.lookAt(camera.position);
       }
       if (controlsdevice) {
-        // homeButton.rotation.z = controlsdevice.deviceOrientation.alpha * Math.PI / 180 - 360;
         homeButton.rotation.z = 180 - controlsdevice.deviceOrientation.alpha * Math.PI / 180 + 10;
-        console.log(controlsdevice.deviceOrientation.alpha)
+        if (wallMenuIsOpen) checkDeviceOrientationAndCloseWallMenu();
       }
     }
 
