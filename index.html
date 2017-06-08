@@ -723,6 +723,9 @@
     console.log('debug', 'leftLimit ' + leftLimit);
     console.log('debug', 'rightLimit ' + rightLimit);
     var currentValue = controlsdevice.deviceOrientation.alpha - 180;
+    if (leftLimit > 0 && rightLimit > 0) {
+      if (currentValue < 0) currentValue = Math.abs(currentValue);
+    }
     console.log('debug', 'currentValue ' + currentValue);
     if (currentValue < leftLimit || currentValue > rightLimit) {
       console.log('debug', 'closing menu at value' + currentValue);
