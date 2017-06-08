@@ -220,22 +220,35 @@
   var defaultFuseColor = 0x00fff6;
   var screensAdded = false;
 
+  var acceptVideo = document.getElementById('allowVideoScreen');
+  acceptVideo.onclick = function(){
+    console.log('touch');
+    if (screensAdded) {
+      console.log('it should work now');
+      $('#allowVideoScreen').css('display', 'none');
+      video.play();
+      video2.play();
+      video.pause();
+      video2.pause();
+    }
+  }
+
   $(document).ready(function () {
       // startLogoAnim();
       $('#container').addClass('displayOn');
       $('#logoBox').css('display', 'none');
       $('#fireWorks').css('display', 'none');
-      $('#allowVideoScreen').on({ 'touchstart' : function(){ 
-        console.log('touch');
-        if (screensAdded) {
-          console.log('it should work now');
-          $('#allowVideoScreen').css('display', 'none');
-          video.play();
-          video2.play();
-          video.pause();
-          video2.pause();
-        }
-      } });
+//      $('#allowVideoScreen').on({ 'touchstart' : function(){ 
+//        console.log('touch');
+//        if (screensAdded) {
+//          console.log('it should work now');
+//          $('#allowVideoScreen').css('display', 'none');
+//          video.play();
+//          video2.play();
+//          video.pause();
+//          video2.pause();
+//        }
+//      } });
       initRender();
       animate();
   });
