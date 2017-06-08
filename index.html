@@ -707,47 +707,49 @@
 
   function checkDeviceOrientationAndCloseWallMenu() {
     // console.log('debug', 'deviceAlphaValueForWallMenu ' + deviceAlphaValueForWallMenu);
-    console.log('debug', 'controlsdevice.deviceOrientation.alpha ' + controlsdevice.deviceOrientation.alpha);
-    var threshold = 90;
-    var currentValue = controlsdevice.deviceOrientation.alpha;
-    // console.log('debug', 'currentValue' + currentValue);
-    var leftLimit;
-    var rightLimit;
-    if (deviceAlphaValueForWallMenu > 0 && deviceAlphaValueForWallMenu < threshold) {
-//      console.log('debug', 'deviceAlphaValueForWallMenu cerca de 0: ' + deviceAlphaValueForWallMenu);
-      leftLimit = 359 - (threshold - deviceAlphaValueForWallMenu);
-      rightLimit = deviceAlphaValueForWallMenu + threshold;
-//      console.log('debug', 'leftLimit ' + leftLimit);
-//      console.log('debug', 'rightLimit ' + rightLimit);
-      if (currentValue > rightLimit && currentValue < leftLimit) {
-//        console.log('debug', 'closing menu at value ' + currentValue);
-        closeWallMenu();
-      }
-    } else if (deviceAlphaValueForWallMenu > 0 && deviceAlphaValueForWallMenu > (359 - threshold)) {
-//      console.log('debug', 'deviceAlphaValueForWallMenu cerca de 359: ' + deviceAlphaValueForWallMenu);
-      leftLimit = deviceAlphaValueForWallMenu - threshold;
-      rightLimit = deviceAlphaValueForWallMenu - 359 + threshold;
-//      console.log('debug', 'leftLimit ' + leftLimit);
-//      console.log('debug', 'rightLimit ' + rightLimit);
-      if (currentValue > rightLimit && currentValue < leftLimit) {
-//        console.log('debug', 'closing menu at value ' + currentValue);
-        closeWallMenu();
-      }
-    } else {
-//      console.log('debug', 'caso general');
-      leftLimit = deviceAlphaValueForWallMenu - threshold;
-      rightLimit = deviceAlphaValueForWallMenu + threshold;
-//      console.log('debug', 'leftLimit ' + leftLimit);
-//      console.log('debug', 'rightLimit ' + rightLimit);
-      if (currentValue < leftLimit || currentValue > rightLimit) {
-//        console.log('debug', 'closing menu at value ' + currentValue);
-        closeWallMenu();
-      }
-    }
+//    console.log('debug', 'controlsdevice.deviceOrientation.alpha ' + controlsdevice.deviceOrientation.alpha);
+//    var threshold = 90;
+//    var currentValue = controlsdevice.deviceOrientation.alpha;
+//    // console.log('debug', 'currentValue' + currentValue);
+//    var leftLimit;
+//    var rightLimit;
+//    if (deviceAlphaValueForWallMenu > 0 && deviceAlphaValueForWallMenu < threshold) {
+////      console.log('debug', 'deviceAlphaValueForWallMenu cerca de 0: ' + deviceAlphaValueForWallMenu);
+//      leftLimit = 359 - (threshold - deviceAlphaValueForWallMenu);
+//      rightLimit = deviceAlphaValueForWallMenu + threshold;
+////      console.log('debug', 'leftLimit ' + leftLimit);
+////      console.log('debug', 'rightLimit ' + rightLimit);
+//      if (currentValue > rightLimit && currentValue < leftLimit) {
+////        console.log('debug', 'closing menu at value ' + currentValue);
+//        closeWallMenu();
+//      }
+//    } else if (deviceAlphaValueForWallMenu > 0 && deviceAlphaValueForWallMenu > (359 - threshold)) {
+////      console.log('debug', 'deviceAlphaValueForWallMenu cerca de 359: ' + deviceAlphaValueForWallMenu);
+//      leftLimit = deviceAlphaValueForWallMenu - threshold;
+//      rightLimit = deviceAlphaValueForWallMenu - 359 + threshold;
+////      console.log('debug', 'leftLimit ' + leftLimit);
+////      console.log('debug', 'rightLimit ' + rightLimit);
+//      if (currentValue > rightLimit && currentValue < leftLimit) {
+////        console.log('debug', 'closing menu at value ' + currentValue);
+//        closeWallMenu();
+//      }
+//    } else {
+////      console.log('debug', 'caso general');
+//      leftLimit = deviceAlphaValueForWallMenu - threshold;
+//      rightLimit = deviceAlphaValueForWallMenu + threshold;
+////      console.log('debug', 'leftLimit ' + leftLimit);
+////      console.log('debug', 'rightLimit ' + rightLimit);
+//      if (currentValue < leftLimit || currentValue > rightLimit) {
+////        console.log('debug', 'closing menu at value ' + currentValue);
+//        closeWallMenu();
+//      }
+//    }
     
 //    console.log('debug', 'deviceAlphaValueForWallMenu: '+deviceAlphaValueForWallMenu)
 //    console.log('debug', 'leftLimit: '+leftLimit)
 //    console.log('debug', 'rightLimit: '+rightLimit)
+    var distanceToCenter = distance(wallMenu, cameraObject3d);
+    console.log('distanceToCenter', distanceToCenter)
   }
 
   function closeWallMenu() {
@@ -768,6 +770,7 @@
   }
 
   var researchLabelDirect, radicalLabelDirect, makerLabelDirect, nobodyLabelDirect, jefesLabelDirect, comunicacionLabelDirect, agoraLabelDirect;
+  var cameraObject3d;
   function distributeObjectsAcrossCircumference(containerObject, objectsArray) {
     wallMenuIsMoving = true;
     var numElements = objectsArray.length;
@@ -782,6 +785,8 @@
       angle += step;
       addDirectAccess(containerObject, objectsArray[i], y, z, i);
     }
+    cameraObject3d = new THREE.Object3D();
+    camera.add(object3d);
     setTimeout(function () {
       wallMenuIsMoving = false;
       wallMenuIsOpen = true;
