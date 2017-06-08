@@ -314,6 +314,7 @@
     addTravelPoints();
     ambientLight = new THREE.AmbientLight(0xffffff);
     ambientLight.position.set(0, 1.2, 0);
+    addWallMenu();
     scene.add(ambientLight);
     updateLabelSizes();
     
@@ -646,6 +647,177 @@
     return result;
   }
 
+  var wallMenu;
+  var wallMenuIsMoving = false;
+  var wallMenuIsOpen = false;
+  function addWallMenu() {
+    var img = new THREE.MeshBasicMaterial({
+      map: textureLoader.load("images/beevaLabs" + extension),
+      transparent: true,
+      side: THREE.DoubleSide,
+      color: 0xffffff
+    });
+    img.map.needsUpdate = true;
+
+    var scale = 0.4;
+    wallMenu = new THREE.Mesh(new THREE.PlaneGeometry(scale, scale), img);
+    wallMenu.name = name;
+    wallMenu.position.set(0, 1.5, -10);
+    wallMenu.rotateY(-Math.PI / 2);
+    
+    scene.add(wallMenu);
+
+    Reticulum.add( wallMenu, {
+      reticleHoverColor: 0xfdff00,
+      fuseColor: 0x660066,
+      fuseDuration: 1,
+      fuseVisible: true,
+      onGazeLong: function() {
+        if (!wallMenuIsMoving) {
+          if (!wallMenuIsOpen) {
+            var labelPoints = [
+              {name: 'labelMaker', position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z}}, 
+              {name: 'labelJefes', position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z}}, 
+              {name: 'labelNobody', position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z}}, 
+              {name: 'labelComunicacion', position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z}}, 
+              {name: 'labelLabsRadical', position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z}},
+              {name: 'labelLabsResearch', position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z}},
+              {name: 'labelAgora', position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z}}
+            ];
+            distributeObjectsAcrossCircumference(wallMenu, labelPoints);
+          } else {
+            closeWallMenu();
+          }
+        }
+      }
+    });
+  }
+
+  function closeWallMenu() {
+    wallMenuIsMoving = true;
+    var directAccessLabels = [researchLabelDirect, radicalLabelDirect, makerLabelDirect, nobodyLabelDirect, jefesLabelDirect, comunicacionLabelDirect, agoraLabelDirect];
+    for (var i = 0; i < directAccessLabels.length; i++) {
+      Reticulum.remove(directAccessLabels[i]);
+      (function(ind) {
+        setTimeout(function(){
+          scene.remove(directAccessLabels[ind]);
+          if (ind == directAccessLabels.length - 1) {
+            wallMenuIsOpen = false;
+            wallMenuIsMoving = false;
+          }
+        }, 100 * ind);
+      })(i);
+    }
+  }
+
+  var researchLabelDirect, radicalLabelDirect, makerLabelDirect, nobodyLabelDirect, jefesLabelDirect, comunicacionLabelDirect, agoraLabelDirect;
+  function distributeObjectsAcrossCircumference(containerObject, objectsArray) {
+    wallMenuIsMoving = true;
+    var numElements = objectsArray.length;
+    var angle = 0;
+    var step = (2*Math.PI) / numElements;
+    var container_height = containerObject.geometry.parameters.height;
+    var container_width = containerObject.geometry.parameters.width;
+    var radius = 0.5;
+    for(var i = 0; i < numElements; i++) {
+      var z = radius * Math.cos(angle);
+      var y = radius * Math.sin(angle);
+      angle += step;
+      addDirectAccess(containerObject, objectsArray[i], y, z, i);
+    }
+    wallMenuIsMoving = false;
+    wallMenuIsOpen = true;
+  }
+
+  function addDirectAccess(containerObject, object, yVal, zVal, index) {
+    var img = new THREE.MeshBasicMaterial({
+      map: textureLoader.load("images/"+ object.name + extension),
+      transparent: true,
+      side: THREE.DoubleSide,
+      color: 0xffffff
+    });
+    img.map.needsUpdate = false;
+    var scale = 0.5;
+    var plane = new THREE.Mesh(new THREE.PlaneGeometry(scale, scale/4), img);
+    plane.name = object.name;
+    plane.position.set(containerObject.position.x, containerObject.position.y, containerObject.position.z);
+    plane.rotateY(-Math.PI / 2);
+    if (object.name === 'labelLabsResearch') {
+      researchLabelDirect = plane;
+    } else if (object.name === 'labelLabsRadical') {
+      radicalLabelDirect = plane;
+    } else if (object.name === 'labelMaker') {
+      makerLabelDirect = plane;
+    } else if (object.name === 'labelJefes') {
+      jefesLabelDirect = plane;
+    } else if (object.name === 'labelNobody') {
+      nobodyLabelDirect = plane;
+    } else if (object.name === 'labelComunicacion') {
+      comunicacionLabelDirect = plane;
+    } else if (object.name === 'labelAgora') {
+      agoraLabelDirect = plane;
+    }
+    scene.add(plane);
+    movement({x: plane.position.x, y: containerObject.position.y + yVal, z: containerObject.position.z + zVal}, plane.position, 100*index, 500, TWEEN.Easing.Quartic.Out);
+    
+    Reticulum.add( plane, {
+      reticleHoverColor: 0xfdff00,
+      fuseColor: 0x660066,
+      fuseVisible: true,
+      onGazeLong: function() {
+        closeWallMenu();
+        if (object.name === 'labelLabsResearch') {
+          movement({x: researchLabel.position.x + 1, y: 1.8, z: researchLabel.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
+            addMembers(researchMembers);
+            updateLabelSizes();
+            updateHomeButtonPosition();
+          });
+          if (controls) controls.target.set(researchLabel.position.x + 0.2, 2, researchLabel.position.z);
+        } else if (object.name === 'labelLabsRadical') {
+          movement({x: radicalLabel.position.x + 1, y: 1.8, z: radicalLabel.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
+            addMembers(radicalMembers);
+            updateLabelSizes();
+            updateHomeButtonPosition();
+          });
+          if (controls) controls.target.set(radicalLabel.position.x + 0.2, 2, radicalLabel.position.z);
+        } else if (object.name === 'labelJefes') {
+          movement({x: jefesLabel.position.x + 1, y: 1.8, z: jefesLabel.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
+            addMembers(jefesAndVenturesMembers);
+            updateLabelSizes();
+            updateHomeButtonPosition();
+          });
+          if (controls) controls.target.set(jefesLabel.position.x + 0.2, 2, jefesLabel.position.z);
+        } else if (object.name === 'labelComunicacion') {
+          movement({x: comunicacionLabel.position.x + 1, y: 1.8, z: comunicacionLabel.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
+            addMembers(comunicacionMembers);
+            updateLabelSizes();
+            updateHomeButtonPosition();
+          });
+          if (controls) controls.target.set(comunicacionLabel.position.x + 0.2, 2, comunicacionLabel.position.z);
+        } else if (object.name === 'labelNobody') {
+          movement({x: nobodyLabel.position.x + 1, y: 1.8, z: nobodyLabel.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
+            updateLabelSizes();
+            updateHomeButtonPosition();
+          });
+          if (controls) controls.target.set(nobodyLabel.position.x + 0.2, 2, nobodyLabel.position.z);
+        } else if (object.name === 'labelMaker') {
+          movement({x: -4, y: 1.8, z: -10}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
+            updateLabelSizes();
+            updateHomeButtonPosition();
+          });
+          if (controls) controls.target.set(-4, 2, -10);
+        } else if (object.name === 'labelAgora') {
+          movement({x: 3, y: 1.8, z: 6}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
+            updateLabelSizes();
+            updateHomeButtonPosition();
+            changeScaleSingle(agoraLabel, 1);
+          });
+          if (controls) controls.target.set(3, 2, 6);
+        }
+      }
+    });
+  }
+
   function addTravelPoints() {
     var labelPoints = [
       {name: 'labelMaker', position: {x: -2.6, y: 1.2, z: -11}}, 
@@ -653,7 +825,8 @@
       {name: 'labelNobody', position: {x: -2.6, y: 1.2, z: 8.7}}, 
       {name: 'labelComunicacion', position: {x: -2.6, y: 1.2, z: 12.7}}, 
       {name: 'labelLabsRadical', position: {x: -3.1, y: 1.2, z: -5}},
-      {name: 'labelLabsResearch', position: {x: -2.6, y: 1.2, z: 1}}
+      {name: 'labelLabsResearch', position: {x: -2.6, y: 1.2, z: 1}},
+      {name: 'labelAgora', position: {x: 2, y: 1.2, z: 1}}
     ];
 
     for (var i = 0; i < labelPoints.length; i++) {
@@ -718,7 +891,7 @@
     removeMembers();
   }
 
-  var researchLabel, radicalLabel, makerLabel, nobodyLabel, jefesLabel, comunicacionLabel;
+  var researchLabel, radicalLabel, makerLabel, nobodyLabel, jefesLabel, comunicacionLabel, agoraLabel;
   function addLabel(name, position) {
     var img = new THREE.MeshBasicMaterial({
       map: textureLoader.load("images/"+ name + extension),
@@ -743,6 +916,8 @@
       nobodyLabel = plane;
     } else if (name === 'labelComunicacion') {
       comunicacionLabel = plane;
+    } else if (name === 'labelAgora') {
+      agoraLabel = plane;
     }
     scene.add(plane);
 
@@ -764,11 +939,20 @@
           addMembers(comunicacionMembers);
         }
         if (name !== 'labelMaker') {
-          movement({x: plane.position.x + 1, y: 1.8, z: plane.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
-            updateLabelSizes();
-            updateHomeButtonPosition();
-          });
-          if (controls) controls.target.set(plane.position.x + 0.2, 2, plane.position.z);
+          if (name === 'labelAgora') {
+            movement({x: 3, y: 1.8, z: 6}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
+              updateLabelSizes();
+              updateHomeButtonPosition();
+              changeScaleSingle(agoraLabel, 1);
+            });
+            if (controls) controls.target.set(3, 2, 6);
+          } else {
+            movement({x: plane.position.x + 1, y: 1.8, z: plane.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
+              updateLabelSizes();
+              updateHomeButtonPosition();
+            });
+            if (controls) controls.target.set(plane.position.x + 0.2, 2, plane.position.z);
+          }
         } else {
           movement({x: -4, y: 1.8, z: -10}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
             updateLabelSizes();
@@ -781,7 +965,7 @@
   }
 
   function updateLabelSizes() {
-    var labelArray = [researchLabel, radicalLabel, makerLabel, nobodyLabel, jefesLabel, comunicacionLabel];
+    var labelArray = [researchLabel, radicalLabel, makerLabel, nobodyLabel, jefesLabel, comunicacionLabel, agoraLabel];
     var cameraPosition = camera.position;
     var big = 4;
     var normal = 1;
@@ -1184,6 +1368,9 @@
     }
     if (comunicacionLabel !== undefined) {
       comunicacionLabel.lookAt(camera.position);
+    }
+    if (agoraLabel !== undefined) {
+      agoraLabel.lookAt(camera.position);
     }
     if (homeButton !== undefined) {
       if (controls) {
