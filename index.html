@@ -721,7 +721,7 @@
       rightLimit = deviceAlphaValueForWallMenu + threshold;
       console.log('debug', 'leftLimit ' + leftLimit);
       console.log('debug', 'rightLimit ' + rightLimit);
-      if (currentValue > rightLimit || currentValue < leftLimit) {
+      if (currentValue > rightLimit || leftLimit - currentValue < threshold) {
         console.log('debug', 'closing menu at value ' + currentValue);
         closeWallMenu();
       }
