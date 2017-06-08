@@ -708,21 +708,23 @@
   }
 
   function checkDeviceOrientationAndCloseWallMenu() {
-    console.log('debug', 'deviceAlphaValueForWallMenu ' + deviceAlphaValueForWallMenu);
+    console.log('debug', 'controlsdevice.deviceOrientation.alpha ' + controlsdevice.deviceOrientation.alpha);
     var threshold = 60;
     var leftLimit = deviceAlphaValueForWallMenu - threshold;
+    console.log('debug', 'leftLimit ' + leftLimit);
 //    if (leftLimit < 0) {
 //      var diff = Math.abs(leftLimit);
 //      leftLimit = 360 - threshold - diff;
 //      console.log('debug', 'leftLimit was negative, now it is ' + leftLimit)
 //    }
     var rightLimit = deviceAlphaValueForWallMenu + threshold;
+    console.log('debug', 'rightLimit ' + rightLimit);
 //    if (rightLimit > 360) {
 //      var diff = Math.abs(360 - rightLimit);
 //      rightLimit = threshold + diff;
 //      console.log('debug', 'rightLimit was greater then 360, now it is ' + rightLimit)
 //    }
-     if (deviceAlphaValueForWallMenu < leftLimit || deviceAlphaValueForWallMenu > rightLimit) {
+     if (controlsdevice.deviceOrientation.alpha < leftLimit || controlsdevice.deviceOrientation.alpha > rightLimit) {
        closeWallMenu();
      }
 //    console.log('debug', 'deviceAlphaValueForWallMenu: '+deviceAlphaValueForWallMenu)
