@@ -718,12 +718,12 @@
       upperLimit = threshold + diff;
       console.log('debug', 'upperLimit was greater then 360, now it is ' + upperLimit)
     }
-//     if (deviceAlphaValueForWallMenu < lowerLimit || deviceAlphaValueForWallMenu > upperLimit) {
-//       closeWallMenu();
-//     }
-    console.log('debug', 'deviceAlphaValueForWallMenu: '+deviceAlphaValueForWallMenu)
-    console.log('debug', 'lowerLimit: '+lowerLimit)
-    console.log('debug', 'upperLimit: '+upperLimit)
+     if (deviceAlphaValueForWallMenu > lowerLimit || deviceAlphaValueForWallMenu < upperLimit) {
+       closeWallMenu();
+     }
+//    console.log('debug', 'deviceAlphaValueForWallMenu: '+deviceAlphaValueForWallMenu)
+//    console.log('debug', 'lowerLimit: '+lowerLimit)
+//    console.log('debug', 'upperLimit: '+upperLimit)
   }
 
   function closeWallMenu() {
