@@ -726,6 +726,7 @@
     var currentValue = controlsdevice.deviceOrientation.alpha - 180;
     console.log('debug', 'currentValue ' + currentValue);
     if (currentValue < leftLimit || currentValue > rightLimit) {
+      console.log('debug', 'closing menu at value' + currentValue);
       closeWallMenu();
     }
 //    console.log('debug', 'deviceAlphaValueForWallMenu: '+deviceAlphaValueForWallMenu)
