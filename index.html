@@ -786,10 +786,18 @@
       angle += step;
       addDirectAccess(containerObject, objectsArray[i], y, z, i);
     }
-    cameraObject3d = new THREE.Object3D();
+    var img = new THREE.MeshBasicMaterial({
+      map: textureLoader.load("images/home_button" + extension),
+      transparent: true,
+      color: 0xffffff
+    });
+    img.map.needsUpdate = true;
+
+    var scale = 0.6;
+    cameraObject3d = new THREE.Mesh(new THREE.PlaneGeometry(scale, scale), img);
     cameraObject3d.position.set(0,0,0);
+    cameraObject3d.visible = false;
     camera.add(cameraObject3d);
-    console.log('distanceToCenter')
     setTimeout(function () {
       wallMenuIsMoving = false;
       wallMenuIsOpen = true;
