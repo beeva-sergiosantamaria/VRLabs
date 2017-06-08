@@ -681,7 +681,10 @@
       fuseDuration: 1,
       fuseVisible: true,
       onGazeOver: function() {
-        if (controlsdevice) deviceAlphaValueForWallMenu = controlsdevice.deviceOrientation.alpha;
+        if (controlsdevice) {
+          deviceAlphaValueForWallMenu = controlsdevice.deviceOrientation.alpha - 180; // -180 <= deviceAlphaValueForWallMenu <= 180
+          console.log('debug', 'deviceAlphaValueForWallMenu ' + deviceAlphaValueForWallMenu);
+        }
       },
       onGazeLong: function() {
         if (!wallMenuIsMoving) {
@@ -705,25 +708,26 @@
   }
 
   function checkDeviceOrientationAndCloseWallMenu() {
+    console.log('debug', 'deviceAlphaValueForWallMenu ' + deviceAlphaValueForWallMenu);
     var threshold = 60;
-    var lowerLimit = deviceAlphaValueForWallMenu - threshold;
-    if (lowerLimit < 0) {
-      var diff = Math.abs(lowerLimit);
-      lowerLimit = 360 - threshold - diff;
-      console.log('debug', 'lowerLimit was negative, now it is ' + lowerLimit)
-    }
-    var upperLimit = deviceAlphaValueForWallMenu + threshold;
-    if (upperLimit > 360) {
-      var diff = Math.abs(360 - upperLimit);
-      upperLimit = threshold + diff;
-      console.log('debug', 'upperLimit was greater then 360, now it is ' + upperLimit)
-    }
-     if (deviceAlphaValueForWallMenu > lowerLimit || deviceAlphaValueForWallMenu < upperLimit) {
+    var leftLimit = deviceAlphaValueForWallMenu - threshold;
+//    if (leftLimit < 0) {
+//      var diff = Math.abs(leftLimit);
+//      leftLimit = 360 - threshold - diff;
+//      console.log('debug', 'leftLimit was negative, now it is ' + leftLimit)
+//    }
+    var rightLimit = deviceAlphaValueForWallMenu + threshold;
+//    if (rightLimit > 360) {
+//      var diff = Math.abs(360 - rightLimit);
+//      rightLimit = threshold + diff;
+//      console.log('debug', 'rightLimit was greater then 360, now it is ' + rightLimit)
+//    }
+     if (deviceAlphaValueForWallMenu < leftLimit || deviceAlphaValueForWallMenu > rightLimit) {
        closeWallMenu();
      }
 //    console.log('debug', 'deviceAlphaValueForWallMenu: '+deviceAlphaValueForWallMenu)
-//    console.log('debug', 'lowerLimit: '+lowerLimit)
-//    console.log('debug', 'upperLimit: '+upperLimit)
+//    console.log('debug', 'leftLimit: '+leftLimit)
+//    console.log('debug', 'rightLimit: '+rightLimit)
   }
 
   function closeWallMenu() {
