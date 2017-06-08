@@ -36,7 +36,7 @@ var Reticulum = (function () {
     }
 
     //Vibrate
-    var vibrate = navigator.vibrate ? navigator.vibrate.bind(navigator) : function(){};
+    // var vibrate = navigator.vibrate ? navigator.vibrate.bind(navigator) : function(){};
 
     //Fuse
     fuse.initiate = function( options ) {
@@ -44,7 +44,7 @@ var Reticulum = (function () {
 
         this.visible        = parameters.visible            !== false; //default to true;
         this.globalDuration = parameters.duration           ||  2.5;
-        this.vibratePattern = parameters.vibrate            ||  100;
+        this.vibratePattern = parameters.vibrate            ||  0;
         this.color          = parameters.color              ||  0x00fff6;
         this.innerRadius    = parameters.innerRadius        ||  reticle.innerRadiusTo;
         this.outerRadius    = parameters.outerRadius        ||  reticle.outerRadiusTo;
@@ -149,10 +149,10 @@ var Reticulum = (function () {
         this.innerRadiusTo      = parameters.hover.innerRadius  || 0.02;
         this.outerRadiusTo      = parameters.hover.outerRadius  || 0.024;
         this.globalColorTo      = parameters.hover.color        || this.color;
-        this.vibrateHover       = parameters.hover.vibrate      || 50;
+        this.vibrateHover       = parameters.hover.vibrate      || 0;
         this.hit                = false;
         //Click
-        this.vibrateClick       = parameters.click.vibrate      || 50;
+        this.vibrateClick       = parameters.click.vibrate      || 0;
         //Animation options
         this.speed              = parameters.hover.speed        || 5;
         this.moveSpeed          = 0;
@@ -417,7 +417,7 @@ var Reticulum = (function () {
 
         //Reticle
         //Vibrate
-        vibrate( reticle.vibrateHover );
+        // vibrate( reticle.vibrateHover );
         //Does object have an action assigned to it?
         if (threeObject.onGazeOver != null) {
             threeObject.onGazeOver();
@@ -448,7 +448,7 @@ var Reticulum = (function () {
         //Fuse
         if( gazeTime >= fuse.duration && !fuse.active ) {
             //Vibrate
-            vibrate( fuse.vibratePattern );
+            // vibrate( fuse.vibratePattern );
             //Does object have an action assigned to it?
             if (threeObject.onGazeLong != null) {
                 threeObject.onGazeLong();
