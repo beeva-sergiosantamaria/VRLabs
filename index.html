@@ -708,7 +708,6 @@
   }
 
   function checkDeviceOrientationAndCloseWallMenu() {
-    console.log('debug', 'controlsdevice.deviceOrientation.alpha ' + controlsdevice.deviceOrientation.alpha);
     var threshold = 60;
     var leftLimit = deviceAlphaValueForWallMenu - threshold;
     console.log('debug', 'leftLimit ' + leftLimit);
@@ -725,6 +724,7 @@
 //      console.log('debug', 'rightLimit was greater then 360, now it is ' + rightLimit)
 //    }
     var currentValue = controlsdevice.deviceOrientation.alpha - 180;
+    console.log('debug', 'currentValue ' + currentValue);
     if (currentValue < leftLimit || currentValue > rightLimit) {
       closeWallMenu();
     }
