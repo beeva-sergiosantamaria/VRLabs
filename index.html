@@ -722,7 +722,9 @@
     }
     if (leftLimit > rightLimit) {
       console.log('debug', 'swapped')
-      rightLimit = [leftLimit, leftLimit = rightLimit][0];
+      // rightLimit = [leftLimit, leftLimit = rightLimit][0];
+      leftLimit = 360 - leftLimit;
+      rightLimit = 360 - rightLimit;
     }
 //    if (deviceAlphaValueForWallMenu > 0) {
 //      leftLimit = deviceAlphaValueForWallMenu - threshold;
