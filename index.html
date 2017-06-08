@@ -774,35 +774,35 @@
       onGazeLong: function() {
         closeWallMenu();
         if (object.name === 'labelLabsResearch') {
-          movement({x: researchLabel.position.x + 1, y: 1.8, z: researchLabel.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
+          movement({x: researchLabel.position.x + 1.6, y: 1.8, z: researchLabel.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
             addMembers(researchMembers);
             updateLabelSizes();
             updateHomeButtonPosition();
           });
           if (controls) controls.target.set(researchLabel.position.x + 0.2, 2, researchLabel.position.z);
         } else if (object.name === 'labelLabsRadical') {
-          movement({x: radicalLabel.position.x + 1, y: 1.8, z: radicalLabel.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
+          movement({x: radicalLabel.position.x + 1.6, y: 1.8, z: radicalLabel.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
             addMembers(radicalMembers);
             updateLabelSizes();
             updateHomeButtonPosition();
           });
           if (controls) controls.target.set(radicalLabel.position.x + 0.2, 2, radicalLabel.position.z);
         } else if (object.name === 'labelJefes') {
-          movement({x: jefesLabel.position.x + 1, y: 1.8, z: jefesLabel.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
+          movement({x: jefesLabel.position.x + 1.6, y: 1.8, z: jefesLabel.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
             addMembers(jefesAndVenturesMembers);
             updateLabelSizes();
             updateHomeButtonPosition();
           });
           if (controls) controls.target.set(jefesLabel.position.x + 0.2, 2, jefesLabel.position.z);
         } else if (object.name === 'labelComunicacion') {
-          movement({x: comunicacionLabel.position.x + 1, y: 1.8, z: comunicacionLabel.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
+          movement({x: comunicacionLabel.position.x + 1.6, y: 1.8, z: comunicacionLabel.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
             addMembers(comunicacionMembers);
             updateLabelSizes();
             updateHomeButtonPosition();
           });
           if (controls) controls.target.set(comunicacionLabel.position.x + 0.2, 2, comunicacionLabel.position.z);
         } else if (object.name === 'labelNobody') {
-          movement({x: nobodyLabel.position.x + 1, y: 1.8, z: nobodyLabel.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
+          movement({x: nobodyLabel.position.x + 1.6, y: 1.8, z: nobodyLabel.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
             updateLabelSizes();
             updateHomeButtonPosition();
           });
@@ -827,13 +827,13 @@
 
   function addTravelPoints() {
     var labelPoints = [
-      {name: 'labelMaker', position: {x: -2.6, y: 1.2, z: -11}}, 
-      {name: 'labelJefes', position: {x: -2.6, y: 1.2, z: 5}}, 
-      {name: 'labelNobody', position: {x: -2.6, y: 1.2, z: 8.7}}, 
       {name: 'labelComunicacion', position: {x: -2.6, y: 1.2, z: 12.7}}, 
-      {name: 'labelLabsRadical', position: {x: -3.1, y: 1.2, z: -5}},
+      {name: 'labelNobody', position: {x: -2.6, y: 1.2, z: 8.7}}, 
+      {name: 'labelJefes', position: {x: -2.6, y: 1.2, z: 5}},
       {name: 'labelLabsResearch', position: {x: -2.6, y: 1.2, z: 1}},
-      {name: 'labelAgora', position: {x: 2, y: 1.2, z: 1}}
+      {name: 'labelAgora', position: {x: 2, y: 1.2, z: 1}}, 
+      {name: 'labelLabsRadical', position: {x: -3.1, y: 1.2, z: -5}}, 
+      {name: 'labelMaker', position: {x: -2.6, y: 1.2, z: -11}}
     ];
 
     for (var i = 0; i < labelPoints.length; i++) {
@@ -865,7 +865,7 @@
 
     var scale = 0.6;
     homeButton = new THREE.Mesh(new THREE.PlaneGeometry(scale, scale), img);
-    homeButton.position.set(camera.position.x, 0.2, camera.position.z + 0.5);
+    homeButton.position.set(camera.position.x, 0.2, camera.position.z);
     var xAxis = new THREE.Vector3(1,0,0);
     // var yAxis = new THREE.Vector3(0,1,0);
     // var zAxis = new THREE.Vector3(0,0,1);
@@ -954,14 +954,14 @@
             });
             if (controls) controls.target.set(3, 2, 6);
           } else {
-            movement({x: plane.position.x + 1, y: 1.8, z: plane.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
+            movement({x: plane.position.x + 1.6, y: 1.8, z: plane.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
               updateLabelSizes();
               updateHomeButtonPosition();
             });
             if (controls) controls.target.set(plane.position.x + 0.2, 2, plane.position.z);
           }
         } else {
-          movement({x: -4, y: 1.8, z: -10}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
+          movement({x: -4, y: 1.8, z: -11}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
             updateLabelSizes();
             updateHomeButtonPosition();
           });
@@ -1387,6 +1387,7 @@
       if (controlsdevice) {
         // homeButton.rotation.z = controlsdevice.deviceOrientation.alpha * Math.PI / 180 - 360;
         homeButton.rotation.z = 180 - controlsdevice.deviceOrientation.alpha * Math.PI / 180 + 10;
+        console.log(controlsdevice.deviceOrientation.alpha)
       }
     }
 
