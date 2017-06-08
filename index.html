@@ -680,13 +680,14 @@
       fuseColor: 0x660066,
       fuseDuration: 1,
       fuseVisible: true,
-      onGazeLong: function() {
-        if (controlsdevice) {
-          deviceAlphaValueForWallMenu = controlsdevice.deviceOrientation.alpha; // 0 <= deviceAlphaValueForWallMenu <= 360
-          //console.log('debug', 'deviceAlphaValueForWallMenu ' + deviceAlphaValueForWallMenu);
-          //console.log('debug', 'controlsdevice.screenOrientation ' + controlsdevice.screenOrientation);
-          //console.log('debug', 'camera.rotation ' + camera.rotation);
+      onGazeClick: function() {
+        if (!wallMenuIsMoving) {
+          if (wallMenuIsOpen) {
+            closeWallMenu();
+          }
         }
+      },
+      onGazeLong: function() {
         if (!wallMenuIsMoving) {
           if (!wallMenuIsOpen) {
             var labelPoints = [
@@ -717,55 +718,7 @@
     frustum.setFromMatrix( new THREE.Matrix4().multiply( camera.projectionMatrix, camera.matrixWorldInverse ) );
     return frustum.contains( object );
   }
-
-  function checkDeviceOrientationAndCloseWallMenu() {
-//    if (!isObjectVisible(wallMenu)) {
-//      closeWallMenu();
-//    }
-    // console.log('debug', 'deviceAlphaValueForWallMenu ' + deviceAlphaValueForWallMenu);
-    console.log('debug', 'controlsdevice.deviceOrientation.beta ' + controlsdevice.deviceOrientation.beta);
-    var threshold = 90;
-    var currentValue = controlsdevice.deviceOrientation.alpha;
-    // console.log('debug', 'currentValue' + currentValue);
-    var leftLimit;
-    var rightLimit;
-    if (deviceAlphaValueForWallMenu > 0 && deviceAlphaValueForWallMenu < threshold) {
-      console.log('debug', 'deviceAlphaValueForWallMenu cerca de 0: ' + deviceAlphaValueForWallMenu);
-      leftLimit = deviceAlphaValueForWallMenu + threshold;
-      rightLimit = 359 - threshold + deviceAlphaValueForWallMenu;
-      console.log('debug', 'leftLimit ' + leftLimit);
-      console.log('debug', 'rightLimit ' + rightLimit);
-      if (currentValue < rightLimit && currentValue > leftLimit) {
-        console.log('debug', 'closing menu at value ' + currentValue);
-        closeWallMenu();
-      }
-    } else if (deviceAlphaValueForWallMenu > 0 && deviceAlphaValueForWallMenu > (359 - threshold)) {
-      console.log('debug', 'deviceAlphaValueForWallMenu cerca de 359: ' + deviceAlphaValueForWallMenu);
-      leftLimit = deviceAlphaValueForWallMenu - 359 + threshold;
-      rightLimit = deviceAlphaValueForWallMenu - threshold;
-      console.log('debug', 'leftLimit ' + leftLimit);
-      console.log('debug', 'rightLimit ' + rightLimit);
-      if (currentValue < rightLimit && currentValue > leftLimit) {
-        console.log('debug', 'closing menu at value ' + currentValue);
-        closeWallMenu();
-      }
-    } else {
-//      console.log('debug', 'caso general');
-      leftLimit = deviceAlphaValueForWallMenu + threshold;
-      rightLimit = deviceAlphaValueForWallMenu - threshold;
-      console.log('debug', 'leftLimit ' + leftLimit);
-      console.log('debug', 'rightLimit ' + rightLimit);
-      if (currentValue < rightLimit || currentValue > leftLimit) {
-//        console.log('debug', 'closing menu at value ' + currentValue);
-        closeWallMenu();
-      }
-    }
-    
-//    console.log('debug', 'deviceAlphaValueForWallMenu: '+deviceAlphaValueForWallMenu)
-//    console.log('debug', 'leftLimit: '+leftLimit)
-//    console.log('debug', 'rightLimit: '+rightLimit)
-  }
-
+  
   function closeWallMenu() {
     wallMenuIsMoving = true;
     var directAccessLabels = [makerLabelDirect, radicalLabelDirect, researchLabelDirect, jefesLabelDirect, nobodyLabelDirect, comunicacionLabelDirect, agoraLabelDirect];
@@ -1454,9 +1407,6 @@
       }
       if (controlsdevice) {
         homeButton.rotation.z = 180 - controlsdevice.deviceOrientation.alpha * Math.PI / 180 + 10;
-        if (wallMenuIsOpen) {
-          checkDeviceOrientationAndCloseWallMenu();
-        }
       }
     }
 
