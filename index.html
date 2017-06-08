@@ -712,41 +712,31 @@
   function checkDeviceOrientationAndCloseWallMenu() {
     console.log('debug', 'deviceAlphaValueForWallMenu ' + deviceAlphaValueForWallMenu);
     var threshold = 90;
-    var leftLimit = deviceAlphaValueForWallMenu - threshold;
-    var rightLimit = deviceAlphaValueForWallMenu + threshold;
-    if (leftLimit < 0) {
-      leftLimit += 359;
-    }
-    if (rightLimit > 359) {
-      rightLimit -= 359;
-    }
-    if (leftLimit > rightLimit) {
-      console.log('debug', 'swapped')
-      // rightLimit = [leftLimit, leftLimit = rightLimit][0];
-      leftLimit = 360 - leftLimit;
-      rightLimit = 360 - rightLimit;
-    }
-//    if (deviceAlphaValueForWallMenu > 0) {
-//      leftLimit = deviceAlphaValueForWallMenu - threshold;
-//      if (leftLimit < 0) {
-//        leftLimit = Math.abs(leftLimit) - 180;
-//      }
-//      rightLimit = deviceAlphaValueForWallMenu + threshold;
-//    } else {
-//      leftLimit = deviceAlphaValueForWallMenu - threshold;
-//      rightLimit = deviceAlphaValueForWallMenu + threshold;
-//    }
-    console.log('debug', 'leftLimit ' + leftLimit);
-    console.log('debug', 'rightLimit ' + rightLimit);
     var currentValue = controlsdevice.deviceOrientation.alpha;
-//    if (leftLimit > 0 && rightLimit > 0) {
-//      if (currentValue < 0) currentValue = Math.abs(currentValue);
-//    }
-    console.log('debug', 'currentValue ' + currentValue);
-    if (currentValue < leftLimit || currentValue > rightLimit) {
-      console.log('debug', 'closing menu at value ' + currentValue);
-      closeWallMenu();
+    if (deviceAlphaValueForWallMenu > 0 && deviceAlphaValueForWallMenu < threshold) {
+      console.log('debug', 'deviceAlphaValueForWallMenu cerca de 0');
+      if (currentValue > (deviceAlphaValueForWallMenu + threshold) || currentValue < (360 - (deviceAlphaValueForWallMenu - threshold))) {
+        console.log('debug', 'closing menu at value ' + currentValue);
+        closeWallMenu();
+      }
+    } else if (deviceAlphaValueForWallMenu > 0 && deviceAlphaValueForWallMenu > (360 - threshold)) {
+      console.log('debug', 'deviceAlphaValueForWallMenu cerca de 360');
+      if (currentValue > (deviceAlphaValueForWallMenu - 360 + threshold) || currentValue < (deviceAlphaValueForWallMenu - threshold)) {
+        console.log('debug', 'closing menu at value ' + currentValue);
+        closeWallMenu();
+      }
+    } else {
+      // ya veremos
+      var leftLimit = deviceAlphaValueForWallMenu - threshold;
+      var rightLimit = deviceAlphaValueForWallMenu + threshold;
+      console.log('debug', 'leftLimit ' + leftLimit);
+      console.log('debug', 'rightLimit ' + rightLimit);
+      if (currentValue < leftLimit || currentValue > rightLimit) {
+        console.log('debug', 'closing menu at value ' + currentValue);
+        closeWallMenu();
+      }
     }
+    
 //    console.log('debug', 'deviceAlphaValueForWallMenu: '+deviceAlphaValueForWallMenu)
 //    console.log('debug', 'leftLimit: '+leftLimit)
 //    console.log('debug', 'rightLimit: '+rightLimit)
