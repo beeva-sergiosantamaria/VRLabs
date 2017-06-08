@@ -724,9 +724,10 @@
 //      rightLimit = threshold + diff;
 //      console.log('debug', 'rightLimit was greater then 360, now it is ' + rightLimit)
 //    }
-     if (controlsdevice.deviceOrientation.alpha < leftLimit || controlsdevice.deviceOrientation.alpha > rightLimit) {
-       closeWallMenu();
-     }
+    var currentValue = controlsdevice.deviceOrientation.alpha - 180;
+    if (currentValue < leftLimit || currentValue > rightLimit) {
+      closeWallMenu();
+    }
 //    console.log('debug', 'deviceAlphaValueForWallMenu: '+deviceAlphaValueForWallMenu)
 //    console.log('debug', 'leftLimit: '+leftLimit)
 //    console.log('debug', 'rightLimit: '+rightLimit)
