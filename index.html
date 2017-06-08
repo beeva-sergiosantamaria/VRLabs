@@ -1438,7 +1438,9 @@
       }
       if (controlsdevice) {
         homeButton.rotation.z = 180 - controlsdevice.deviceOrientation.alpha * Math.PI / 180 + 10;
-        if (wallMenuIsOpen) checkDeviceOrientationAndCloseWallMenu();
+        if (wallMenuIsOpen) {
+          checkDeviceOrientationAndCloseWallMenu();
+        }
       }
     }
 
