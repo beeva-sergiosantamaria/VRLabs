@@ -12,9 +12,7 @@
 <body class="darkBack">
 <div id="allowVideoScreen" class="allowVideo">
   <div class="videoInstructions">VrLabs needs permissions to play videos</div>
-    <div id="acceptButton" class="acceptButton">
-    <div>Accept</div>
-  </div>
+    <div id="acceptButton" class="acceptButton">Accept</div>
 </div>
 <iframe id="youtubeVideo" width="0" height="0" style="position: absolute; display: none;" src=""></iframe>
 <canvas id="fireWorks" class="fireworks"></canvas>
@@ -556,9 +554,15 @@
     videoTexture = new THREEx.VideoTexture(url);
     videoTexture.needsUpdate = false;
     video = videoTexture.video;
+
+    video.setAttribute('crossorigin', 'anonymous');
+    video.load(); // must call after setting/changing source
     videoTexture2 = new THREEx.VideoTexture(url2);
     videoTexture2.needsUpdate = false;
     video2 = videoTexture2.video;
+
+    video2.setAttribute('crossorigin', 'anonymous');
+    video2.load(); // must call after setting/changing source
     video.pause();
     video2.pause();
     addScreen1();
