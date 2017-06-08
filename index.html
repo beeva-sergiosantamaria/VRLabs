@@ -225,17 +225,17 @@
       $('#container').addClass('displayOn');
       $('#logoBox').css('display', 'none');
       $('#fireWorks').css('display', 'none');
-//      $('#acceptButton').on({ 'touchstart' : function(){ 
-//        console.log('touch');
-//        if (screensAdded) {
-//          console.log('it should work now');
-//          $('#allowVideoScreen').css('display', 'none');
-//          video.play();
-//          video2.play();
-//          video.pause();
-//          video2.pause();
-//        }
-//      } });
+      $('#allowVideoScreen').on({ 'touchstart' : function(){ 
+        console.log('touch');
+        if (screensAdded) {
+          console.log('it should work now');
+          $('#allowVideoScreen').css('display', 'none');
+          video.play();
+          video2.play();
+          video.pause();
+          video2.pause();
+        }
+      } });
       initRender();
       animate();
   });
@@ -320,13 +320,6 @@
       controls.enableZoom = false;
       controls.target.set(camera.position.x, camera.position.y, camera.position.z + 0.5);
     }
-    $(document).on({ 'touchstart' : function(){ 
-      console.log('detecta touch');
-      video.play();
-      video2.play();
-      video.pause();
-      video2.pause();
-    } });
     addHomeButton();
     addTravelPoints();
     ambientLight = new THREE.AmbientLight(0xffffff);
@@ -561,15 +554,9 @@
     videoTexture = new THREEx.VideoTexture(url);
     videoTexture.needsUpdate = false;
     video = videoTexture.video;
-
-    video.setAttribute('crossorigin', 'anonymous');
-    video.load(); // must call after setting/changing source
     videoTexture2 = new THREEx.VideoTexture(url2);
     videoTexture2.needsUpdate = false;
     video2 = videoTexture2.video;
-
-    video2.setAttribute('crossorigin', 'anonymous');
-    video2.load(); // must call after setting/changing source
     video.pause();
     video2.pause();
     addScreen1();
