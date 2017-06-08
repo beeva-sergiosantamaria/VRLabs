@@ -705,7 +705,23 @@
     });
   }
 
+  function isObjectVisible(object) {
+    camera.updateMatrix(); // make sure camera's local matrix is updated
+    camera.updateMatrixWorld(); // make sure camera's world matrix is updated
+    camera.matrixWorldInverse.getInverse( camera.matrixWorld );
+
+    object.updateMatrix(); // make sure object's local matrix is updated
+    object.updateMatrixWorld(); // make sure object's world matrix is updated
+
+    var frustum = new THREE.Frustum();
+    frustum.setFromMatrix( new THREE.Matrix4().multiply( camera.projectionMatrix, camera.matrixWorldInverse ) );
+    return frustum.contains( object );
+  }
+
   function checkDeviceOrientationAndCloseWallMenu() {
+    if (!isObjectVisible(wallMenu)) {
+      closeWallMenu();
+    }
     // console.log('debug', 'deviceAlphaValueForWallMenu ' + deviceAlphaValueForWallMenu);
 //    console.log('debug', 'controlsdevice.deviceOrientation.alpha ' + controlsdevice.deviceOrientation.alpha);
 //    var threshold = 90;
@@ -748,9 +764,6 @@
 //    console.log('debug', 'deviceAlphaValueForWallMenu: '+deviceAlphaValueForWallMenu)
 //    console.log('debug', 'leftLimit: '+leftLimit)
 //    console.log('debug', 'rightLimit: '+rightLimit)
-    console.log('distanceToCenter')
-    var distanceToCenter = distance(wallMenu.position, cameraObject3d.position);
-    console.log('distanceToCenter', distanceToCenter)
   }
 
   function closeWallMenu() {
@@ -771,7 +784,6 @@
   }
 
   var researchLabelDirect, radicalLabelDirect, makerLabelDirect, nobodyLabelDirect, jefesLabelDirect, comunicacionLabelDirect, agoraLabelDirect;
-  var cameraObject3d;
   function distributeObjectsAcrossCircumference(containerObject, objectsArray) {
     wallMenuIsMoving = true;
     var numElements = objectsArray.length;
@@ -786,9 +798,6 @@
       angle += step;
       addDirectAccess(containerObject, objectsArray[i], y, z, i);
     }
-    cameraObject3d = new THREE.Object3D();
-    cameraObject3d.position.set(0,0,0);
-    camera.add(cameraObject3d);
     setTimeout(function () {
       wallMenuIsMoving = false;
       wallMenuIsOpen = true;
