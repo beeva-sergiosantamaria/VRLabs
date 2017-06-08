@@ -220,30 +220,27 @@
   var reticulumFar = 7;
   var initialPosition = {x: -1.6, y: 1.8, z: -11};
   var defaultFuseColor = 0x00fff6;
+  var screensAdded = false;
 
   $(document).ready(function () {
       // startLogoAnim();
       $('#container').addClass('displayOn');
       $('#logoBox').css('display', 'none');
       $('#fireWorks').css('display', 'none');
+      $('#acceptButton').on({ 'touchstart' : function(){ 
+        console.log('touch');
+        if (screensAdded) {
+          console.log('it should work now');
+          $('#allowVideoScreen').css('display', 'none');
+          video.play();
+          video2.play();
+          video.pause();
+          video2.pause();
+        }
+      } });
       initRender();
       animate();
   });
-  $('#acceptButton').on({ 'touchstart' : function(){ 
-        console.log('detecta touch');
-        checkstatus = {
-            mesas: true,
-            infoCard: true,
-            members: true,
-            travel: true,
-            screens: false
-        }
-        $('#allowVideoScreen').css('display', 'none');
-        video.play();
-        video2.play();
-        video.pause();
-        video2.pause();
-    } });
 
   function initRender() {
     scene = new THREE.Scene();
@@ -568,6 +565,7 @@
     addScreen2();
     scene.add(screensGroup);
     $("#allowVideo").css('display', 'block');
+    screensAdded = true;
   }
 
   function addScreen1() {
