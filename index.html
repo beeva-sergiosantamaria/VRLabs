@@ -706,8 +706,8 @@
   }
 
   function checkDeviceOrientationAndCloseWallMenu() {
-    var threshold = 60;
-    var leftLimit = deviceAlphaValueForWallMenu - threshold;
+    var threshold = 90;
+    var leftLimit = deviceAlphaValueForWallMenu - threshold/2;
     console.log('debug', 'leftLimit ' + leftLimit);
 //    if (leftLimit < 0) {
 //      var diff = Math.abs(leftLimit);
