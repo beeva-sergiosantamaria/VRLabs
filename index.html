@@ -716,7 +716,7 @@
     var leftLimit;
     var rightLimit;
     if (deviceAlphaValueForWallMenu > 0 && deviceAlphaValueForWallMenu < threshold) {
-      console.log('debug', 'deviceAlphaValueForWallMenu cerca de 0');
+      console.log('debug', 'deviceAlphaValueForWallMenu cerca de 0: ' + deviceAlphaValueForWallMenu);
       leftLimit = 360 - (threshold - deviceAlphaValueForWallMenu);
       rightLimit = deviceAlphaValueForWallMenu + threshold;
       console.log('debug', 'leftLimit ' + leftLimit);
@@ -726,7 +726,7 @@
         closeWallMenu();
       }
     } else if (deviceAlphaValueForWallMenu > 0 && deviceAlphaValueForWallMenu > (360 - threshold)) {
-      console.log('debug', 'deviceAlphaValueForWallMenu cerca de 360');
+      console.log('debug', 'deviceAlphaValueForWallMenu cerca de 360: ' + deviceAlphaValueForWallMenu);
       leftLimit = deviceAlphaValueForWallMenu - threshold;
       rightLimit = deviceAlphaValueForWallMenu - 360 + threshold;
       console.log('debug', 'leftLimit ' + leftLimit);
