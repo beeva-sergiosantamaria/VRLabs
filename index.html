@@ -222,7 +222,6 @@
 
   var acceptVideo = document.getElementById('allowVideoScreen');
   acceptVideo.onclick = function(){
-    console.log('touch');
     if (screensAdded) {
       $('#allowVideoScreen').css('display', 'none');
       video.play();
@@ -233,21 +232,9 @@
   }
 
   $(document).ready(function () {
-      // startLogoAnim();
       $('#container').addClass('displayOn');
       $('#logoBox').css('display', 'none');
       $('#fireWorks').css('display', 'none');
-//      $('#allowVideoScreen').on({ 'touchstart' : function(){ 
-//        console.log('touch');
-//        if (screensAdded) {
-//          console.log('it should work now');
-//          $('#allowVideoScreen').css('display', 'none');
-//          video.play();
-//          video2.play();
-//          video.pause();
-//          video2.pause();
-//        }
-//      } });
       initRender();
       animate();
   });
@@ -265,11 +252,8 @@
     var container = document.getElementById('container');
     container.appendChild(element);
     camera = new THREE.PerspectiveCamera(60, (width / height), 0.01, 10000000);
-    // camera.position.set(-0.8, 1, -0.8);
     camera.position.set(initialPosition.x, initialPosition.y, initialPosition.z);
-    // *******************************
-    // --- Reticulum ---
-    // initiate Reticulum so it loads up 
+
     Reticulum.init(camera, {
       proximity: false,
       near: reticulumNear, //near factor of the raycaster (shouldn't be negative and should be smaller than the far property)
@@ -285,7 +269,7 @@
           innerRadius: 0.02,
           outerRadius: 0.024,
           speed: 5,
-          vibrate: 50 //Set to 0 or [] to disable
+          vibrate: 0 //Set to 0 or [] to disable
         }
       },
       fuse: {
@@ -294,7 +278,7 @@
         color: defaultFuseColor,
         innerRadius: 0.045,
         outerRadius: 0.06,
-        vibrate: 100, //Set to 0 or [] to disable
+        vibrate: 0, //Set to 0 or [] to disable
         clickCancelFuse: false //If users clicks on targeted object fuse is canceled
       }
     });
@@ -304,13 +288,7 @@
       effect = new THREE.StereoEffect(renderer);
       effect.setSize(window.innerWidth, window.innerHeight);
       effect.setEyeSeparation = 0.5;
-      /*controls = new THREE.OrbitControls(camera, element);
-      controls.target.set(
-        camera.position.x + 0.1,
-        camera.position.y,
-        camera.position.z
-      );*/
-      //window.addEventListener('deviceorientation', setOrientationControls, true);
+      
       controlsdevice = new THREE.DeviceOrientationControls(camera, true);
       controlsdevice.connect();
 
@@ -448,118 +426,16 @@
     });
   }
 
-//  function addLetters3D(lettersArray, position, object) {
-//    var loader = new THREE.FontLoader();
-//    loader.load('scene/fonts/droid_sans_bold.typeface.js', function (font) {
-//      for (var a = 0; a < lettersArray.length; a++) {
-//        var radicalTextModel = new THREE.TextGeometry(lettersArray[a], {
-//          font: font,
-//          size: 0.05,
-//          height: 0.01,
-//          curveSegments: 3,
-//          bevelEnabled: true,
-//          bevelThickness: 0.01,
-//          bevelSize: 0.01
-//        });
-//        var materialFront = new THREE.MeshBasicMaterial({color: 0xffdd44});
-//        var materialSide = new THREE.MeshBasicMaterial({color: 0x333333});
-//        var materialArray = [materialFront, materialSide];
-//        var textMaterial = new THREE.MeshFaceMaterial(materialArray);
-//        var radicalTextMesh = new THREE.Mesh(radicalTextModel, textMaterial);
-//        radicalTextMesh.position.x = 0.1 * a;
-//        radicalTextMesh.position.y = -2;
-//        radicalTextModel.computeBoundingBox();
-//        object.add(radicalTextMesh);
-//      }
-//    });
-//    object.position.set(position.x, position.y, position.z);
-//    object.lookAt(camera.position);
-//    object.name = 'letras3D';
-//    scene.add(object);
-//  }
-
-//  function addParticleSystem() {
-//    var loader = new THREE.FontLoader();
-//    loader.load('scene/fonts/droid_sans_bold.typeface.js', function (font) {
-//      radicalText = new THREE.TextGeometry('CreativeTech + UX + Mobility', {
-//        font: font,
-//        size: 0.1,
-//        height: 0,
-//        curveSegments: 1
-//      });
-//      researchText = new THREE.TextGeometry('Research', {
-//        font: font,
-//        size: 0.1,
-//        height: 0,
-//        curveSegments: 1
-//      });
-//      var modifier = new THREE.SubdivisionModifier(1);
-//      modifier.modify(radicalText);
-//      modifier.modify(researchText);
-//      radicalTextNParticles = radicalText.vertices.length;
-//      researchTextNParticles = researchText.vertices.length;
-//    });
-//    var boxGeometry = new THREE.Geometry();
-//    for (var p = 0; p < numeroParticulas; p++) {
-//      var pX = Math.random() * (max - min + 1) + min,
-//          pY = Math.random() * (max - min + 1) + min,
-//          pZ = Math.random() * (max - min + 1) + min,
-//          particle = new THREE.Vector3(pX, pY, pZ);
-//      verticesArray.push({x: pX, y: pY, z: pZ});
-//      boxGeometry.vertices.push(particle);
-//    }
-//    var particleMaterial = new THREE.ParticleBasicMaterial({
-//      size: 0.02,
-//      color: 0x333333,
-//      transparency: true,
-//      opacity: 0.5
-//    });
-//    particleCube = new THREE.Points(boxGeometry, particleMaterial);
-//    particleCube.position.set(0, 0, 0);
-//    scene.add(particleCube);
-//  }
-
-//  function addSpritesLetters(lettersArray) {
-//    for (var a = 0; a < lettersArray.length; a++) {
-//      var map = new THREE.TextureLoader().load("images/letters/" + lettersArray[a] + extension);
-//      var material = new THREE.SpriteMaterial({map: map, color: 0xffffff, fog: true});
-//      var sprite = new THREE.Sprite(material);
-//      if (isMobile) {
-//        sprite.position.x = 0.03 * a;
-//        sprite.position.z = -1.5;
-//        sprite.scale.set(0.03, 0.03, 0.03);
-//        spriteGroup.add(sprite);
-//        spriteGroup.position.x = -0.13;
-//        spriteGroup.position.y = -0.06;
-//      }
-//      else {
-//        sprite.position.x = 0.04 * a;
-//        sprite.position.z = -0.5;
-//        sprite.scale.set(0.05, 0.05, 0.05);
-//        spriteGroup.add(sprite);
-//        spriteGroup.position.x = -0.6;
-//        spriteGroup.position.y = -0.25;
-//      }
-//      camera.add(spriteGroup);
-//    }
-//  }
-
-//  function removeSpriteLetters() {
-//    camera.remove(spriteGroup);
-//    spriteGroup = new THREE.Object3D();
-//    spriteGroup.name = 'spriteGroup';
-//  }
-
   function addScreens() {
     videoMP4 = document.createElement('video').canPlayType('video/mp4') !== '';
     videoOgg = document.createElement('video').canPlayType('video/ogg') !== '';
     var url, url2;
     if (videoMP4) {
-        url = 'videos/sintel.mp4';
-        url2 = 'videos/salchis.mp4';
+      url = 'videos/sintel.mp4';
+      url2 = 'videos/salchis.mp4';
     } else if (videoOgg) {
-        url = 'videos/sintel.ogv';
-        url2 = 'videos/salchis.mp4';
+      url = 'videos/sintel.ogv';
+      url2 = 'videos/salchis.mp4';
     } else {
       alert('cant play mp4 or ogv');
     }
@@ -601,7 +477,6 @@
           movement({x: -1.5, y: 2, z: screen1Mesh.position.z}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, addMediaControls(screen1Mesh, video), function () {
             updateHomeButtonPosition();
           });
-          
         }
         camera.up = new THREE.Vector3(0,1,0);
         camera.lookAt(screen1Mesh.position);
@@ -633,7 +508,6 @@
           movement({x: -1.4, y: 2, z: screen2Mesh.position.z}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, addMediaControls(screen2Mesh, video2), function () {
             updateHomeButtonPosition();
           });
-          
         }
         camera.up = new THREE.Vector3(0,1,0);
         camera.lookAt(screen2Mesh.position);
@@ -754,13 +628,11 @@
       movement({x: -1.2, y: 1.6, z: 1.6}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
         updateHomeButtonPosition();
       });
-      
       if (controls) controls.target.set(researchLabel.position.x + 0.2, 1.6, researchLabel.position.z);
     } else if (videoObject === video2) {
       movement({x: -1.2, y: 1.6, z: 5}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
         updateHomeButtonPosition();
       });
-      
       if (controls) controls.target.set(-1.8, 1.6, 5);
     }
   }
@@ -818,7 +690,6 @@
     // var yAxis = new THREE.Vector3(0,1,0);
     // var zAxis = new THREE.Vector3(0,0,1);
     rotateAroundWorldAxis(homeButton, xAxis, 90 * Math.PI / 180);
-    // homeButton.rotation.z -= 90 * Math.PI / 180;
     
     scene.add(homeButton);
 
