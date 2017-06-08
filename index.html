@@ -683,9 +683,9 @@
       onGazeLong: function() {
         if (controlsdevice) {
           deviceAlphaValueForWallMenu = controlsdevice.deviceOrientation.alpha; // 0 <= deviceAlphaValueForWallMenu <= 360
-          console.log('debug', 'deviceAlphaValueForWallMenu ' + deviceAlphaValueForWallMenu);
-          console.log('debug', 'controlsdevice.screenOrientation ' + controlsdevice.screenOrientation);
-          console.log('debug', 'camera.rotation ' + camera.rotation);
+          //console.log('debug', 'deviceAlphaValueForWallMenu ' + deviceAlphaValueForWallMenu);
+          //console.log('debug', 'controlsdevice.screenOrientation ' + controlsdevice.screenOrientation);
+          //console.log('debug', 'camera.rotation ' + camera.rotation);
         }
         if (!wallMenuIsMoving) {
           if (!wallMenuIsOpen) {
@@ -706,10 +706,11 @@
   }
 
   function checkDeviceOrientationAndCloseWallMenu() {
-    console.log('debug', 'deviceAlphaValueForWallMenu ' + deviceAlphaValueForWallMenu);
+    // console.log('debug', 'deviceAlphaValueForWallMenu ' + deviceAlphaValueForWallMenu);
+    console.log('debug', 'controlsdevice.screenOrientation ' + controlsdevice.screenOrientation);
     var threshold = 90;
     var currentValue = controlsdevice.deviceOrientation.alpha;
-    console.log('debug', 'currentValue' + currentValue);
+    // console.log('debug', 'currentValue' + currentValue);
     var leftLimit;
     var rightLimit;
     if (deviceAlphaValueForWallMenu > 0 && deviceAlphaValueForWallMenu < threshold) {
