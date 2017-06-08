@@ -713,22 +713,32 @@
     console.log('debug', 'deviceAlphaValueForWallMenu ' + deviceAlphaValueForWallMenu);
     var threshold = 90;
     var currentValue = controlsdevice.deviceOrientation.alpha;
+    var leftLimit;
+    var rightLimit;
     if (deviceAlphaValueForWallMenu > 0 && deviceAlphaValueForWallMenu < threshold) {
       console.log('debug', 'deviceAlphaValueForWallMenu cerca de 0');
-      if (currentValue > (deviceAlphaValueForWallMenu + threshold) || currentValue < (360 - (deviceAlphaValueForWallMenu - threshold))) {
+      leftLimit = 360 - (threshold - deviceAlphaValueForWallMenu);
+      rightLimit = deviceAlphaValueForWallMenu + threshold;
+      console.log('debug', 'leftLimit ' + leftLimit);
+      console.log('debug', 'rightLimit ' + rightLimit);
+      if (currentValue > rightLimit || currentValue < leftLimit) {
         console.log('debug', 'closing menu at value ' + currentValue);
         closeWallMenu();
       }
     } else if (deviceAlphaValueForWallMenu > 0 && deviceAlphaValueForWallMenu > (360 - threshold)) {
       console.log('debug', 'deviceAlphaValueForWallMenu cerca de 360');
-      if (currentValue > (deviceAlphaValueForWallMenu - 360 + threshold) || currentValue < (deviceAlphaValueForWallMenu - threshold)) {
+      leftLimit = deviceAlphaValueForWallMenu - threshold;
+      rightLimit = deviceAlphaValueForWallMenu - 360 + threshold;
+      console.log('debug', 'leftLimit ' + leftLimit);
+      console.log('debug', 'rightLimit ' + rightLimit);
+      if (currentValue > rightLimit || currentValue < leftLimit) {
         console.log('debug', 'closing menu at value ' + currentValue);
         closeWallMenu();
       }
     } else {
-      // ya veremos
-      var leftLimit = deviceAlphaValueForWallMenu - threshold;
-      var rightLimit = deviceAlphaValueForWallMenu + threshold;
+      console.log('debug', 'caso general');
+      leftLimit = deviceAlphaValueForWallMenu - threshold;
+      rightLimit = deviceAlphaValueForWallMenu + threshold;
       console.log('debug', 'leftLimit ' + leftLimit);
       console.log('debug', 'rightLimit ' + rightLimit);
       if (currentValue < leftLimit || currentValue > rightLimit) {
