@@ -225,17 +225,17 @@
       $('#container').addClass('displayOn');
       $('#logoBox').css('display', 'none');
       $('#fireWorks').css('display', 'none');
-      $('#acceptButton').on({ 'touchstart' : function(){ 
-        console.log('touch');
-        if (screensAdded) {
-          console.log('it should work now');
-          $('#allowVideoScreen').css('display', 'none');
-          video.play();
-          video2.play();
-          video.pause();
-          video2.pause();
-        }
-      } });
+//      $('#acceptButton').on({ 'touchstart' : function(){ 
+//        console.log('touch');
+//        if (screensAdded) {
+//          console.log('it should work now');
+//          $('#allowVideoScreen').css('display', 'none');
+//          video.play();
+//          video2.play();
+//          video.pause();
+//          video2.pause();
+//        }
+//      } });
       initRender();
       animate();
   });
@@ -320,6 +320,13 @@
       controls.enableZoom = false;
       controls.target.set(camera.position.x, camera.position.y, camera.position.z + 0.5);
     }
+    $(document).on({ 'touchstart' : function(){ 
+      console.log('detecta touch');
+      video.play();
+      video2.play();
+      video.pause();
+      video2.pause();
+    } });
     addHomeButton();
     addTravelPoints();
     ambientLight = new THREE.AmbientLight(0xffffff);
