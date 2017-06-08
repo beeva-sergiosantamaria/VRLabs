@@ -687,6 +687,10 @@
         }
       },
       onGazeLong: function() {
+        if (controlsdevice) {
+          deviceAlphaValueForWallMenu = controlsdevice.deviceOrientation.alpha; // 0 <= deviceAlphaValueForWallMenu <= 360
+          console.log('debug', 'deviceAlphaValueForWallMenu ' + deviceAlphaValueForWallMenu);
+        }
         if (!wallMenuIsMoving) {
           if (!wallMenuIsOpen) {
             var labelPoints = [
