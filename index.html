@@ -765,8 +765,10 @@
       angle += step;
       addDirectAccess(containerObject, objectsArray[i], y, z, i);
     }
-    wallMenuIsMoving = false;
-    wallMenuIsOpen = true;
+    setTimeout(function () {
+      wallMenuIsMoving = false;
+      wallMenuIsOpen = true;
+    }, 1500);
   }
 
   function addDirectAccess(containerObject, object, yVal, zVal, index) {
