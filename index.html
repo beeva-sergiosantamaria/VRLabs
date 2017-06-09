@@ -481,9 +481,10 @@
       fuseVisible: true,
       onGazeLong: function() {
         removeFromReticulum(screen1Mesh);
-        if (wallMenuIsOpen) {
-          closeWallMenu();
+        if (infoGroupIsShowing) {
+          removeInfoSection();
         }
+        removeMembers();
         if (video != undefined && video2 != undefined) {
           video2.pause();
           if (controls) controls.target.set(screen1Mesh.position.x - 0.2, screen1Mesh.position.y, screen1Mesh.position.z);
@@ -515,9 +516,10 @@
       fuseVisible: true,
       onGazeLong: function() {
         removeFromReticulum(screen2Mesh);
-        if (wallMenuIsOpen) {
-          closeWallMenu();
+        if (infoGroupIsShowing) {
+          removeInfoSection();
         }
+        removeMembers();
         if (video != undefined && video2 != undefined) {
           video.pause();
           if (controls) controls.target.set(screen2Mesh.position.x - 0.2, screen2Mesh.position.y, screen2Mesh.position.z);
@@ -1312,34 +1314,6 @@
     movement({y: 2}, infoGroup.position, 0, 1500, TWEEN.Easing.Back.Out, function () { infoIsOpening = false });
     scene.add(infoGroup);
     infoGroupIsShowing = true;
-  }
-
-  function addInfoSection(images, name, timeout) {
-    infoGroupIsShowing = true;
-    if (infoGroup.children.length > 0) {
-        removeInfoSection();
-    }
-    scene.remove(infoGroup);
-    infoGroup = new THREE.Object3D();
-    infoGroup.name = 'infoGroup';
-    for (var a = 0; a < 3; a++) {
-      var texture = textureLoader.load("images/sectionInfo/" + images[a] + extension);
-      var geometry = new THREE.PlaneGeometry(2, 2, 2);
-      var material = new THREE.MeshBasicMaterial({
-          map: texture,
-          transparent: true,
-          opacity: 1,
-          color: 0xffffff
-      });
-      var plane = new THREE.Mesh(geometry, material);
-      plane.name = name;
-      infoGroup.add(plane);
-    }
-    //infoGroup.position.set(-2.3, 0.35 - 2, -1.95);
-    infoGroup.position.set(-4.6, -2, -4);
-    infoGroup.rotation.y = Math.PI / 2;
-    movement({y: 1.35}, infoGroup.position, 0, 1000, TWEEN.Easing.Back.Out);
-    scene.add(infoGroup);
   }
 
   function removeInfoSection() {
