@@ -10,7 +10,7 @@
     <meta name="mobile-web-app-capable" content="yes">
 </head>
 <body class="darkBack">
-<div id="allowVideoScreen" class="allowVideo">
+<div id="allowVideoScreen" class="allowVideo" style="display: none">
   <div class="videoInstructions">VrLabs needs permissions to play videos</div>
     <div id="acceptButton" class="acceptButton">Accept</div>
 </div>
@@ -215,7 +215,7 @@
   var particlesAnimation = true;
   
   var reticulumNear = 0.2;
-  var reticulumFar = 7;
+  var reticulumFar = 8;
   var initialPosition = {x: -1.6, y: 1.8, z: -10};
   var defaultFuseColor = 0x00fff6;
   var screensAdded = false;
@@ -232,11 +232,11 @@
   }
 
   $(document).ready(function () {
-      $('#container').addClass('displayOn');
-      $('#logoBox').css('display', 'none');
-      $('#fireWorks').css('display', 'none');
-      initRender();
-      animate();
+    $('#container').addClass('displayOn');
+    $('#logoBox').css('display', 'none');
+    $('#fireWorks').css('display', 'none');
+    initRender();
+    animate();
   });
 
   function initRender() {
@@ -292,6 +292,7 @@
     scene.add(camera);
     if (window.DeviceOrientationEvent && /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
       isMobile = true;
+      $('#allowVideoScreen').css('display', 'block');
       effect = new THREE.StereoEffect(renderer);
       effect.setSize(window.innerWidth, window.innerHeight);
       effect.setEyeSeparation = 0.5;
@@ -311,6 +312,7 @@
       }
       
     } else {
+      $('#allowVideoScreen').css('display', 'none');
       controls = new THREE.OrbitControls(camera, renderer.domElement);
       controls.enableDamping = true;
       controls.dampingFactor = 0.70;
@@ -479,6 +481,9 @@
       fuseVisible: true,
       onGazeLong: function() {
         removeFromReticulum(screen1Mesh);
+        if (wallMenuIsOpen) {
+          closeWallMenu();
+        }
         if (video != undefined && video2 != undefined) {
           video2.pause();
           if (controls) controls.target.set(screen1Mesh.position.x - 0.2, screen1Mesh.position.y, screen1Mesh.position.z);
@@ -510,6 +515,9 @@
       fuseVisible: true,
       onGazeLong: function() {
         removeFromReticulum(screen2Mesh);
+        if (wallMenuIsOpen) {
+          closeWallMenu();
+        }
         if (video != undefined && video2 != undefined) {
           video.pause();
           if (controls) controls.target.set(screen2Mesh.position.x - 0.2, screen2Mesh.position.y, screen2Mesh.position.z);
@@ -675,21 +683,33 @@
     
     scene.add(wallMenu);
 
+    addWallMenuToReticulum();
+  }
+
+  function addWallMenuToReticulum() {
     Reticulum.add( wallMenu, {
       reticleHoverColor: 0xfdff00,
       fuseColor: 0x660066,
       fuseDuration: 1,
       fuseVisible: true,
-      onGazeClick: function() {
-        if (!wallMenuIsMoving) {
-          if (wallMenuIsOpen) {
-            closeWallMenu();
-          }
+      onGazeOver: function() {
+        if (!wallMenuIsOpen) {
+          changeScaleSingle(wallMenu, 1.5);
+          if (this.material.color) this.material.color.setHex( 0xffcc00 );
+          if (this.material.emissive) this.material.emissive.setHex( 0xffcc00 );
+        }
+      },
+      onGazeOut: function() {
+        if (!wallMenuIsOpen) {
+          changeScaleSingle(wallMenu, 1);
+          if (this.material.color) this.material.color.setHex( 0xffffff );
+          if (this.material.emissive) this.material.emissive.setHex( 0xffffff );
         }
       },
       onGazeLong: function() {
         if (!wallMenuIsMoving) {
           if (!wallMenuIsOpen) {
+            Reticulum.remove(wallMenu);
             var labelPoints = [
               {name: 'labelMaker', position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z + 0.05}}, 
               {name: 'labelLabsRadical', position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z + 0.05}},
@@ -730,6 +750,7 @@
           if (ind == directAccessLabels.length - 1) {
             wallMenuIsOpen = false;
             wallMenuIsMoving = false;
+            addWallMenuToReticulum();
           }
         }, 100 * ind);
       })(i);
@@ -911,12 +932,15 @@
   }
 
   function goHome() {
+    removeMembers();
+    if (infoGroupIsShowing) {
+      removeInfoSection();
+    }
     movement({x: initialPosition.x, y: initialPosition.y, z: initialPosition.z}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
       updateLabelSizes();
       updateHomeButtonPosition();
       if (controls) controls.target.set(camera.position.x, camera.position.y, camera.position.z + 0.5);
     });
-    removeMembers();
   }
 
   var researchLabel, radicalLabel, makerLabel, nobodyLabel, jefesLabel, comunicacionLabel, agoraLabel;
@@ -954,6 +978,9 @@
       fuseColor: 0x00fff6,
       fuseVisible: true,
       onGazeLong: function() {
+        if (wallMenuIsOpen) {
+          closeWallMenu();
+        }
         changeScaleSingle(plane, 1);
         removeMembers();
         removeInfoSection();
@@ -1142,7 +1169,6 @@
 
   var infoIsOpening = false;
   function addMemberInfoSection(memberObject, x, y, z) {
-    infoGroupIsShowing = true;
     infoIsOpening = true;
     if (infoGroup.children.length > 0) {
       removeInfoSection();
@@ -1285,6 +1311,7 @@
     infoGroup.rotation.y = Math.PI / 2;
     movement({y: 2}, infoGroup.position, 0, 1500, TWEEN.Easing.Back.Out, function () { infoIsOpening = false });
     scene.add(infoGroup);
+    infoGroupIsShowing = true;
   }
 
   function addInfoSection(images, name, timeout) {
