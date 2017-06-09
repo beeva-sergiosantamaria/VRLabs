@@ -255,22 +255,22 @@
     camera.position.set(initialPosition.x, initialPosition.y, initialPosition.z);
 
     Reticulum.init(camera, {
-      proximity: false,
-      near: reticulumNear, //near factor of the raycaster (shouldn't be negative and should be smaller than the far property)
+      proximity: true,
+      near: reticulumNear, // near factor of the raycaster (shouldn't be negative and should be smaller than the far property)
       far: reticulumFar,
       vibrate: 0,
       reticle: {
         visible: true,
-        restPoint: 1, //Defines the reticle's resting point when no object has been targeted
+        restPoint: 1, // Defines the reticle's resting point when no object has been targeted
         color: 0xff00e7,
-        innerRadius: 0.001,
-        outerRadius: 0.006,
+        innerRadius: 0.001, // inner reticle radius when nothing is selected
+        outerRadius: 0.006, // outer reticle radius when nothing is selected
         hover: {
           color: 0xff00e7,
-          innerRadius: 0.02,
-          outerRadius: 0.024,
+          innerRadius: 0.02, // inner reticle radius when reticle passes over the object
+          outerRadius: 0.024, // outer reticle radius when reticle passes over the object
           speed: 5,
-          vibrate: 0 //Set to 0 or [] to disable
+          vibrate: 0 // Set to 0 or [] to disable
         }
       },
       click: {
@@ -283,10 +283,10 @@
         visible: false,
         duration: 2,
         color: defaultFuseColor,
-        innerRadius: 0.045,
-        outerRadius: 0.06,
-        vibrate: 0, //Set to 0 or [] to disable
-        clickCancelFuse: false //If users clicks on targeted object fuse is canceled
+        innerRadius: 0.045, // inner fuse radius when reticle is loading the interaction
+        outerRadius: 0.06, // outer fuse radius when reticle is loading the interaction
+        vibrate: 0, // Set to 0 or [] to disable
+        clickCancelFuse: false // If users clicks on targeted object fuse is canceled
       }
     });
     scene.add(camera);
