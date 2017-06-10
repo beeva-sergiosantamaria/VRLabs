@@ -146,7 +146,7 @@
     {name: 'adrian', position: {x: -5.8, y: 1.6, z: -5.4}},
     {name: 'ira', position: {x: -4, y: 1.6, z: -6}},
     {name: 'salva', position: {x: -4, y: 1.6, z: -2.2}},
-    {name: 'jota', position: {x: -3.6, y: 1.3, z: -3.8}}
+    {name: 'jota', position: {x: -3.6, y: 1.4, z: -3.8}}
   ];
   var researchMembers = [
     {name: 'mario', position: {x: -6, y: 1.6, z: 2.2}},
@@ -542,7 +542,7 @@
   var mediaControlsContainer;
   function addMediaControls(object, videoObject) {
     mediaControlsContainer = new THREE.Object3D();
-    mediaControlsContainer.position.set(object.position.x, object.position.y, object.position.z);
+    mediaControlsContainer.position.set(object.position.x - 0.2, object.position.y, object.position.z);
 
     mediaControlsContainer.rotateY(-Math.PI / 2);
     var mediaControls = [
@@ -599,8 +599,8 @@
 
     Reticulum.add( plane, {
       fuseDuration: 1,
-      reticleHoverColor: name === 'media-close' ? 0xeb2348 : 0x00fff6,
-      fuseColor: name === 'media-close' ? 0xeb2348 : 0x00fff6,
+      reticleHoverColor: name === 'media-close' ? 0xFF9087 : 0xFFD087,
+      fuseColor: name === 'media-close' ? 0xeb2348 : 0xD89939,
       fuseVisible: true,
       onGazeOver: function() {
         if (this.material.color) this.material.color.setHex( 0xffcc00 );
@@ -977,8 +977,8 @@
     scene.add(plane);
 
     Reticulum.add( plane, {
-      reticleHoverColor: 0x00fff6,
-      fuseColor: 0x00fff6,
+      reticleHoverColor: 0x9DB7DA,
+      fuseColor: 0x2E568E,
       fuseVisible: true,
       onGazeLong: function() {
         if (wallMenuIsOpen) {
@@ -1065,19 +1065,19 @@
       color: 0xffffff
     });
     img.map.needsUpdate = true;
-
-    var plane = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 0.9), img);
+    var scale = 0.7;
+    var plane = new THREE.Mesh(new THREE.PlaneGeometry(scale, scale), img);
     plane.name = member.name;
     plane.position.set(member.position.x, member.position.y, member.position.z);
     
     membersGroup.add(plane);
-    movement({y: member.position.y}, plane.position, 300 * index, 1000, TWEEN.Easing.Back.Out);
+    movement({y: member.position.y}, plane.position, 500 * index, 1500, TWEEN.Easing.Back.Out);
     memberPlanes.push(plane);
     scene.add(plane);
 
     Reticulum.add( plane, {
-      reticleHoverColor: 0x008000,
-      fuseColor: 0x008000,
+      reticleHoverColor: 0x9ADEBD,
+      fuseColor: 0x137B49,
       fuseVisible: true,
       onGazeOver: function() {
         if (this.material.color) this.material.color.setHex( 0xffcc00 );
@@ -1312,7 +1312,9 @@
 
     infoGroup.position.set(x, y, z);
     infoGroup.rotation.y = Math.PI / 2;
-    movement({y: 2}, infoGroup.position, 0, 1500, TWEEN.Easing.Back.Out, function () { infoIsOpening = false });
+    movement({y: 2}, infoGroup.position, 0, 1500, TWEEN.Easing.Back.Out, function () { 
+      infoIsOpening = false;
+    });
     scene.add(infoGroup);
     infoGroupIsShowing = true;
   }
