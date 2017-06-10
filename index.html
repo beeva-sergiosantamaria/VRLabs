@@ -488,7 +488,8 @@
         if (video != undefined && video2 != undefined) {
           video2.pause();
           if (controls) controls.target.set(screen1Mesh.position.x - 0.2, screen1Mesh.position.y, screen1Mesh.position.z);
-          movement({x: -1.5, y: 2, z: screen1Mesh.position.z}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, addMediaControls(screen1Mesh, video), function () {
+          movement({x: -1.5, y: 2, z: screen1Mesh.position.z}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
+            addMediaControls(screen1Mesh, video);
             updateHomeButtonPosition();
           });
         }
