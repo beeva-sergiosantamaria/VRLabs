@@ -79,45 +79,40 @@
 <script type="text/javascript" src="libs/StereoEffect.js"></script>
 <script type="text/javascript" src="libs/tween.js"></script>
 <script type="text/javascript" src="libs/OrbitControls.js"></script>
+<script type="text/javascript" src="libs/labsUtils.js"></script>
 <script type="text/javascript" src="libs/SubdivisionModifier.js"></script>
 <script type="text/javascript" src="scene/logoAnim.js"></script>
 <!-- A simple gaze interaction manager for VR -->
 <!--<script src="https://skezo.github.io/Reticulum/reticulum.js"></script>-->
 <script src="./libs/reticulum.js"></script>
 <script type="x-shader/x-vertex" id="vertexshader">
-      uniform float amplitude;
-      attribute vec3 customColor;
-      attribute vec3 displacement;
-      varying vec3 vNormal;
-      varying vec3 vColor;
-      void main() {
-        vNormal = normal;
-        vColor = customColor;
-        vec3 newPosition = position + normal * amplitude * displacement;
-        gl_Position = projectionMatrix * modelViewMatrix * vec4( newPosition, 1.0 );
-      }
-
+  uniform float amplitude;
+  attribute vec3 customColor;
+  attribute vec3 displacement;
+  varying vec3 vNormal;
+  varying vec3 vColor;
+  void main() {
+    vNormal = normal;
+    vColor = customColor;
+    vec3 newPosition = position + normal * amplitude * displacement;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4( newPosition, 1.0 );
+  }
 </script>
 
 <script type="x-shader/x-fragment" id="fragmentshader">
-      varying vec3 vNormal;
-      varying vec3 vColor;
-      void main() {
-        const float ambient = 0.4;
-        vec3 light = vec3( 1.0 );
-        light = normalize( light );
-        float directional = max( dot( vNormal, light ), 0.0 );
-        gl_FragColor = vec4( ( directional + ambient ) * vColor, 1.0 );
-      }
-
+  varying vec3 vNormal;
+  varying vec3 vColor;
+  void main() {
+    const float ambient = 0.4;
+    vec3 light = vec3( 1.0 );
+    light = normalize( light );
+    float directional = max( dot( vNormal, light ), 0.0 );
+    gl_FragColor = vec4( ( directional + ambient ) * vColor, 1.0 );
+  }
 </script>
 
 <script>
-  var camera, scene, renderer, controls, controlsdevice, uniforms,
-    numVertices, effect, intersected, intersectedScreens, intersectedTravel, intersectedInfo, intersectedMembers,
-    intersectedExit, sky, plane, particleCube, radicalText,
-    radicalTextNParticles, researchText, researchTextNParticles, interval, ambientLight, radicallight, researchlight, designlight,
-    screen1Light, screen2Light, exitIcon, arrowIconGeometry,
+  var camera, scene, renderer, controls, controlsdevice, effect, sky, ambientLight,
     width = window.innerWidth,
     height = window.innerHeight;
 
@@ -125,55 +120,12 @@
 
   var videoMP4, videoOgg, video, videoTexture, video2, videoTexture2, screen1Mesh, screen2Mesh;
 
-  var centro, design, research, clever, maker, sillas, comunicacion, pared, cristaleraFrontal, cristaleraEntrada, cristaleraAgora, banco, teles, pantalla1;
-
-  var tweenLettersIn;
-
   var clock = new THREE.Clock();
-
-  var rootDirectory = "images/membersPhoto/";
-  var subFolder = "recortadas/";
-  var subFolderCircular = "circular/";
-  var subFolderInfo = "info/";
-  var extension = ".png";
 
   var manager = new THREE.LoadingManager();
   var textureLoader = new THREE.TextureLoader();
 
-  var radicalMembers = [
-    {name: 'alvaro', position: {x: -5.8, y: 1.6, z: -2.4}},
-    {name: 'sergio', position: {x: -6.4, y: 1.6, z: -4.2}},
-    {name: 'adrian', position: {x: -5.8, y: 1.6, z: -5.4}},
-    {name: 'ira', position: {x: -4, y: 1.6, z: -6}},
-    {name: 'salva', position: {x: -4, y: 1.6, z: -2.2}},
-    {name: 'jota', position: {x: -3.6, y: 1.4, z: -3.8}}
-  ];
-  var researchMembers = [
-    {name: 'mario', position: {x: -6, y: 1.6, z: 2.2}},
-    {name: 'fernando', position: {x: -6, y: 1.6, z: 0.7}},
-    {name: 'ricardo', position: {x: -4.6, y: 1.6, z: 0.2}},
-    {name: 'enrique', position: {x: -3.6, y: 1.6, z: -0.3}},
-    {name: 'samuel', position: {x: -3.4, y: 1.6, z: 2.4}}
-  ];
-  var jefesAndVenturesMembers = [
-    {name: 'carlosm', position: {x: -6, y: 1.6, z: 6}},
-    {name: 'lucas', position: {x: -6, y: 1.6, z: 4.5}},
-    {name: 'nieves', position: {x: -4.6, y: 1.6, z: 6.2}},
-    {name: 'jesus', position: {x: -4.6, y: 1.6, z: 4}},
-    {name: 'carlosg', position: {x: -3.6, y: 1.6, z: 6.3}},
-    {name: 'marian', position: {x: -3.2, y: 1.3, z: 5.5}},
-    // {name: 'pablo', position: {x: -3.6, y: 1.6, z: 4}}
-  ];
-  var comunicacionMembers = [
-    // {name: 'marta', position: {x: -6, y: 1.6, z: 12}},
-    // {name: 'javi', position: {x: -4.6, y: 1.6, z: 13.7}},
-    // {name: 'patri', position: {x: -4.6, y: 1.6, z: 11.8}},
-    // {name: 'ade', position: {x: -3.4, y: 1.6, z: 14.1}},
-    // {name: 'kat', position: {x: -3.4, y: 1.6, z: 11.5}}
-  ];
-
-  var radicalInfoImages = ['radicalInfo1', 'radicalInfo2', 'radicalInfo3'];
-  var sergioInfoImages = ['sergioInfo1', 'sergioInfo2', 'sergioInfo3'];
+  var utils = new LabsUtils();
 
   var planta = new THREE.Object3D();
   planta.name = "estructura";
@@ -181,45 +133,12 @@
   mesas.name = "mesasInteractivas";
   var screensGroup = new THREE.Object3D();
   screensGroup.name = "screens";
-  var letrasRadical = new THREE.Object3D();
-  letrasRadical.name = 'lerasRadical';
-  var letrasResearch = new THREE.Object3D();
-  letrasResearch.name = 'letrasResearch';
-  var letrasDesign = new THREE.Object3D();
-  letrasDesign.name = 'letrasDesign';
-  var letrasClever = new THREE.Object3D();
-  letrasClever.name = 'letrasClever';
-  var letrasComunicacion = new THREE.Object3D();
-  letrasComunicacion.name = 'letrasComunicacion';
-  var letrasMaker = new THREE.Object3D();
-  letrasMaker.name = 'letrasMaker';
-  var travelPoints = new THREE.Object3D();
-  travelPoints.name = 'travelPoints';
-  var spriteGroup = new THREE.Object3D();
-  spriteGroup.name = 'spriteGroup';
   var membersGroup = new THREE.Object3D();
   membersGroup.name = 'members';
   var infoGroup = new THREE.Object3D();
   infoGroup.name = 'infoGroup';
-  var exitGroup = new THREE.Object3D();
-  exitGroup.name = 'exitGroup';
-
-  var labelsDirectory = "images/labels/";
-
-  var activeLetters;
 
   var infoGroupIsShowing = false;
-
-  var numeroParticulas = 2000;
-  var disperseParticles = {nParticles: numeroParticulas, path: 'disperse'};
-  var min = -3, max = 3;
-  var verticesArray = [];
-  var particlesAnimation = true;
-  
-  var reticulumNear = 0.2;
-  var reticulumFar = 8;
-  var initialPosition = {x: -1.6, y: 1.8, z: -10};
-  var defaultFuseColor = 0x00fff6;
   var screensAdded = false;
 
   var acceptVideo = document.getElementById('allowVideoScreen');
@@ -254,16 +173,16 @@
     var container = document.getElementById('container');
     container.appendChild(element);
     camera = new THREE.PerspectiveCamera(60, (width / height), 0.01, 10000000);
-    camera.position.set(initialPosition.x, initialPosition.y, initialPosition.z);
+    camera.position.set(utils.initialPosition.x, utils.initialPosition.y, utils.initialPosition.z);
 
     Reticulum.init(camera, {
       proximity: true,
-      near: reticulumNear, // near factor of the raycaster (shouldn't be negative and should be smaller than the far property)
-      far: reticulumFar,
+      near: utils.reticulumNear, // near factor of the raycaster (shouldn't be negative and should be smaller than the far property)
+      far: utils.reticulumFar,
       vibrate: 0,
       reticle: {
         visible: true,
-        restPoint: 1, // Defines the reticle's resting point when no object has been targeted
+        restPoint: 0.1, // Defines the reticle's resting point when no object has been targeted
         color: 0xff00e7,
         innerRadius: 0.001, // inner reticle radius when nothing is selected
         outerRadius: 0.006, // outer reticle radius when nothing is selected
@@ -284,7 +203,7 @@
       fuse: {
         visible: false,
         duration: 2,
-        color: defaultFuseColor,
+        color: utils.reticleColors.basic,
         innerRadius: 0.045, // inner fuse radius when reticle is loading the interaction
         outerRadius: 0.06, // outer fuse radius when reticle is loading the interaction
         vibrate: 0, // Set to 0 or [] to disable
@@ -336,7 +255,7 @@
   function buildShape() {
     var skyGeometry = new THREE.SphereGeometry(20, 32, 32);
     var skyMaterial = new THREE.MeshBasicMaterial({
-      map: new THREE.TextureLoader().load('images/sky2.jpg'),
+      map: new THREE.TextureLoader().load(utils.rootDirectory + 'sky2.jpg'),
       side: THREE.DoubleSide,
       transparent: true,
       opacity: 1,
@@ -346,12 +265,12 @@
     sky = new THREE.Mesh(skyGeometry, skyMaterial);
     sky.renderOrder = 0;
     sky.rotation.y = 1.7;
-    sky.name = "sky";
     scene.add(sky);
     addModel();
   }
 
   function addModel() {
+    var centro, design, research, clever, maker, sillas, comunicacion, pared, cristaleraFrontal, cristaleraEntrada, cristaleraAgora, banco;
     var onProgress = function (xhr) {
       if (xhr.lengthComputable) {
         var percentComplete = xhr.loaded / xhr.total * 100;
@@ -376,63 +295,49 @@
       objLoader.load('planta6.obj', function (elements) {
         techo = elements.children[13];
         techo.renderOrder = 0;
-        techo.name = "techo";
         planta.add(techo);
         banco = elements.children[12];
         banco.renderOrder = 0;
-        banco.name = "banco";
         planta.add(banco);
         cristaleraEntrada = elements.children[11];
         cristaleraEntrada.renderOrder = 1;
-        cristaleraEntrada.name = "cristaleraEntrada";
         planta.add(cristaleraEntrada);
         pared = elements.children[10];
         pared.renderOrder = 0;
-        pared.name = "pared";
         planta.add(pared);
         cristaleraAgora = elements.children[9];
         cristaleraAgora.renderOrder = 1;
-        cristaleraAgora.name = "cristaleraAgora";
         planta.add(cristaleraAgora);
         centro = elements.children[8];
         centro.renderOrder = 0;
-        centro.name = "centro";
         mesas.add(centro);
         research = elements.children[7];
         research.renderOrder = 0;
-        research.name = "research";
         mesas.add(research);
         design = elements.children[6];
         design.renderOrder = 0;
-        design.name = "design";
         mesas.add(design);          
         
         comunicacion = elements.children[5];
         comunicacion.renderOrder = 0;
-        comunicacion.name = "comunicacion";
         mesas.add(comunicacion);
         
         clever = elements.children[4];
         clever.renderOrder = 0;
-        clever.name = "clever";
         mesas.add(clever);
         
         cristaleraFrontal = elements.children[3];
         cristaleraFrontal.renderOrder = 2;
-        cristaleraFrontal.name = "cristaleraFrontal";
         planta.add(cristaleraFrontal);
         sillas = elements.children[2];
         sillas.renderOrder = 0;
-        sillas.name = "sillas";
         planta.add(sillas);
         maker = elements.children[0];
         maker.renderOrder = 0;
-        maker.name = "maker";
         mesas.add(maker);
         
         planta.add(mesas);
         planta.scale.set(2,2,2);
-        //planta.scale.set(2,2.5,2);
         scene.add(planta);
       }, onProgress, onError);
     });
@@ -478,11 +383,11 @@
     screen1Mesh.name = 'screen1';
     
     Reticulum.add( screen1Mesh, {
-      reticleHoverColor: 0x00fff6,
-      fuseColor: 0x00fff6,
+      reticleHoverColor: utils.reticleColors.basic,
+      fuseColor: utils.reticleColors.basic,
       fuseVisible: true,
       onGazeLong: function() {
-        removeFromReticulum(screen1Mesh);
+        Reticulum.remove(screen1Mesh);
         if (infoGroupIsShowing) {
           removeInfoSection();
         }
@@ -514,11 +419,11 @@
     screen2Mesh.name = 'screen2';
     
     Reticulum.add( screen2Mesh, {
-      reticleHoverColor: 0x00fff6,
-      fuseColor: 0x00fff6,
+      reticleHoverColor: utils.reticleColors.basic,
+      fuseColor: utils.reticleColors.basic,
       fuseVisible: true,
       onGazeLong: function() {
-        removeFromReticulum(screen2Mesh);
+        Reticulum.remove(screen2Mesh);
         if (infoGroupIsShowing) {
           removeInfoSection();
         }
@@ -547,14 +452,8 @@
     mediaControlsContainer.position.set(object.position.x - 0.2, object.position.y, object.position.z);
 
     mediaControlsContainer.rotateY(-Math.PI / 2);
-    var mediaControls = [
-      {name: 'media-stop', path: 'stop.png', position: {x: 0, y: 0, z: -1}},
-      {name: 'media-pause', path: 'pause.png', position: {x: 0, y: 0, z: -1}},
-      {name: 'media-close', path: 'close.png', position: {x: 0, y: 0, z: -1}},
-      {name: 'media-play', path: 'play.png', position: {x: 0, y: 0, z: 0}}
-    ];
-    for (var i = 0; i < mediaControls.length; i++) {
-      addMediaButton(mediaControls[i].name, mediaControls[i].path, mediaControls[i].position, videoObject);
+    for (var i = 0; i < utils.mediaControls.length; i++) {
+      addMediaButton(utils.mediaControls[i].name, utils.mediaControls[i].path, utils.mediaControls[i].position, videoObject);
     }
     scene.add(mediaControlsContainer)
   }
@@ -578,7 +477,7 @@
   var video2Playing = false;
   function addMediaButton(name, path, position, videoObject) {
     var img = new THREE.MeshBasicMaterial({
-      map: textureLoader.load("images/mediaControls/" + path),
+      map: textureLoader.load(utils.subFolderMediaControls + path),
       transparent: true,
       side: THREE.DoubleSide
     });
@@ -588,21 +487,21 @@
     var plane = new THREE.Mesh(new THREE.PlaneGeometry(scale, scale), img);
     plane.name = name;
     plane.position.set(position.x, position.y, position.z);
-    if (name === 'media-play') {
+    if (name === utils.mediaNamePlay) {
       playButton = plane;
-    } else if (name === 'media-stop') {
+    } else if (name === utils.mediaNameStop) {
       stopButton = plane;
-    } else if (name === 'media-pause') {
+    } else if (name === utils.mediaNamePause) {
       pauseButton = plane;
-    } else if (name === 'media-close') {
+    } else if (name === utils.mediaNameClose) {
       closeButton = plane;
     }
     mediaControlsContainer.add(plane);
 
     Reticulum.add( plane, {
       fuseDuration: 1,
-      reticleHoverColor: name === 'media-close' ? 0xFF9087 : 0xFFD087,
-      fuseColor: name === 'media-close' ? 0xeb2348 : 0xD89939,
+      reticleHoverColor: name === utils.mediaNameClose ? utils.reticleColors.red.light : utils.reticleColors.yellow.light,
+      fuseColor: name === utils.mediaNameClose ? utils.reticleColors.red.dark : utils.reticleColors.yellow.dark,
       fuseVisible: true,
       onGazeOver: function() {
         if (this.material.color) this.material.color.setHex( 0xffcc00 );
@@ -611,7 +510,7 @@
         if (this.material.color) this.material.color.setHex( 0xffffff );
       },
       onGazeLong: function() {
-        if (name === 'media-play') {
+        if (name === utils.mediaNamePlay) {
           videoObject.play();
           if (videoObject === video) {
             showMediaControls(screen1Mesh);
@@ -621,7 +520,7 @@
             video2Playing = true;
           }
           saveCameraLookingAtScreenRotationValue();
-        } else if (name === 'media-close') {
+        } else if (name === utils.mediaNameClose) {
           videoObject.pause();
           removeMediaControls();
           exitScreen(videoObject);
@@ -637,10 +536,10 @@
   }
 
   function removeMediaControls() {
-    Reticulum.remove(playButton); 
-    Reticulum.remove(stopButton); 
-    Reticulum.remove(pauseButton); 
-    Reticulum.remove(closeButton); 
+    if (playButton) removeFromReticulum(playButton);
+    if (stopButton) removeFromReticulum(stopButton);
+    if (pauseButton) removeFromReticulum(pauseButton);
+    if (closeButton) removeFromReticulum(closeButton);
     scene.remove(mediaControlsContainer);
   }
 
@@ -673,7 +572,7 @@
   var deviceAlphaValueForWallMenu;
   function addWallMenu() {
     var img = new THREE.MeshBasicMaterial({
-      map: textureLoader.load("images/beevaLabs" + extension),
+      map: textureLoader.load(utils.rootDirectory + "beevaLabs" + utils.extension),
       transparent: true,
       side: THREE.DoubleSide,
       color: 0xffffff
@@ -714,15 +613,15 @@
       onGazeLong: function() {
         if (!wallMenuIsMoving) {
           if (!wallMenuIsOpen) {
-            Reticulum.remove(wallMenu);
+            removeFromReticulum(wallMenu);
             var labelPoints = [
-              {name: 'maker', position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z + 0.05}}, 
-              {name: 'radical', position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z + 0.05}},
-              {name: 'research', position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z + 0.05}}, 
-              {name: 'jefes', position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z + 0.05}}, 
-              {name: 'nobody', position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z + 0.05}}, 
-              {name: 'comunicacion', position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z + 0.05}},
-              {name: 'agora', position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z + 0.05}}
+              {name: utils.makerName, position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z + 0.05}}, 
+              {name: utils.radicalName, position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z + 0.05}},
+              {name: utils.researchName, position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z + 0.05}}, 
+              {name: utils.jefesName, position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z + 0.05}}, 
+              {name: utils.nobodyName, position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z + 0.05}}, 
+              {name: utils.comunicacionName, position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z + 0.05}},
+              {name: utils.agoraName, position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z + 0.05}}
             ];
             distributeObjectsAcrossCircumference(wallMenu, labelPoints);
           }
@@ -730,25 +629,12 @@
       }
     });
   }
-
-  function isObjectVisible(object) {
-    camera.updateMatrix(); // make sure camera's local matrix is updated
-    camera.updateMatrixWorld(); // make sure camera's world matrix is updated
-    camera.matrixWorldInverse.getInverse( camera.matrixWorld );
-
-    object.updateMatrix(); // make sure object's local matrix is updated
-    object.updateMatrixWorld(); // make sure object's world matrix is updated
-
-    var frustum = new THREE.Frustum();
-    frustum.setFromMatrix( new THREE.Matrix4().multiply( camera.projectionMatrix, camera.matrixWorldInverse ) );
-    return frustum.contains( object );
-  }
   
   function closeWallMenu() {
     wallMenuIsMoving = true;
     var directAccessLabels = [makerLabelDirect, radicalLabelDirect, researchLabelDirect, jefesLabelDirect, nobodyLabelDirect, comunicacionLabelDirect, agoraLabelDirect];
     for (var i = 0; i < directAccessLabels.length; i++) {
-      Reticulum.remove(directAccessLabels[i]);
+      removeFromReticulum(directAccessLabels[i]);
       (function(ind) {
         setTimeout(function(){
           scene.remove(directAccessLabels[ind]);
@@ -785,7 +671,7 @@
 
   function addDirectAccess(containerObject, object, yVal, zVal, index) {
     var img = new THREE.MeshBasicMaterial({
-      map: textureLoader.load(labelsDirectory + object.name + extension),
+      map: textureLoader.load(utils.labelsDirectory + object.name + utils.extension),
       transparent: true,
       side: THREE.DoubleSide,
       color: 0xffffff
@@ -796,19 +682,19 @@
     plane.name = object.name;
     plane.position.set(containerObject.position.x, containerObject.position.y, containerObject.position.z);
     plane.rotateY(-Math.PI / 2);
-    if (object.name === 'research') {
+    if (object.name === utils.researchName) {
       researchLabelDirect = plane;
-    } else if (object.name === 'radical') {
+    } else if (object.name === utils.radicalName) {
       radicalLabelDirect = plane;
-    } else if (object.name === 'maker') {
+    } else if (object.name === utils.makerName) {
       makerLabelDirect = plane;
-    } else if (object.name === 'jefes') {
+    } else if (object.name === utils.jefesName) {
       jefesLabelDirect = plane;
-    } else if (object.name === 'nobody') {
+    } else if (object.name === utils.nobodyName) {
       nobodyLabelDirect = plane;
-    } else if (object.name === 'comunicacion') {
+    } else if (object.name === utils.comunicacionName) {
       comunicacionLabelDirect = plane;
-    } else if (object.name === 'agora') {
+    } else if (object.name === utils.agoraName) {
       agoraLabelDirect = plane;
     }
     scene.add(plane);
@@ -826,47 +712,47 @@
       },
       onGazeLong: function() {
         closeWallMenu();
-        if (object.name === 'research') {
+        if (object.name === utils.researchName) {
           movement({x: researchLabel.position.x + 1.6, y: 1.8, z: researchLabel.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
-            addMembers(researchMembers);
+            addMembers(utils.researchMembers);
             updateLabelSizes();
             updateHomeButtonPosition();
           });
           if (controls) controls.target.set(researchLabel.position.x + 0.2, 2, researchLabel.position.z);
-        } else if (object.name === 'radical') {
+        } else if (object.name === utils.radicalName) {
           movement({x: radicalLabel.position.x + 1.6, y: 1.8, z: radicalLabel.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
-            addMembers(radicalMembers);
+            addMembers(utils.radicalMembers);
             updateLabelSizes();
             updateHomeButtonPosition();
           });
           if (controls) controls.target.set(radicalLabel.position.x + 0.2, 2, radicalLabel.position.z);
-        } else if (object.name === 'jefes') {
+        } else if (object.name === utils.jefesName) {
           movement({x: jefesLabel.position.x + 1.6, y: 1.8, z: jefesLabel.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
-            addMembers(jefesAndVenturesMembers);
+            addMembers(utils.jefesAndVenturesMembers);
             updateLabelSizes();
             updateHomeButtonPosition();
           });
           if (controls) controls.target.set(jefesLabel.position.x + 0.2, 2, jefesLabel.position.z);
-        } else if (object.name === 'comunicacion') {
+        } else if (object.name === utils.comunicacionName) {
           movement({x: comunicacionLabel.position.x + 1.6, y: 1.8, z: comunicacionLabel.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
-            addMembers(comunicacionMembers);
+            addMembers(utils.comunicacionMembers);
             updateLabelSizes();
             updateHomeButtonPosition();
           });
           if (controls) controls.target.set(comunicacionLabel.position.x + 0.2, 2, comunicacionLabel.position.z);
-        } else if (object.name === 'nobody') {
+        } else if (object.name === utils.nobodyName) {
           movement({x: nobodyLabel.position.x + 1.6, y: 1.8, z: nobodyLabel.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
             updateLabelSizes();
             updateHomeButtonPosition();
           });
           if (controls) controls.target.set(nobodyLabel.position.x + 0.2, 2, nobodyLabel.position.z);
-        } else if (object.name === 'maker') {
+        } else if (object.name === utils.makerName) {
           movement({x: -4, y: 1.8, z: -10}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
             updateLabelSizes();
             updateHomeButtonPosition();
           });
           if (controls) controls.target.set(-4, 2, -10);
-        } else if (object.name === 'agora') {
+        } else if (object.name === utils.agoraName) {
           movement({x: 3, y: 1.8, z: 6}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
             updateLabelSizes();
             updateHomeButtonPosition();
@@ -879,18 +765,8 @@
   }
 
   function addTravelPoints() {
-    var labelPoints = [
-      {name: 'comunicacion', position: {x: -2.6, y: 1.2, z: 12.7}}, 
-      {name: 'nobody', position: {x: -2.6, y: 1.2, z: 8.7}}, 
-      {name: 'jefes', position: {x: -2.6, y: 1.2, z: 5}},
-      {name: 'research', position: {x: -2.6, y: 1.2, z: 1}},
-      {name: 'agora', position: {x: 2, y: 1.2, z: 1}}, 
-      {name: 'radical', position: {x: -3.1, y: 1.2, z: -5}}, 
-      {name: 'maker', position: {x: -2.6, y: 1.2, z: -11}}
-    ];
-
-    for (var i = 0; i < labelPoints.length; i++) {
-      addLabel(labelPoints[i].name, labelPoints[i].position);
+    for (var i = 0; i < utils.labelPoints.length; i++) {
+      addLabel(utils.labelPoints[i].name, utils.labelPoints[i].position);
     }
   }
 
@@ -909,7 +785,7 @@
   var homeButton;
   function addHomeButton() {
     var img = new THREE.MeshBasicMaterial({
-      map: textureLoader.load("images/home_button" + extension),
+      map: textureLoader.load(utils.rootDirectory + "home_button" + utils.extension),
       transparent: true,
       color: 0xffffff,
       side: THREE.DoubleSide
@@ -947,7 +823,7 @@
     if (infoGroupIsShowing) {
       removeInfoSection();
     }
-    movement({x: initialPosition.x, y: initialPosition.y, z: initialPosition.z}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
+    movement({x: utils.initialPosition.x, y: utils.initialPosition.y, z: utils.initialPosition.z}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
       updateLabelSizes();
       updateHomeButtonPosition();
       if (controls) controls.target.set(camera.position.x, camera.position.y, camera.position.z + 0.5);
@@ -957,7 +833,7 @@
   var researchLabel, radicalLabel, makerLabel, nobodyLabel, jefesLabel, comunicacionLabel, agoraLabel;
   function addLabel(name, position) {
     var img = new THREE.MeshBasicMaterial({
-      map: textureLoader.load(labelsDirectory + name + extension),
+      map: textureLoader.load(utils.labelsDirectory + name + utils.extension),
       transparent: true,
       color: 0xffffff
     });
@@ -967,26 +843,26 @@
     var plane = new THREE.Mesh(new THREE.PlaneGeometry(scale, scale/4), img);
     plane.name = name;
     plane.position.set(position.x, position.y, position.z);
-    if (name === 'research') {
+    if (name === utils.researchName) {
       researchLabel = plane;
-    } else if (name === 'radical') {
+    } else if (name === utils.radicalName) {
       radicalLabel = plane;
-    } else if (name === 'maker') {
+    } else if (name === utils.makerName) {
       makerLabel = plane;
-    } else if (name === 'jefes') {
+    } else if (name === utils.jefesName) {
       jefesLabel = plane;
-    } else if (name === 'nobody') {
+    } else if (name === utils.nobodyName) {
       nobodyLabel = plane;
-    } else if (name === 'comunicacion') {
+    } else if (name === utils.comunicacionName) {
       comunicacionLabel = plane;
-    } else if (name === 'agora') {
+    } else if (name === utils.agoraName) {
       agoraLabel = plane;
     }
     scene.add(plane);
 
     Reticulum.add( plane, {
-      reticleHoverColor: 0x9DB7DA,
-      fuseColor: 0x2E568E,
+      reticleHoverColor: utils.reticleColors.blue.light,
+      fuseColor: utils.reticleColors.blue.dark,
       fuseVisible: true,
       onGazeLong: function() {
         if (wallMenuIsOpen) {
@@ -995,17 +871,17 @@
         changeScaleSingle(plane, 1);
         removeMembers();
         removeInfoSection();
-        if (name === 'research') {
-          addMembers(researchMembers);
-        } else if (name === 'radical') {
-          addMembers(radicalMembers);
-        } else if (name === 'jefes') {
-          addMembers(jefesAndVenturesMembers);
-        } else if (name === 'comunicacion') {
-          addMembers(comunicacionMembers);
+        if (name === utils.researchName) {
+          addMembers(utils.researchMembers);
+        } else if (name === utils.radicalName) {
+          addMembers(utils.radicalMembers);
+        } else if (name === utils.jefesName) {
+          addMembers(utils.jefesAndVenturesMembers);
+        } else if (name === utils.comunicacionName) {
+          addMembers(utils.comunicacionMembers);
         }
-        if (name !== 'maker') {
-          if (name === 'agora') {
+        if (name !== utils.makerName) {
+          if (name === utils.agoraName) {
             movement({x: 3, y: 1.8, z: 6}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
               updateLabelSizes();
               updateHomeButtonPosition();
@@ -1067,7 +943,7 @@
 
   function addMember(member, index) {
     var img = new THREE.MeshBasicMaterial({
-      map: textureLoader.load(rootDirectory + subFolderCircular + member.name + extension),
+      map: textureLoader.load(utils.subFolderCircular + member.name + utils.extension),
       transparent: true,
       depthWrite: false,
       color: 0xffffff
@@ -1084,8 +960,8 @@
     scene.add(plane);
 
     Reticulum.add( plane, {
-      reticleHoverColor: 0x9ADEBD,
-      fuseColor: 0x137B49,
+      reticleHoverColor: utils.reticleColors.green.light,
+      fuseColor: utils.reticleColors.green.dark,
       fuseVisible: true,
       onGazeOver: function() {
         if (this.material.color) this.material.color.setHex( 0xffcc00 );
@@ -1096,13 +972,13 @@
       onGazeLong: function() {
         if (!infoGroupIsShowing) {
           removeMembers();
-          if (isRadicalMember(plane)) {
+          if (utils.isRadicalMember(plane)) {
             addRadicalMemberInfoSection(plane);
-          } else if (isResearchMember(plane)) {
+          } else if (utils.isResearchMember(plane)) {
             addResearchMemberInfoSection(plane);
-          } else if (isJefesAndVenturesMember(plane)) {
+          } else if (utils.isJefesAndVenturesMember(plane)) {
             addJefesAndVenturesMemberInfoSection(plane);
-          } else if (isComunicacionMember(plane)) {
+          } else if (utils.isComunicacionMember(plane)) {
             addComunicacionMemberInfoSection(plane);
           }
         }
@@ -1114,7 +990,7 @@
     var numberOfMembers = memberPlanes.length;
     for (var a = 0; a < numberOfMembers; a++) {
       movement({y: -4}, memberPlanes[a].position, 0, 500, TWEEN.Easing.Back.Out);
-      Reticulum.remove(memberPlanes[a]);
+      removeFromReticulum(memberPlanes[a]);
       scene.remove(memberPlanes[a]);
       if (a == numberOfMembers - 1) {
         membersGroup = new THREE.Object3D();
@@ -1122,43 +998,6 @@
         memberPlanes = [];
       }
     }
-    // scene.remove(membersGroup);
-  }
-
-  function isRadicalMember(memberObject) {
-    for (var i = 0; i < radicalMembers.length; i++) {
-      if (memberObject.name === radicalMembers[i].name) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  function isResearchMember(memberObject) {
-    for (var i = 0; i < researchMembers.length; i++) {
-      if (memberObject.name === researchMembers[i].name) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  function isJefesAndVenturesMember(memberObject) {
-    for (var i = 0; i < jefesAndVenturesMembers.length; i++) {
-      if (memberObject.name === jefesAndVenturesMembers[i].name) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  function isComunicacionMember(memberObject) {
-    for (var i = 0; i < comunicacionMembers.length; i++) {
-      if (memberObject.name === comunicacionMembers[i].name) {
-        return true;
-      }
-    }
-    return false;
   }
 
   var infoCloseButton, infoEmailButton, infoCalendarButton, infoCallButton;
@@ -1187,7 +1026,7 @@
     scene.remove(infoGroup);
     infoGroup = new THREE.Object3D();
     infoGroup.name = 'infoGroup';
-    var texture = textureLoader.load("images/info_board.png");
+    var texture = textureLoader.load(utils.rootDirectory + "info_board.png");
     var geometry = new THREE.PlaneGeometry(3, 1.8, 3);
     var material = new THREE.MeshBasicMaterial({
       map: texture,
@@ -1199,7 +1038,7 @@
     plane.name = name;
 
     var closeButtonMaterial = new THREE.MeshBasicMaterial({
-      map: textureLoader.load("images/mediaControls/close.png"),
+      map: textureLoader.load(utils.subFolderMediaControls + "close.png"),
       transparent: true,
       side: THREE.DoubleSide
     });
@@ -1210,21 +1049,21 @@
     closeButtonMesh.position.set(1.2, 0.65, 0.1);
 
     Reticulum.add( closeButtonMesh, {
-      reticleHoverColor: 0xeb2348,
+      reticleHoverColor: utils.reticleColors.red.light,
+      fuseColor: utils.reticleColors.red.dark,
       fuseDuration: 1,
-      fuseColor: 0xeb2348,
       fuseVisible: true,
       onGazeLong: function() {
         if (!infoIsOpening) {
           removeInfoSection();
-          if (isRadicalMember(memberObject)) {
-            addMembers(radicalMembers);
-          } else if (isResearchMember(memberObject)) {
-            addMembers(researchMembers);
-          } else if (isJefesAndVenturesMember(memberObject)) {
-            addMembers(jefesAndVenturesMembers);
-          } else if (isComunicacionMember(memberObject)) {
-            addMembers(comunicacionMembers);
+          if (utils.isRadicalMember(memberObject)) {
+            addMembers(utils.radicalMembers);
+          } else if (utils.isResearchMember(memberObject)) {
+            addMembers(utils.researchMembers);
+          } else if (utils.isJefesAndVenturesMember(memberObject)) {
+            addMembers(utils.jefesAndVenturesMembers);
+          } else if (utils.isComunicacionMember(memberObject)) {
+            addMembers(utils.comunicacionMembers);
           }
           infoGroupIsShowing = false;
         }
@@ -1233,7 +1072,7 @@
     plane.add(closeButtonMesh);
 
     var emailButtonMaterial = new THREE.MeshBasicMaterial({
-      map: textureLoader.load("images/email.png"),
+      map: textureLoader.load(utils.rootDirectory + "email.png"),
       transparent: true,
       side: THREE.DoubleSide
     });
@@ -1244,8 +1083,8 @@
     infoEmailButton.position.set(-1, -0.6, 0.1);
 
     Reticulum.add( infoEmailButton, {
-      reticleHoverColor: 0x00fff6,
-      fuseColor: 0x00fff6,
+      reticleHoverColor: utils.reticleColors.reticleColors.basic,
+      fuseColor: utils.reticleColors.reticleColors.basic,
       fuseVisible: true,
       onGazeLong: function() {
       }
@@ -1253,7 +1092,7 @@
     plane.add(infoEmailButton);
 
     var calendarButtonMaterial = new THREE.MeshBasicMaterial({
-      map: textureLoader.load("images/calendar.png"),
+      map: textureLoader.load(utils.rootDirectory + "calendar.png"),
       transparent: true,
       side: THREE.DoubleSide
     });
@@ -1263,8 +1102,8 @@
     infoCalendarButton.position.set(0, -0.6, 0.1);
 
     Reticulum.add( infoCalendarButton, {
-      reticleHoverColor: 0x00fff6,
-      fuseColor: 0x00fff6,
+      reticleHoverColor: utils.reticleColors.reticleColors.basic,
+      fuseColor: utils.reticleColors.reticleColors.basic,
       fuseVisible: true,
       onGazeLong: function() {
       }
@@ -1272,7 +1111,7 @@
     plane.add(infoCalendarButton);
 
     var callButtonMaterial = new THREE.MeshBasicMaterial({
-      map: textureLoader.load("images/call.png"),
+      map: textureLoader.load(utils.rootDirectory + "call.png"),
       transparent: true,
       side: THREE.DoubleSide
     });
@@ -1282,8 +1121,8 @@
     infoCallButton.position.set(1, -0.6, 0.1);
 
     Reticulum.add( infoCallButton, {
-      reticleHoverColor: 0x00fff6,
-      fuseColor: 0x00fff6,
+      reticleHoverColor: utils.reticleColors.reticleColors.basic,
+      fuseColor: utils.reticleColors.reticleColors.basic,
       fuseVisible: true,
       onGazeLong: function() {
       }
@@ -1291,7 +1130,7 @@
     plane.add(infoCallButton);
 
     var img = new THREE.MeshBasicMaterial({
-      map: textureLoader.load(rootDirectory + subFolderCircular + memberObject.name + extension),
+      map: textureLoader.load(utils.subFolderCircular + memberObject.name + utils.extension),
       transparent: true,
       depthWrite: false,
       color: 0xffffff
@@ -1305,7 +1144,7 @@
     var memberName = memberObject.name;
 
     img = new THREE.MeshBasicMaterial({
-      map: textureLoader.load(rootDirectory + subFolderInfo + memberName + extension),
+      map: textureLoader.load(utils.subFolderInfo + memberName + utils.extension),
       transparent: true,
       depthWrite: false,
       color: 0xffffff
@@ -1328,17 +1167,16 @@
   }
 
   function removeInfoSection() {
-    if (infoCloseButton) Reticulum.remove(infoCloseButton);
-    if (infoEmailButton) Reticulum.remove(infoEmailButton);
-    if (infoCalendarButton) Reticulum.remove(infoCalendarButton);
-    if (infoCallButton) Reticulum.remove(infoCallButton);
-    movement({y: -2}, infoGroup.position, 0, 1200, TWEEN.Easing.Back.In);
-    setTimeout(function () {
+    if (infoCloseButton) removeFromReticulum(infoCloseButton);
+    if (infoEmailButton) removeFromReticulum(infoEmailButton);
+    if (infoCalendarButton) removeFromReticulum(infoCalendarButton);
+    if (infoCallButton) removeFromReticulum(infoCallButton);
+    movement({y: -2}, infoGroup.position, 0, 1200, TWEEN.Easing.Back.In, function () {
       scene.remove(infoGroup);
       infoGroup = new THREE.Object3D();
       infoGroup.name = 'infoGroup';
       infoGroupIsShowing = false;
-    }, 1300);
+    });
   }
 
   function onWindowResize() {
@@ -1377,14 +1215,8 @@
       renderer.render(scene, camera);
     }
     sky.rotation.y += 0.0003;
-    if (particleCube != undefined) {
-      particleCube.geometry.verticesNeedUpdate = true;
-    }
     if (videoTexture != undefined) videoTexture.update();
     if (videoTexture2 != undefined) videoTexture2.update();
-    if (travelPoints.children[0]) travelPoints.children[0].rotation.y += 0.01;
-    if (travelPoints.children[1]) travelPoints.children[1].rotation.y += 0.01;
-    if (travelPoints.children[2]) travelPoints.children[2].rotation.y += 0.01;
 
     if (memberPlanes.length > 0) {
       for (var i = 0; i < memberPlanes.length; i++) {
@@ -1415,7 +1247,7 @@
     if (homeButton !== undefined) {
       if (controls) {
         homeButton.rotation.setFromRotationMatrix(camera.matrix);
-        homeButton.lookAt(camera.position);
+        // homeButton.lookAt(camera.position);
       }
       if (controlsdevice) {
         homeButton.rotation.z = 180 - controlsdevice.deviceOrientation.alpha * Math.PI / 180 + 10;
@@ -1472,53 +1304,8 @@
       .start();
   }
 
-  function makeTextSprite( message, parameters ) {
-    if ( parameters === undefined ) parameters = {};
-    var fontface = parameters.hasOwnProperty("fontface") ? parameters["fontface"] : "Arial";
-    var fontsize = parameters.hasOwnProperty("fontsize") ? parameters["fontsize"] : 18;
-    var position = parameters.hasOwnProperty("position") ? parameters["position"] : {x: 0, y: 0, z: 0};
-    var borderThickness = parameters.hasOwnProperty("borderThickness") ? parameters["borderThickness"] : 4;
-    var borderColor = parameters.hasOwnProperty("borderColor") ?parameters["borderColor"] : { r:0, g:0, b:0, a:1.0 };
-    var backgroundColor = parameters.hasOwnProperty("backgroundColor") ?parameters["backgroundColor"] : { r:255, g:255, b:255, a:1.0 };
-    var textColor = parameters.hasOwnProperty("textColor") ?parameters["textColor"] : { r:0, g:0, b:0, a:1.0 };    
-    var canvas = document.createElement('canvas');
-    var context = canvas.getContext('2d');
-    context.font = "Bold " + fontsize + "px " + fontface;
-    var metrics = context.measureText( message );
-    var textWidth = metrics.width;    
-    context.fillStyle   = "rgba(" + backgroundColor.r + "," + backgroundColor.g + "," + backgroundColor.b + "," + backgroundColor.a + ")";
-    context.strokeStyle = "rgba(" + borderColor.r + "," + borderColor.g + "," + borderColor.b + "," + borderColor.a + ")";    
-    context.lineWidth = borderThickness;
-    roundRect(context, borderThickness/2, borderThickness/2, (textWidth + borderThickness) * 1.1, fontsize * 1.4 + borderThickness, 8);    
-    context.fillStyle = "rgba("+textColor.r+", "+textColor.g+", "+textColor.b+", 1.0)";
-    context.fillText( message, borderThickness, fontsize + borderThickness);    
-    var texture = new THREE.Texture(canvas) 
-    texture.needsUpdate = true;    
-    var spriteMaterial = new THREE.SpriteMaterial( { map: texture, useScreenCoordinates: false } );
-    var sprite = new THREE.Sprite( spriteMaterial );
-    sprite.scale.set(0.5 * fontsize, 0.25 * fontsize, 0.75 * fontsize);
-    return sprite;
-  }
-
-  // function for drawing rounded rectangles
-  function roundRect(ctx, x, y, w, h, r) {
-    ctx.beginPath();
-    ctx.moveTo(x+r, y);
-    ctx.lineTo(x+w-r, y);
-    ctx.quadraticCurveTo(x+w, y, x+w, y+r);
-    ctx.lineTo(x+w, y+h-r);
-    ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
-    ctx.lineTo(x+r, y+h);
-    ctx.quadraticCurveTo(x, y+h, x, y+h-r);
-    ctx.lineTo(x, y+r);
-    ctx.quadraticCurveTo(x, y, x+r, y);
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();   
-  }
-
   function updateHomeButtonPosition() {
-    movement({x: camera.position.x, y: 0.2, z: camera.position.z}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
+    movement({x: camera.position.x, y: 0.2, z: camera.position.z}, homeButton.position, 0, 10, TWEEN.Easing.Quartic.Out);
   }
 
   function distance(positionA, positionB) {
