@@ -1518,7 +1518,7 @@
   }
 
   function updateHomeButtonPosition() {
-    movement({x: camera.position.x, y: 0.2, z: camera.position.z + 0.5}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
+    movement({x: camera.position.x, y: 0.2, z: camera.position.z}, homeButton.position, 0, 200, TWEEN.Easing.Quartic.Out);
   }
 
   function distance(positionA, positionB) {
