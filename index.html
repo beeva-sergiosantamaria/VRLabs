@@ -215,7 +215,7 @@
       isMobile = true;
       $('#allowVideoScreen').css('display', 'block');
       effect = new THREE.StereoEffect(renderer);
-      effect.setSize(window.innerWidth, window.innerHeight);
+      effect.setSize(width, height);
       effect.setEyeSeparation = 0.5;
       
       controlsdevice = new THREE.DeviceOrientationControls(camera, true);
