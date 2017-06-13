@@ -818,6 +818,12 @@
       reticleHoverColor: 0xfdff00,
       fuseColor: 0x660066,
       fuseVisible: true,
+      onGazeOver: function() {
+        changeScaleSingle(plane, 1.2);
+      },
+      onGazeOut: function() {
+        changeScaleSingle(plane, 1);
+      },
       onGazeLong: function() {
         closeWallMenu();
         if (object.name === 'research') {
