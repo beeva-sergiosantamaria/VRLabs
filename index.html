@@ -204,6 +204,8 @@
   var exitGroup = new THREE.Object3D();
   exitGroup.name = 'exitGroup';
 
+  var labelsDirectory = "images/labels/";
+
   var activeLetters;
 
   var infoGroupIsShowing = false;
@@ -714,13 +716,13 @@
           if (!wallMenuIsOpen) {
             Reticulum.remove(wallMenu);
             var labelPoints = [
-              {name: 'labelMaker', position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z + 0.05}}, 
-              {name: 'labelLabsRadical', position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z + 0.05}},
-              {name: 'labelLabsResearch', position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z + 0.05}}, 
-              {name: 'labelJefes', position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z + 0.05}}, 
-              {name: 'labelNobody', position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z + 0.05}}, 
-              {name: 'labelComunicacion', position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z + 0.05}},
-              {name: 'labelAgora', position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z + 0.05}}
+              {name: 'maker', position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z + 0.05}}, 
+              {name: 'radical', position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z + 0.05}},
+              {name: 'research', position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z + 0.05}}, 
+              {name: 'jefes', position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z + 0.05}}, 
+              {name: 'nobody', position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z + 0.05}}, 
+              {name: 'comunicacion', position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z + 0.05}},
+              {name: 'agora', position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z + 0.05}}
             ];
             distributeObjectsAcrossCircumference(wallMenu, labelPoints);
           }
@@ -783,7 +785,7 @@
 
   function addDirectAccess(containerObject, object, yVal, zVal, index) {
     var img = new THREE.MeshBasicMaterial({
-      map: textureLoader.load("images/"+ object.name + extension),
+      map: textureLoader.load(labelsDirectory + object.name + extension),
       transparent: true,
       side: THREE.DoubleSide,
       color: 0xffffff
@@ -794,19 +796,19 @@
     plane.name = object.name;
     plane.position.set(containerObject.position.x, containerObject.position.y, containerObject.position.z);
     plane.rotateY(-Math.PI / 2);
-    if (object.name === 'labelLabsResearch') {
+    if (object.name === 'research') {
       researchLabelDirect = plane;
-    } else if (object.name === 'labelLabsRadical') {
+    } else if (object.name === 'radical') {
       radicalLabelDirect = plane;
-    } else if (object.name === 'labelMaker') {
+    } else if (object.name === 'maker') {
       makerLabelDirect = plane;
-    } else if (object.name === 'labelJefes') {
+    } else if (object.name === 'jefes') {
       jefesLabelDirect = plane;
-    } else if (object.name === 'labelNobody') {
+    } else if (object.name === 'nobody') {
       nobodyLabelDirect = plane;
-    } else if (object.name === 'labelComunicacion') {
+    } else if (object.name === 'comunicacion') {
       comunicacionLabelDirect = plane;
-    } else if (object.name === 'labelAgora') {
+    } else if (object.name === 'agora') {
       agoraLabelDirect = plane;
     }
     scene.add(plane);
@@ -818,47 +820,47 @@
       fuseVisible: true,
       onGazeLong: function() {
         closeWallMenu();
-        if (object.name === 'labelLabsResearch') {
+        if (object.name === 'research') {
           movement({x: researchLabel.position.x + 1.6, y: 1.8, z: researchLabel.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
             addMembers(researchMembers);
             updateLabelSizes();
             updateHomeButtonPosition();
           });
           if (controls) controls.target.set(researchLabel.position.x + 0.2, 2, researchLabel.position.z);
-        } else if (object.name === 'labelLabsRadical') {
+        } else if (object.name === 'radical') {
           movement({x: radicalLabel.position.x + 1.6, y: 1.8, z: radicalLabel.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
             addMembers(radicalMembers);
             updateLabelSizes();
             updateHomeButtonPosition();
           });
           if (controls) controls.target.set(radicalLabel.position.x + 0.2, 2, radicalLabel.position.z);
-        } else if (object.name === 'labelJefes') {
+        } else if (object.name === 'jefes') {
           movement({x: jefesLabel.position.x + 1.6, y: 1.8, z: jefesLabel.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
             addMembers(jefesAndVenturesMembers);
             updateLabelSizes();
             updateHomeButtonPosition();
           });
           if (controls) controls.target.set(jefesLabel.position.x + 0.2, 2, jefesLabel.position.z);
-        } else if (object.name === 'labelComunicacion') {
+        } else if (object.name === 'comunicacion') {
           movement({x: comunicacionLabel.position.x + 1.6, y: 1.8, z: comunicacionLabel.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
             addMembers(comunicacionMembers);
             updateLabelSizes();
             updateHomeButtonPosition();
           });
           if (controls) controls.target.set(comunicacionLabel.position.x + 0.2, 2, comunicacionLabel.position.z);
-        } else if (object.name === 'labelNobody') {
+        } else if (object.name === 'nobody') {
           movement({x: nobodyLabel.position.x + 1.6, y: 1.8, z: nobodyLabel.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
             updateLabelSizes();
             updateHomeButtonPosition();
           });
           if (controls) controls.target.set(nobodyLabel.position.x + 0.2, 2, nobodyLabel.position.z);
-        } else if (object.name === 'labelMaker') {
+        } else if (object.name === 'maker') {
           movement({x: -4, y: 1.8, z: -10}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
             updateLabelSizes();
             updateHomeButtonPosition();
           });
           if (controls) controls.target.set(-4, 2, -10);
-        } else if (object.name === 'labelAgora') {
+        } else if (object.name === 'agora') {
           movement({x: 3, y: 1.8, z: 6}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
             updateLabelSizes();
             updateHomeButtonPosition();
@@ -872,13 +874,13 @@
 
   function addTravelPoints() {
     var labelPoints = [
-      {name: 'labelComunicacion', position: {x: -2.6, y: 1.2, z: 12.7}}, 
-      {name: 'labelNobody', position: {x: -2.6, y: 1.2, z: 8.7}}, 
-      {name: 'labelJefes', position: {x: -2.6, y: 1.2, z: 5}},
-      {name: 'labelLabsResearch', position: {x: -2.6, y: 1.2, z: 1}},
-      {name: 'labelAgora', position: {x: 2, y: 1.2, z: 1}}, 
-      {name: 'labelLabsRadical', position: {x: -3.1, y: 1.2, z: -5}}, 
-      {name: 'labelMaker', position: {x: -2.6, y: 1.2, z: -11}}
+      {name: 'comunicacion', position: {x: -2.6, y: 1.2, z: 12.7}}, 
+      {name: 'nobody', position: {x: -2.6, y: 1.2, z: 8.7}}, 
+      {name: 'jefes', position: {x: -2.6, y: 1.2, z: 5}},
+      {name: 'research', position: {x: -2.6, y: 1.2, z: 1}},
+      {name: 'agora', position: {x: 2, y: 1.2, z: 1}}, 
+      {name: 'radical', position: {x: -3.1, y: 1.2, z: -5}}, 
+      {name: 'maker', position: {x: -2.6, y: 1.2, z: -11}}
     ];
 
     for (var i = 0; i < labelPoints.length; i++) {
@@ -949,7 +951,7 @@
   var researchLabel, radicalLabel, makerLabel, nobodyLabel, jefesLabel, comunicacionLabel, agoraLabel;
   function addLabel(name, position) {
     var img = new THREE.MeshBasicMaterial({
-      map: textureLoader.load("images/"+ name + extension),
+      map: textureLoader.load(labelsDirectory + name + extension),
       transparent: true,
       color: 0xffffff
     });
@@ -959,19 +961,19 @@
     var plane = new THREE.Mesh(new THREE.PlaneGeometry(scale, scale/4), img);
     plane.name = name;
     plane.position.set(position.x, position.y, position.z);
-    if (name === 'labelLabsResearch') {
+    if (name === 'research') {
       researchLabel = plane;
-    } else if (name === 'labelLabsRadical') {
+    } else if (name === 'radical') {
       radicalLabel = plane;
-    } else if (name === 'labelMaker') {
+    } else if (name === 'maker') {
       makerLabel = plane;
-    } else if (name === 'labelJefes') {
+    } else if (name === 'jefes') {
       jefesLabel = plane;
-    } else if (name === 'labelNobody') {
+    } else if (name === 'nobody') {
       nobodyLabel = plane;
-    } else if (name === 'labelComunicacion') {
+    } else if (name === 'comunicacion') {
       comunicacionLabel = plane;
-    } else if (name === 'labelAgora') {
+    } else if (name === 'agora') {
       agoraLabel = plane;
     }
     scene.add(plane);
@@ -987,17 +989,17 @@
         changeScaleSingle(plane, 1);
         removeMembers();
         removeInfoSection();
-        if (name === 'labelLabsResearch') {
+        if (name === 'research') {
           addMembers(researchMembers);
-        } else if (name === 'labelLabsRadical') {
+        } else if (name === 'radical') {
           addMembers(radicalMembers);
-        } else if (name === 'labelJefes') {
+        } else if (name === 'jefes') {
           addMembers(jefesAndVenturesMembers);
-        } else if (name === 'labelComunicacion') {
+        } else if (name === 'comunicacion') {
           addMembers(comunicacionMembers);
         }
-        if (name !== 'labelMaker') {
-          if (name === 'labelAgora') {
+        if (name !== 'maker') {
+          if (name === 'agora') {
             movement({x: 3, y: 1.8, z: 6}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
               updateLabelSizes();
               updateHomeButtonPosition();
