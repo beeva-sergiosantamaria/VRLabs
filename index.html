@@ -566,7 +566,7 @@
     return result;
   }
 
-  var wallMenu;
+  var wallMenu, clickMeHint;
   var wallMenuIsMoving = false;
   var wallMenuIsOpen = false;
   var deviceAlphaValueForWallMenu;
@@ -588,6 +588,19 @@
     scene.add(wallMenu);
 
     addWallMenuToReticulum();
+
+    img = new THREE.MeshBasicMaterial({
+      map: textureLoader.load(utils.rootDirectory + "beevaLabs_clickMe" + utils.extension),
+      transparent: true,
+      side: THREE.DoubleSide,
+      color: 0xffffff
+    });
+    img.map.needsUpdate = false;
+    clickMeHint = new THREE.Mesh(new THREE.PlaneGeometry(scale, scale), img);
+    clickMeHint.position.set(0, 1, -9.7);
+    clickMeHint.rotateY(-Math.PI / 2);
+    
+    scene.add(clickMeHint);
   }
 
   function addWallMenuToReticulum() {
@@ -680,7 +693,7 @@
     var scale = 0.5;
     var plane = new THREE.Mesh(new THREE.PlaneGeometry(scale, scale/4), img);
     plane.name = object.name;
-    plane.position.set(containerObject.position.x, containerObject.position.y, containerObject.position.z);
+    plane.position.set(containerObject.position.x - 0.05, containerObject.position.y, containerObject.position.z);
     plane.rotateY(-Math.PI / 2);
     if (object.name === utils.researchName) {
       researchLabelDirect = plane;
@@ -1215,6 +1228,11 @@
       renderer.render(scene, camera);
     }
     sky.rotation.y += 0.0003;
+    if (wallMenuIsOpen || wallMenuIsMoving) {
+      clickMeHint.visible = false;
+    } else {
+      clickMeHint.visible = true;
+    }
     if (videoTexture != undefined) videoTexture.update();
     if (videoTexture2 != undefined) videoTexture2.update();
 
