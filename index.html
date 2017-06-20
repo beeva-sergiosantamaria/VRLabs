@@ -394,11 +394,11 @@
         removeMembers();
         if (video != undefined && video2 != undefined) {
           video2.pause();
-          if (controls) controls.target.set(screen1Mesh.position.x - 0.2, screen1Mesh.position.y, screen1Mesh.position.z);
           movement({x: -1.5, y: 2, z: screen1Mesh.position.z}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
             addMediaControls(screen1Mesh, video);
             updateHomeButtonPosition();
           });
+          if (controls) controls.target.set(screen1Mesh.position.x - 0.2, screen1Mesh.position.y, screen1Mesh.position.z);
         }
         camera.up = new THREE.Vector3(0,1,0);
         camera.lookAt(screen1Mesh.position);
@@ -430,10 +430,11 @@
         removeMembers();
         if (video != undefined && video2 != undefined) {
           video.pause();
-          if (controls) controls.target.set(screen2Mesh.position.x - 0.2, screen2Mesh.position.y, screen2Mesh.position.z);
-          movement({x: -1.4, y: 2, z: screen2Mesh.position.z}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, addMediaControls(screen2Mesh, video2), function () {
+          movement({x: -1.4, y: 2, z: screen2Mesh.position.z}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
+            addMediaControls(screen2Mesh, video2);
             updateHomeButtonPosition();
           });
+          if (controls) controls.target.set(screen2Mesh.position.x - 0.2, screen2Mesh.position.y, screen2Mesh.position.z);
         }
         camera.up = new THREE.Vector3(0,1,0);
         camera.lookAt(screen2Mesh.position);
@@ -762,7 +763,7 @@
     });
     img.map.needsUpdate = false;
     var scale = 0.5;
-    var plane = new THREE.Mesh(new THREE.PlaneGeometry(scale, scale/4), img);
+    var plane = new THREE.Mesh(new THREE.PlaneGeometry(scale, scale/4.76), img);
     plane.name = object.name;
     plane.position.set(containerObject.position.x - 0.05, containerObject.position.y, containerObject.position.z);
     plane.rotateY(-Math.PI / 2);
@@ -923,7 +924,7 @@
     img.map.needsUpdate = true;
 
     var scale = 0.45;
-    var plane = new THREE.Mesh(new THREE.PlaneGeometry(scale, scale/4), img);
+    var plane = new THREE.Mesh(new THREE.PlaneGeometry(scale, scale/4.76), img);
     plane.name = name;
     plane.position.set(position.x, position.y, position.z);
     if (name === utils.researchName) {
