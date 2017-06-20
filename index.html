@@ -624,12 +624,14 @@
       movement({x: researchLabel.position.x + 1.6, y: 1.8, z: researchLabel.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
         updateLabelSizes();
         updateHomeButtonPosition();
+        addScreen1();
       });
       if (controls) controls.target.set(researchLabel.position.x + 0.2, 2, researchLabel.position.z);
     } else if (videoObject === video2) {
       movement({x: nobodyLabel.position.x + 1.6, y: 1.8, z: nobodyLabel.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
         updateLabelSizes();
         updateHomeButtonPosition();
+        addScreen2();
       });
       if (controls) controls.target.set(nobodyLabel.position.x + 0.2, 2, nobodyLabel.position.z);
     }
@@ -946,7 +948,6 @@
     scene.add(plane);
 
     if (name !== utils.agoraName) {
-      console.log('entro ', name);
       Reticulum.add( plane, {
         reticleHoverColor: utils.reticleColors.blue.light,
         fuseColor: utils.reticleColors.blue.dark,
