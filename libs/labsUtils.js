@@ -9,6 +9,7 @@ LabsUtils = function() {
     this.subFolderCircular = this.membersDirectory + "circular/";
     this.subFolderInfo = this.membersDirectory + "info/";
     this.subFolderMediaControls = this.rootDirectory + "mediaControls/";
+    this.subFolderInfoBox = this.rootDirectory + "infoBox/";
     this.extension = ".png";
     this.initialPosition = {x: -1.6, y: 1.8, z: -10};
     this.makerName = 'maker';

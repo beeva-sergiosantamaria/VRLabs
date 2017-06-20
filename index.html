@@ -202,7 +202,7 @@
       },
       fuse: {
         visible: false,
-        duration: 2,
+        duration: 1.5,
         color: utils.reticleColors.basic,
         innerRadius: 0.045, // inner fuse radius when reticle is loading the interaction
         outerRadius: 0.06, // outer fuse radius when reticle is loading the interaction
@@ -449,7 +449,7 @@
   var mediaControlsContainer;
   function addMediaControls(object, videoObject) {
     mediaControlsContainer = new THREE.Object3D();
-    mediaControlsContainer.position.set(object.position.x - 0.2, object.position.y, object.position.z);
+    mediaControlsContainer.position.set(object.position.x - 0.32, object.position.y, object.position.z);
 
     mediaControlsContainer.rotateY(-Math.PI / 2);
     for (var i = 0; i < utils.mediaControls.length; i++) {
@@ -463,7 +463,7 @@
     movement({x: -0.13, y: 0, z: 0}, stopButton.position, 0, 500, TWEEN.Easing.Back.Out);
     movement({x: 0, y: 0, z: 0}, pauseButton.position, 0, 500, TWEEN.Easing.Back.Out);
     movement({x: 0.13, y: 0, z: 0}, closeButton.position, 0, 500, TWEEN.Easing.Back.Out);
-    movement({x: screenObject.position.x, y: screenObject.position.y - 0.3, z: screenObject.position.z + 0.1}, mediaControlsContainer.position, 0, 1500, TWEEN.Easing.Back.Out)
+    movement({x: screenObject.position.x - 0.1, y: screenObject.position.y - 0.32, z: screenObject.position.z + 0.1}, mediaControlsContainer.position, 0, 1500, TWEEN.Easing.Back.Out)
   }
 
   var cameraLookingAtScreenRotationValue;
@@ -489,19 +489,25 @@
     plane.position.set(position.x, position.y, position.z);
     if (name === utils.mediaNamePlay) {
       playButton = plane;
+      addPlayButtonToReticulum(videoObject)
     } else if (name === utils.mediaNameStop) {
       stopButton = plane;
+      addStopButtonToReticulum(videoObject);
     } else if (name === utils.mediaNamePause) {
       pauseButton = plane;
+      addPauseButtonToReticulum(videoObject);
     } else if (name === utils.mediaNameClose) {
       closeButton = plane;
+      addCloseButtonToReticulum(videoObject);
     }
     mediaControlsContainer.add(plane);
+  }
 
-    Reticulum.add( plane, {
-      fuseDuration: 1,
-      reticleHoverColor: name === utils.mediaNameClose ? utils.reticleColors.red.light : utils.reticleColors.yellow.light,
-      fuseColor: name === utils.mediaNameClose ? utils.reticleColors.red.dark : utils.reticleColors.yellow.dark,
+  function addCloseButtonToReticulum(videoObject) {
+    Reticulum.add( closeButton, {
+      fuseDuration: 0.5,
+      reticleHoverColor: utils.reticleColors.red.light,
+      fuseColor: utils.reticleColors.red.dark,
       fuseVisible: true,
       onGazeOver: function() {
         if (this.material.color) this.material.color.setHex( 0xffcc00 );
@@ -510,27 +516,97 @@
         if (this.material.color) this.material.color.setHex( 0xffffff );
       },
       onGazeLong: function() {
-        if (name === utils.mediaNamePlay) {
-          videoObject.play();
-          if (videoObject === video) {
-            showMediaControls(screen1Mesh);
-            videoPlaying = true;
-          } else if (videoObject === video2) {
-            showMediaControls(screen2Mesh);
-            video2Playing = true;
-          }
-          saveCameraLookingAtScreenRotationValue();
-        } else if (name === utils.mediaNameClose) {
-          videoObject.pause();
-          removeMediaControls();
-          exitScreen(videoObject);
+        videoObject.pause();
+        videoObject.currentTime = 0;
+        videoObject.load();
+        videoPlaying = false;
+        video2Playing = false;
+        removeMediaControls();
+        exitScreen(videoObject);
+      }
+    });
+  }
+
+  function addPlayButtonToReticulum(videoObject) {
+    Reticulum.add( playButton, {
+      fuseDuration: 0.5,
+      reticleHoverColor: utils.reticleColors.yellow.light,
+      fuseColor: utils.reticleColors.yellow.dark,
+      fuseVisible: true,
+      onGazeOver: function() {
+        if (this.material.color) this.material.color.setHex( 0xffcc00 );
+      },
+      onGazeOut: function() {
+        if (this.material.color) this.material.color.setHex( 0xffffff );
+      },
+      onGazeLong: function() {
+        videoObject.play();
+        if (videoObject === video) {
+          showMediaControls(screen1Mesh);
+          videoPlaying = true;
+        } else if (videoObject === video2) {
+          showMediaControls(screen2Mesh);
+          video2Playing = true;
+        }
+        saveCameraLookingAtScreenRotationValue();
+        removeFromReticulum(playButton);
+        addPauseButtonToReticulum(videoObject);
+        addStopButtonToReticulum(videoObject);
+      }
+    });
+  }
+
+  function addPauseButtonToReticulum(videoObject) {
+    Reticulum.add( pauseButton, {
+      fuseDuration: 0.5,
+      reticleHoverColor: utils.reticleColors.yellow.light,
+      fuseColor: utils.reticleColors.yellow.dark,
+      fuseVisible: true,
+      onGazeOver: function() {
+        if (this.material.color) this.material.color.setHex( 0xffcc00 );
+      },
+      onGazeOut: function() {
+        if (this.material.color) this.material.color.setHex( 0xffffff );
+      },
+      onGazeLong: function() {
+        videoObject.pause();
+        if (videoObject === video) {
           videoPlaying = false;
-          video2Playing = false;
-        } else {
-          videoObject.pause();
-          videoPlaying = false;
+        } else if (videoObject === video2) {
           video2Playing = false;
         }
+        removeFromReticulum(pauseButton);
+        addPlayButtonToReticulum(videoObject);
+        addStopButtonToReticulum(videoObject);
+      }
+    });
+  }
+
+  function addStopButtonToReticulum(videoObject) {
+    Reticulum.add( stopButton, {
+      fuseDuration: 0.5,
+      reticleHoverColor: utils.reticleColors.yellow.light,
+      fuseColor: utils.reticleColors.yellow.dark,
+      fuseVisible: true,
+      onGazeOver: function() {
+        if (this.material.color) this.material.color.setHex( 0xffcc00 );
+      },
+      onGazeOut: function() {
+        if (this.material.color) this.material.color.setHex( 0xffffff );
+      },
+      onGazeLong: function() {
+        videoObject.pause();
+        videoObject.currentTime = 0;
+        videoObject.load();
+        videoObject.pause();
+        if (videoObject === video) {
+          videoPlaying = false;
+        } else if (videoObject === video2) {
+          video2Playing = false;
+        }
+        removeFromReticulum(stopButton);
+        removeFromReticulum(pauseButton);
+        addPlayButtonToReticulum(videoObject);
       }
     });
   }
@@ -545,25 +621,20 @@
 
   function exitScreen(videoObject) {
     if (videoObject === video) {
-      movement({x: -1.2, y: 1.6, z: 1.6}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
+      movement({x: researchLabel.position.x + 1.6, y: 1.8, z: researchLabel.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
+        updateLabelSizes();
         updateHomeButtonPosition();
       });
-      if (controls) controls.target.set(researchLabel.position.x + 0.2, 1.6, researchLabel.position.z);
+      if (controls) controls.target.set(researchLabel.position.x + 0.2, 2, researchLabel.position.z);
     } else if (videoObject === video2) {
-      movement({x: -1.2, y: 1.6, z: 5}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
+      movement({x: nobodyLabel.position.x + 1.6, y: 1.8, z: nobodyLabel.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
+        updateLabelSizes();
         updateHomeButtonPosition();
       });
-      if (controls) controls.target.set(-1.8, 1.6, 5);
+      if (controls) controls.target.set(nobodyLabel.position.x + 0.2, 2, nobodyLabel.position.z);
     }
-  }
-
-  function stringToCharArray(string) {
-    var result = string.split('');
-    for (var i = 0; i < result.length; i++) {
-      if (result[i] == ' ') result[i] = 'blanck';
-      if (result[i] == '+') result[i] = 'plus';
-    }
-    return result;
+    videoObject.pause();
+    updateLabelSizes();
   }
 
   var wallMenu, clickMeHint;
@@ -716,11 +787,14 @@
     Reticulum.add( plane, {
       reticleHoverColor: 0xfdff00,
       fuseColor: 0x660066,
+      fuseDuration: 1,
       fuseVisible: true,
       onGazeOver: function() {
+        if (this.material.color) this.material.color.setHex( 0xffcc00 );
         changeScaleSingle(plane, 1.2);
       },
       onGazeOut: function() {
+        if (this.material.color) this.material.color.setHex( 0xffffff );
         changeScaleSingle(plane, 1);
       },
       onGazeLong: function() {
@@ -781,10 +855,6 @@
     for (var i = 0; i < utils.labelPoints.length; i++) {
       addLabel(utils.labelPoints[i].name, utils.labelPoints[i].position);
     }
-  }
-
-  function toTitleCase(str) {
-    return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
   }
 
   function changeScale(object, scaleX, scaleY, scaleZ) {
@@ -876,7 +946,14 @@
     Reticulum.add( plane, {
       reticleHoverColor: utils.reticleColors.blue.light,
       fuseColor: utils.reticleColors.blue.dark,
+      fuseDuration: 1,
       fuseVisible: true,
+      onGazeOver: function() {
+        if (this.material.color) this.material.color.setHex( 0xffcc00 );
+      },
+      onGazeOut: function() {
+        if (this.material.color) this.material.color.setHex( 0xffffff );
+      },
       onGazeLong: function() {
         if (wallMenuIsOpen) {
           closeWallMenu();
@@ -1066,6 +1143,12 @@
       fuseColor: utils.reticleColors.red.dark,
       fuseDuration: 1,
       fuseVisible: true,
+      onGazeOver: function() {
+        if (this.material.color) this.material.color.setHex( 0xffcc00 );
+      },
+      onGazeOut: function() {
+        if (this.material.color) this.material.color.setHex( 0xffffff );
+      },
       onGazeLong: function() {
         if (!infoIsOpening) {
           removeInfoSection();
@@ -1085,7 +1168,7 @@
     plane.add(closeButtonMesh);
 
     var emailButtonMaterial = new THREE.MeshBasicMaterial({
-      map: textureLoader.load(utils.rootDirectory + "email.png"),
+      map: textureLoader.load(utils.subFolderInfoBox + "email.png"),
       transparent: true,
       side: THREE.DoubleSide
     });
@@ -1099,13 +1182,19 @@
       reticleHoverColor: utils.reticleColors.basic,
       fuseColor: utils.reticleColors.basic,
       fuseVisible: true,
+      onGazeOver: function() {
+        if (this.material.color) this.material.color.setHex( 0xffcc00 );
+      },
+      onGazeOut: function() {
+        if (this.material.color) this.material.color.setHex( 0xffffff );
+      },
       onGazeLong: function() {
       }
     });
     plane.add(infoEmailButton);
 
     var calendarButtonMaterial = new THREE.MeshBasicMaterial({
-      map: textureLoader.load(utils.rootDirectory + "calendar.png"),
+      map: textureLoader.load(utils.subFolderInfoBox + "calendar.png"),
       transparent: true,
       side: THREE.DoubleSide
     });
@@ -1118,13 +1207,19 @@
       reticleHoverColor: utils.reticleColors.basic,
       fuseColor: utils.reticleColors.basic,
       fuseVisible: true,
+      onGazeOver: function() {
+        if (this.material.color) this.material.color.setHex( 0xffcc00 );
+      },
+      onGazeOut: function() {
+        if (this.material.color) this.material.color.setHex( 0xffffff );
+      },
       onGazeLong: function() {
       }
     });
     plane.add(infoCalendarButton);
 
     var callButtonMaterial = new THREE.MeshBasicMaterial({
-      map: textureLoader.load(utils.rootDirectory + "call.png"),
+      map: textureLoader.load(utils.subFolderInfoBox + "call.png"),
       transparent: true,
       side: THREE.DoubleSide
     });
@@ -1137,6 +1232,12 @@
       reticleHoverColor: utils.reticleColors.basic,
       fuseColor: utils.reticleColors.basic,
       fuseVisible: true,
+      onGazeOver: function() {
+        if (this.material.color) this.material.color.setHex( 0xffcc00 );
+      },
+      onGazeOut: function() {
+        if (this.material.color) this.material.color.setHex( 0xffffff );
+      },
       onGazeLong: function() {
       }
     });
@@ -1265,25 +1366,23 @@
     if (homeButton !== undefined) {
       if (controls) {
         homeButton.rotation.setFromRotationMatrix(camera.matrix);
-        // homeButton.lookAt(camera.position);
       }
       if (controlsdevice) {
         homeButton.rotation.z = 180 - controlsdevice.deviceOrientation.alpha * Math.PI / 180 + 10;
       }
     }
-
     if (controls) {
       if (videoPlaying && cameraLookingAtScreenRotationValue != undefined) {
         if (!controlsAreMoving) {
           if (camera.rotation.z < -1.4 && !controlsAreCentered) {
             controlsAreMoving = true;
-            movement({x: screen1Mesh.position.x, y: screen1Mesh.position.y, z: screen1Mesh.position.z + 0.1}, mediaControlsContainer.position, 0, 500, TWEEN.Easing.Back.Out, function () {
+            movement({x: screen1Mesh.position.x - 0.1, y: screen1Mesh.position.y, z: screen1Mesh.position.z + 0.1}, mediaControlsContainer.position, 0, 500, TWEEN.Easing.Back.Out, function () {
               controlsAreMoving = false;
               controlsAreCentered = true;
             });
           } else if (camera.rotation.z > cameraLookingAtScreenRotationValue.rotation.z && controlsAreCentered && !controlsAreMoving) {
             controlsAreMoving = true;
-            movement({x: screen1Mesh.position.x, y: screen1Mesh.position.y - 0.3, z: screen1Mesh.position.z + 0.1}, mediaControlsContainer.position, 0, 500, TWEEN.Easing.Back.Out, function () {
+            movement({x: screen1Mesh.position.x - 0.1, y: screen1Mesh.position.y - 0.32, z: screen1Mesh.position.z + 0.1}, mediaControlsContainer.position, 0, 500, TWEEN.Easing.Back.Out, function () {
               controlsAreMoving = false;
               controlsAreCentered = false;
             });
@@ -1293,13 +1392,13 @@
         if (!controlsAreMoving) {
           if (camera.rotation.z < -1.4 && !controlsAreCentered) {
             controlsAreMoving = true;
-            movement({x: screen2Mesh.position.x, y: screen2Mesh.position.y, z: screen2Mesh.position.z + 0.1}, mediaControlsContainer.position, 0, 500, TWEEN.Easing.Back.Out, function () {
+            movement({x: screen2Mesh.position.x - 0.1, y: screen2Mesh.position.y, z: screen2Mesh.position.z + 0.1}, mediaControlsContainer.position, 0, 500, TWEEN.Easing.Back.Out, function () {
               controlsAreMoving = false;
               controlsAreCentered = true;
             });
           } else if (camera.rotation.z > cameraLookingAtScreenRotationValue.rotation.z && controlsAreCentered && !controlsAreMoving) {
             controlsAreMoving = true;
-            movement({x: screen2Mesh.position.x, y: screen2Mesh.position.y - 0.3, z: screen2Mesh.position.z + 0.1}, mediaControlsContainer.position, 0, 500, TWEEN.Easing.Back.Out, function () {
+            movement({x: screen2Mesh.position.x - 0.1, y: screen2Mesh.position.y - 0.32, z: screen2Mesh.position.z + 0.1}, mediaControlsContainer.position, 0, 500, TWEEN.Easing.Back.Out, function () {
               controlsAreMoving = false;
               controlsAreCentered = false;
             });
