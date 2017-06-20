@@ -388,6 +388,7 @@
       fuseVisible: true,
       onGazeLong: function() {
         Reticulum.remove(screen1Mesh);
+        Reticulum.remove(agoraLabel);
         if (infoGroupIsShowing) {
           removeInfoSection();
         }
@@ -424,6 +425,7 @@
       fuseVisible: true,
       onGazeLong: function() {
         Reticulum.remove(screen2Mesh);
+        Reticulum.remove(agoraLabel);
         if (infoGroupIsShowing) {
           removeInfoSection();
         }
@@ -636,6 +638,7 @@
     }
     videoObject.pause();
     updateLabelSizes();
+    addAgoraLabelToReticulum();
   }
 
   var wallMenu, clickMeHint;
@@ -941,10 +944,59 @@
       comunicacionLabel = plane;
     } else if (name === utils.agoraName) {
       agoraLabel = plane;
+      addAgoraLabelToReticulum();
     }
     scene.add(plane);
 
-    Reticulum.add( plane, {
+    if (name !== utils.agoraName) {
+      console.log('entro ', name);
+      Reticulum.add( plane, {
+        reticleHoverColor: utils.reticleColors.blue.light,
+        fuseColor: utils.reticleColors.blue.dark,
+        fuseDuration: 1,
+        fuseVisible: true,
+        onGazeOver: function() {
+          if (this.material.color) this.material.color.setHex( 0xffcc00 );
+        },
+        onGazeOut: function() {
+          if (this.material.color) this.material.color.setHex( 0xffffff );
+        },
+        onGazeLong: function() {
+          if (wallMenuIsOpen) {
+            closeWallMenu();
+          }
+          changeScaleSingle(plane, 1);
+          removeMembers();
+          removeInfoSection();
+          if (name === utils.researchName) {
+            addMembers(utils.researchMembers);
+          } else if (name === utils.radicalName) {
+            addMembers(utils.radicalMembers);
+          } else if (name === utils.jefesName) {
+            addMembers(utils.jefesAndVenturesMembers);
+          } else if (name === utils.comunicacionName) {
+            addMembers(utils.comunicacionMembers);
+          }
+          if (name !== utils.makerName) {
+            movement({x: plane.position.x + 1.6, y: 1.8, z: plane.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
+              updateLabelSizes();
+              updateHomeButtonPosition();
+            });
+            if (controls) controls.target.set(plane.position.x + 0.2, 2, plane.position.z);
+          } else {
+            movement({x: -4, y: 1.8, z: -11}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
+              updateLabelSizes();
+              updateHomeButtonPosition();
+            });
+            if (controls) controls.target.set(-4, 2, -10);
+          }
+        }
+      });
+    }
+  }
+
+  function addAgoraLabelToReticulum() {
+    Reticulum.add( agoraLabel, {
       reticleHoverColor: utils.reticleColors.blue.light,
       fuseColor: utils.reticleColors.blue.dark,
       fuseDuration: 1,
@@ -959,40 +1011,15 @@
         if (wallMenuIsOpen) {
           closeWallMenu();
         }
-        changeScaleSingle(plane, 1);
+        changeScaleSingle(agoraLabel, 1);
         removeMembers();
         removeInfoSection();
-        if (name === utils.researchName) {
-          addMembers(utils.researchMembers);
-        } else if (name === utils.radicalName) {
-          addMembers(utils.radicalMembers);
-        } else if (name === utils.jefesName) {
-          addMembers(utils.jefesAndVenturesMembers);
-        } else if (name === utils.comunicacionName) {
-          addMembers(utils.comunicacionMembers);
-        }
-        if (name !== utils.makerName) {
-          if (name === utils.agoraName) {
-            movement({x: 3, y: 1.8, z: 6}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
-              updateLabelSizes();
-              updateHomeButtonPosition();
-              changeScaleSingle(agoraLabel, 1);
-            });
-            if (controls) controls.target.set(3, 2, 6);
-          } else {
-            movement({x: plane.position.x + 1.6, y: 1.8, z: plane.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
-              updateLabelSizes();
-              updateHomeButtonPosition();
-            });
-            if (controls) controls.target.set(plane.position.x + 0.2, 2, plane.position.z);
-          }
-        } else {
-          movement({x: -4, y: 1.8, z: -11}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
-            updateLabelSizes();
-            updateHomeButtonPosition();
-          });
-          if (controls) controls.target.set(-4, 2, -10);
-        }
+        movement({x: 3, y: 1.8, z: 6}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
+          updateLabelSizes();
+          updateHomeButtonPosition();
+          changeScaleSingle(agoraLabel, 1);
+        });
+        if (controls) controls.target.set(3, 2, 6);
       }
     });
   }
