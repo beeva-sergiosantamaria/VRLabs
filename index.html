@@ -347,14 +347,11 @@
     videoMP4 = document.createElement('video').canPlayType('video/mp4') !== '';
     videoOgg = document.createElement('video').canPlayType('video/ogg') !== '';
     var url, url2;
-    if (videoMP4) {
-      url = 'videos/sintel.mp4';
-      url2 = 'videos/salchis.mp4';
-    } else if (videoOgg) {
-      url = 'videos/sintel.ogv';
-      url2 = 'videos/salchis.mp4';
+    if (videoMP4 || videoOgg) {
+      url = 'videos/vr_ar.mp4';
+      url2 = 'videos/bots.mp4';
     } else {
-      alert('cant play mp4 or ogv');
+      alert('Can\'t play videos');
     }
     videoTexture = new THREEx.VideoTexture(url);
     videoTexture.needsUpdate = false;
