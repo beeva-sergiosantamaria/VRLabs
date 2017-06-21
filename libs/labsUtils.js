@@ -19,6 +19,8 @@ LabsUtils = function() {
     this.nobodyName = 'nobody';
     this.comunicacionName = 'comunicacion';
     this.agoraName = 'agora';
+    this.tele1Name = 'tele1';
+    this.tele2Name = 'tele2';
     this.mediaNameStop = 'media-stop';
     this.mediaNamePause = 'media-pause';
     this.mediaNameClose = 'media-close';
@@ -89,7 +91,9 @@ LabsUtils = function() {
         {name: this.researchName, position: {x: -2.6, y: 1.2, z: 1}},
         {name: this.agoraName, position: {x: 2, y: 1.2, z: 1}}, 
         {name: this.radicalName, position: {x: -3.1, y: 1.2, z: -5}}, 
-        {name: this.makerName, position: {x: -2.6, y: 1.2, z: -11}}
+        {name: this.makerName, position: {x: -2.6, y: 1.2, z: -11}}, 
+        {name: this.tele1Name, position: {x: -1.4, y: 2.4, z: 1}}, 
+        {name: this.tele2Name, position: {x: -1.4, y: 2.4, z: 8.4}}
     ];
 
     this.isRadicalMember = function(memberObject) {
