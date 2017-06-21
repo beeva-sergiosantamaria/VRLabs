@@ -1075,6 +1075,11 @@
           if (this.material.color) this.material.color.setHex( 0xffffff );
         },
         onGazeLong: function() {
+          if (exitSignAdded) {
+            Reticulum.remove(exitSign);
+            scene.remove(exitSign);
+            exitSignAdded = false;
+          }
           if (wallMenuIsOpen) {
             closeWallMenu();
           }
@@ -1105,6 +1110,7 @@
           } else {
             movement({x: -4, y: 1.8, z: -11}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
               updateLabelSizes();
+              addExitSign(utils.makerName);
               updateHomeButtonPosition();
             });
             if (controls) controls.target.set(-4, 2, -10);
@@ -1114,7 +1120,58 @@
     }
   }
 
+  var exitSign;
+  var exitSignAdded = false;
+  function addExitSign(name) {
+    console.log('adding exit for ', name);
+    var img = new THREE.MeshBasicMaterial({
+      map: textureLoader.load(utils.rootDirectory + 'exit' + utils.extension),
+      transparent: true,
+      color: 0xffffff
+    });
+    img.map.needsUpdate = true;
+
+    var scale = 0.5;
+    exitSign = new THREE.Mesh(new THREE.PlaneGeometry(scale, scale), img);
+    if (name === utils.agoraName) {
+      exitSign.position.set(2, 1.2, 3.5);
+    } else if (name === utils.makerName) {
+      exitSign.position.set(-4, 1.2, -11);
+    }
+    scene.add(exitSign);
+
+    Reticulum.add( exitSign, {
+      reticleHoverColor: utils.reticleColors.green.light,
+      fuseColor: utils.reticleColors.green.dark,
+      fuseDuration: 1,
+      fuseVisible: true,
+      onGazeOver: function() {
+        changeScaleSingle(exitSign, 1.5);
+      },
+      onGazeOut: function() {
+        changeScaleSingle(exitSign, 1);
+      },
+      onGazeLong: function() {
+        if (name === utils.agoraName) {
+          movement({x: researchLabel.position.x + 1.6, y: 1.8, z: researchLabel.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
+            updateLabelSizes();
+            updateHomeButtonPosition();
+            Reticulum.remove(exitSign);
+            scene.remove(exitSign);
+          });
+          if (controls) controls.target.set(researchLabel.position.x + 0.2, 2, researchLabel.position.z);
+        } else if (name === utils.makerName) {
+          goHome();
+          Reticulum.remove(exitSign);
+          scene.remove(exitSign);
+        }
+      }
+    });
+    exitSignAdded = true;
+  }
+
   function addAgoraLabelToReticulum() {
+
     Reticulum.add( agoraLabel, {
       reticleHoverColor: utils.reticleColors.blue.light,
       fuseColor: utils.reticleColors.blue.dark,
@@ -1134,7 +1191,10 @@
         removeMembers();
         removeInfoSection();
         movement({x: 3, y: 1.8, z: 6}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
+          console.log('finished moving to agora')
           updateLabelSizes();
+          console.log('exit sign')
+          addExitSign(utils.agoraName);
           updateHomeButtonPosition();
           changeScaleSingle(agoraLabel, 1);
         });
@@ -1515,6 +1575,9 @@
     }
     if (tele2Label !== undefined) {
       tele2Label.lookAt(camera.position);
+    }
+    if (exitSign !== undefined) {
+      exitSign.lookAt(camera.position);
     }
     if (homeButton !== undefined) {
       if (controls) {
