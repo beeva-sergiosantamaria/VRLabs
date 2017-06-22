@@ -12,6 +12,7 @@ LabsUtils = function() {
     this.subFolderInfoBox = this.rootDirectory + "infoBox/";
     this.extension = ".png";
     this.initialPosition = {x: -1.6, y: 1.8, z: -10};
+    this.initialPositionTutorial = {x: 200, y: 1.8, z: -400};
     this.makerName = 'maker';
     this.radicalName = 'radical';
     this.researchName = 'research';
@@ -45,6 +46,11 @@ LabsUtils = function() {
             light: 0xFFD087,
             dark: 0xD89939
         }
+    };
+    this.objectColors = {
+        initial: 0x079a07,
+        highlight: 0xff00f4,
+        closest: 0xaa0052
     };
 
     this.radicalMembers = [

@@ -81,7 +81,7 @@
 <script type="text/javascript" src="libs/OrbitControls.js"></script>
 <script type="text/javascript" src="libs/labsUtils.js"></script>
 <script type="text/javascript" src="libs/SubdivisionModifier.js"></script>
-<script type="text/javascript" src="scene/logoAnim.js"></script>
+<!--<script type="text/javascript" src="scene/logoAnim.js"></script> -->
 <!-- A simple gaze interaction manager for VR -->
 <!--<script src="https://skezo.github.io/Reticulum/reticulum.js"></script>-->
 <script src="./libs/reticulum.js"></script>
@@ -142,6 +142,9 @@
 
   var infoGroupIsShowing = false;
   var screensAdded = false;
+  var tutorialFinished = false;
+  var distancesFromReticleToObject = [];
+  var MAX_DISTANCE = 7;
 
   var acceptVideo = document.getElementById('allowVideoScreen');
 
@@ -176,7 +179,8 @@
     var container = document.getElementById('container');
     container.appendChild(element);
     camera = new THREE.PerspectiveCamera(60, (width / height), 0.01, 10000000);
-    camera.position.set(utils.initialPosition.x, utils.initialPosition.y, utils.initialPosition.z);
+    // camera.position.set(utils.initialPosition.x, utils.initialPosition.y, utils.initialPosition.z);
+    camera.position.set(utils.initialPositionTutorial.x, utils.initialPositionTutorial.y, utils.initialPositionTutorial.z);
 
     Reticulum.init(camera, {
       proximity: true,
@@ -243,7 +247,10 @@
       controls.enableZoom = false;
       controls.target.set(camera.position.x, camera.position.y, camera.position.z + 0.5);
     }
-    addHomeButton();
+
+    renderTutorial();
+
+    addHomeButton(tutorialFinished);
     addTravelPoints();
     ambientLight = new THREE.AmbientLight(0xffffff);
     ambientLight.position.set(0, 1.2, 0);
@@ -255,6 +262,109 @@
     buildShape();
 
     window.addEventListener('resize', onWindowResize, false);
+  }
+
+  var parentTutorial = new THREE.Object3D();
+  var boxCount = 3;
+  var boxSize = 1;
+  var radius = MAX_DISTANCE - 1;
+  var movements;
+  
+  function renderTutorial() {
+    movements = 0;
+    scene.add(parentTutorial);
+    
+    var boxGeometry = new THREE.BoxGeometry( boxSize, boxSize, boxSize );
+
+    for( var i = 0; i < boxCount; i++ ) {
+        var x = radius;
+        // var z = 0 + radius * Math.sin(2 * Math.PI * i / boxCount);  
+        var z = i*radius;
+        addMesh(boxGeometry, x, 0, z, i);
+    }
+    parentTutorial.position.set(utils.initialPositionTutorial.x, 0, utils.initialPositionTutorial.z);
+    calculateDistances();
+  }
+
+  var closeObjectLabels;
+  function highlightClosestObjects() {
+    if (closeObjectLabels && closeObjectLabels.length > 0) {
+      for (var i = 0; i < closeObjectLabels.length; i++) {
+        scene.remove(closeObjectLabels[i]);
+      }
+    }
+    closeObjectLabels = [];
+    for (var i = 0; i < parentTutorial.children.length; i++) {
+      if (distancesFromReticleToObject[i] > 2 && distancesFromReticleToObject[i] < MAX_DISTANCE) {
+        changeColor(parentTutorial.children[i], utils.objectColors.initial);
+        addCloseLabelToChild(parentTutorial.children[i].position);
+      } else {
+        changeColor(parentTutorial.children[i], utils.objectColors.closest);
+      }
+    }
+  }
+
+  var closeLabel;
+  function addCloseLabelToChild(childObjectPosition) {
+    var fileName = tutorialFinished ? "tutorialFinished" : "isClose";
+    console.log('debug', 'entro ' + fileName);
+    var img = new THREE.MeshBasicMaterial({
+      map: textureLoader.load(utils.rootDirectory + fileName + utils.extension),
+      transparent: true,
+      side: THREE.DoubleSide,
+      color: 0xffffff
+    });
+    img.map.needsUpdate = false;
+    var scale = 2;
+    closeLabel = new THREE.Mesh(new THREE.PlaneGeometry(scale, scale), img);
+    closeLabel.position.set(utils.initialPositionTutorial.x + childObjectPosition.x, 2, utils.initialPositionTutorial.z + childObjectPosition.z);
+    
+    closeObjectLabels.push(closeLabel);
+    scene.add(closeLabel);
+  }
+
+  function addMesh(geo, x, y, z, i) {
+
+    var object = new THREE.Mesh( geo, new THREE.MeshLambertMaterial( { color: utils.objectColors.closest } ) );
+    
+    object.position.x = x;
+    object.position.y = y;
+    object.position.z = z;
+    
+    // *******************************
+    // --- Reticulum ---
+    // have the object react when user looks at it
+    Reticulum.add( object, {
+      reticleHoverColor: 0x00fff6,
+      fuseVisible: true,
+      onGazeOver: function(){
+        changeScaleSingle(object, 1.5)
+        if (this.material.color) changeColor(object, utils.objectColors.highlight);
+      },
+      onGazeOut: function(){
+        changeScaleSingle(object, 1)
+        if (this.material.color) changeColor(object, utils.objectColors.initial);
+      },
+      onGazeLong: function(){
+        if (tutorialFinished) {
+          goHome();
+        } else {
+          var position = getPositionInTutorial(object);
+          movement(position, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
+            movements++;
+            if (movements >= 2) {
+              tutorialFinished = true;
+            }
+          });
+          if (controls) controls.target.set(position.x - 0.2, position.y, position.z);
+        }
+      }
+    });
+    parentTutorial.add( object );
+  }
+
+  function getPositionInTutorial(object) {
+    return {x: utils.initialPositionTutorial.x + object.position.x, y: 2, z: utils.initialPositionTutorial.z + object.position.z};
   }
 
   function buildShape() {
@@ -987,8 +1097,12 @@
     changeScale(object, scale, scale, scale);
   }
 
+  function changeColor(object, colorHex) {
+    object.material.color.setHex( colorHex );
+  }
+
   var homeButton;
-  function addHomeButton() {
+  function addHomeButton(isTutorialFinished) {
     var img = new THREE.MeshBasicMaterial({
       map: textureLoader.load(utils.rootDirectory + "home_button" + utils.extension),
       transparent: true,
@@ -1004,7 +1118,7 @@
     // var yAxis = new THREE.Vector3(0,1,0);
     // var zAxis = new THREE.Vector3(0,0,1);
     rotateAroundWorldAxis(homeButton, xAxis, 90 * Math.PI / 180);
-    
+    homeButton.visible = isTutorialFinished;
     scene.add(homeButton);
 
     Reticulum.add( homeButton, {
@@ -1582,6 +1696,11 @@
     if (exitSign !== undefined) {
       exitSign.lookAt(camera.position);
     }
+    if (closeObjectLabels && closeObjectLabels.length > 0) {
+      for (var i = 0; i < closeObjectLabels.length; i++) {
+        closeObjectLabels[i].lookAt(camera.position);
+      }
+    }
     if (homeButton !== undefined) {
       if (controls) {
         homeButton.rotation.setFromRotationMatrix(camera.matrix);
@@ -1640,11 +1759,15 @@
         if (callback) {
           callback();
         }
+        calculateDistances();
       })
       .start();
   }
 
   function updateHomeButtonPosition() {
+    if (!homeButton.visible) {
+      homeButton.visible = true;
+    }
     movement({x: camera.position.x, y: 0.2, z: camera.position.z}, homeButton.position, 0, 10, TWEEN.Easing.Quartic.Out);
   }
 
@@ -1653,6 +1776,17 @@
     var difY = positionA.y-positionB.y;
     var difZ = positionA.z-positionB.z;
     return Math.sqrt(difX*difX + difY*difY + difZ*difZ);
+  }
+
+  function calculateDistances() {
+    distancesFromReticleToObject = [];
+    var objectPosition;
+    for (var i = 0; i < parentTutorial.children.length; i++) {
+      objectPosition = {x:parentTutorial.position.x + parentTutorial.children[i].position.x, y:parentTutorial.position.y + parentTutorial.children[i].position.y, z:parentTutorial.position.z + parentTutorial.children[i].position.z};
+      var dist = distance(camera.position, objectPosition);
+      distancesFromReticleToObject.push(dist);
+    }
+    highlightClosestObjects();
   }
 </script>
 </body>
