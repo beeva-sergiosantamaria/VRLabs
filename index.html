@@ -269,6 +269,10 @@
   var boxSize = 1;
   var radius = MAX_DISTANCE - 1;
   var movements;
+
+  var anAnimationHasStarted = false;
+  var wallInfoTextIsInflating = false;
+  var wallInfoTextIsDeflating = false;
   
   function renderTutorial() {
     movements = 0;
@@ -293,7 +297,7 @@
     for (var i = 0; i < parentTutorial.children.length; i++) {
       if (distancesFromReticleToObject[i] > 2 && distancesFromReticleToObject[i] < MAX_DISTANCE) {
         changeColor(parentTutorial.children[i], utils.objectColors.initial);
-        addCloseLabelToChild(parentTutorial.children[i].position);
+        addProximityLabelToChild(parentTutorial.children[i].position);
       } else {
         changeColor(parentTutorial.children[i], utils.objectColors.closest);
       }
@@ -309,7 +313,7 @@
   }
 
   var closeLabel;
-  function addCloseLabelToChild(childObjectPosition) {
+  function addProximityLabelToChild(childObjectPosition) {
     var fileName = tutorialFinished ? "tutorialFinished" : "isClose";
     var img = new THREE.MeshBasicMaterial({
       map: textureLoader.load(utils.rootDirectory + fileName + utils.extension),
@@ -843,7 +847,7 @@
     
     scene.add(wallInfo);
 
-    addWallInfoToReticulum();
+    addWallInfoLogoToReticulum();
   }
 
   function addWallMenuToReticulum() {
@@ -889,7 +893,7 @@
     wallMenuHasBeenRemoved = false;
   }
 
-  function addWallInfoToReticulum() {
+  function addWallInfoLogoToReticulum() {
     Reticulum.add( wallInfo, {
       reticleHoverColor: 0xfdff00,
       fuseColor: 0x660066,
@@ -904,14 +908,20 @@
         if (this.material.color) this.material.color.setHex( 0xffffff );
       },
       onGazeLong: function() {
-        if (!wallInfoIsVisible) {
+        if (!wallInfoIsVisible && !wallInfoTextIsInflating) {
           if (wallMenuIsOpen) {
             closeWallMenu();
           }
-          movement(1, wallInfoText.scale, 0, 1500, function () {
-            wallInfoText.visible = true;
-            wallInfoIsVisible = true;
-          });
+          wallInfoTextIsInflating = true;
+          anAnimationHasStarted = true;
+//          inflateObject(wallInfoText, function () {
+//            wallInfoText.visible = true;
+//            wallInfoIsVisible = true;
+//          });
+//          movement({y: 1, z: 1}, wallInfoText.scale, 0, 1500, TWEEN.Easing.Cubic.In, function () {
+//            wallInfoText.visible = true;
+//            wallInfoIsVisible = true;
+//          });
         } else {
           hideWallInfoText();
         }
@@ -919,16 +929,38 @@
     });
   }
 
+  var t;
+  function inflateObject(mesh, callback) {
+    clock = new THREE.Clock();
+    t = 0;
+    while (t < 3.0) {
+      t = clock.getElapsedTime();
+      
+        mesh.scale.x = 1-(t/3.0);
+        mesh.scale.y = 1-(t/3.0);
+        mesh.scale.z = 1-(t/3.0);
+        render();  
+      
+    }
+    if (callback) {
+      callback();
+    }
+  }
+
   function hideWallInfoText() {
-    movement(0, wallInfoText.scale, 0, 1500, function () {
-      wallInfoText.visible = false;
-      wallInfoIsVisible = false;
-    });
+    if (!wallMenuIsOpen && !wallInfoTextIsDeflating) {
+//      movement({y: 0, z: 0}, wallInfoText.scale, 0, 1500, TWEEN.Easing.Cubic.Out, function () {
+//        wallInfoText.visible = false;
+//        wallInfoIsVisible = false;
+//      });
+      wallInfoTextIsDeflating = true;
+      anAnimationHasStarted = true;
+    }
   }
   
   function closeWallMenu() {
     wallMenuIsMoving = true;
-    var directAccessLabels = [makerLabelDirect, radicalLabelDirect, researchLabelDirect, jefesLabelDirect, nobodyLabelDirect, comunicacionLabelDirect, agoraLabelDirect];
+    var directAccessLabels = [makerLabelDirect, radicalLabelDirect, researchLabelDirect, jefesLabelDirect, nobodyLabelDirect, comunicacionLabelDirect, agoraLabelDirect, tele1Direct, tele2Direct];
     for (var i = 0; i < directAccessLabels.length; i++) {
       removeFromReticulum(directAccessLabels[i]);
       (function(ind) {
@@ -979,7 +1011,7 @@
     var scale = 0.45;
     var plane = new THREE.Mesh(new THREE.PlaneGeometry((object.name === utils.tele1Name || object.name === utils.tele2Name) ? scale - 0.1 : scale, (object.name === utils.tele1Name || object.name === utils.tele2Name) ? scale/4 : scale/4.76), img);
     plane.name = object.name;
-    plane.position.set(containerObject.position.x - 0.05, containerObject.position.y, containerObject.position.z);
+    plane.position.set(containerObject.position.x - 0.05 - 0.01*index, containerObject.position.y + 0.01*index, containerObject.position.z);
     plane.rotateY(-Math.PI / 2);
     if (object.name === utils.researchName) {
       researchLabelDirect = plane;
@@ -1117,7 +1149,8 @@
     // var yAxis = new THREE.Vector3(0,1,0);
     // var zAxis = new THREE.Vector3(0,0,1);
     rotateAroundWorldAxis(homeButton, xAxis, 90 * Math.PI / 180);
-    homeButton.visible = isTutorialFinished;
+    
+    //homeButton.visible = isTutorialFinished;
     scene.add(homeButton);
 
     Reticulum.add( homeButton, {
@@ -1649,12 +1682,15 @@
     else {
       renderer.render(scene, camera);
     }
+
     sky.rotation.y += 0.0003;
+
     if (wallMenuIsOpen || wallMenuIsMoving) {
       clickMeHint.visible = false;
     } else {
       clickMeHint.visible = true;
     }
+
     if (videoTexture != undefined) videoTexture.update();
     if (videoTexture2 != undefined) videoTexture2.update();
 
@@ -1663,41 +1699,53 @@
         memberPlanes[i].lookAt(camera.position);
       }
     }
+
     if (researchLabel !== undefined) {
       researchLabel.lookAt(camera.position);
     }
+
     if (radicalLabel !== undefined) {
       radicalLabel.lookAt(camera.position);
     }
+
     if (makerLabel !== undefined) {
       makerLabel.lookAt(camera.position);
     }
+
     if (jefesLabel !== undefined) {
       jefesLabel.lookAt(camera.position);
     }
+
     if (nobodyLabel !== undefined) {
       nobodyLabel.lookAt(camera.position);
     }
+
     if (comunicacionLabel !== undefined) {
       comunicacionLabel.lookAt(camera.position);
     }
+
     if (agoraLabel !== undefined) {
       agoraLabel.lookAt(camera.position);
     }
+
     if (tele1Label !== undefined) {
       tele1Label.lookAt(camera.position);
     }
+
     if (tele2Label !== undefined) {
       tele2Label.lookAt(camera.position);
     }
+
     if (exitSign !== undefined) {
       exitSign.lookAt(camera.position);
     }
+
     if (closeObjectLabels && closeObjectLabels.length > 0) {
       for (var i = 0; i < closeObjectLabels.length; i++) {
         closeObjectLabels[i].lookAt(camera.position);
       }
     }
+
     if (homeButton !== undefined) {
       if (controls) {
         homeButton.rotation.setFromRotationMatrix(camera.matrix);
@@ -1706,6 +1754,7 @@
         homeButton.rotation.z = 180 - controlsdevice.deviceOrientation.alpha * Math.PI / 180 + 10;
       }
     }
+
     if (controls) {
       if (videoPlaying && cameraLookingAtScreenRotationValue != undefined) {
         if (!controlsAreMoving) {
@@ -1741,12 +1790,46 @@
         }
       }
     }
+
+    if (anAnimationHasStarted) {
+      clock = new THREE.Clock();
+      anAnimationHasStarted = false;
+      console.log('debug', 'new clock!');
+    }
+    if (wallInfoTextIsDeflating) {
+      console.log('debug', 'wallInfoTextIsDeflating');
+      var t = clock.getElapsedTime();
+      if (t >= 3.0) {
+        wallInfoTextIsDeflating = false;
+        wallInfoText.visible = false;
+        wallInfoIsVisible = false;
+      } else {
+        wallInfoText.scale.x = 1-(t/3.0);
+        wallInfoText.scale.y = 1-(t/3.0);
+        wallInfoText.scale.z = 1-(t/3.0);   
+      }
+    }
+
+    if (wallInfoTextIsInflating) {
+      console.log('debug', 'wallInfoTextIsInflating');
+      var t = clock.getElapsedTime();
+      wallInfoText.visible = true;
+      if (t >= 3.0) {
+        wallInfoTextIsInflating = false;
+        wallInfoText.visible = true;
+        wallInfoIsVisible = true;
+      } else {
+        wallInfoText.scale.x = 0 + (t/3.0);
+        wallInfoText.scale.y = 0 + (t/3.0);
+        wallInfoText.scale.z = 0 + (t/3.0);   
+      }
+    }
   }
 
   function movement(value, object, delay, duration, easingType, callback) {
     if (wallMenuHasBeenRemoved) {
       addWallMenuToReticulum();
-      addWallInfoToReticulum();
+      addWallInfoLogoToReticulum();
     }
     var tween = new TWEEN.Tween(object)
       .to(value, duration)
