@@ -288,11 +288,7 @@
 
   var closeObjectLabels;
   function highlightClosestObjects() {
-    if (closeObjectLabels && closeObjectLabels.length > 0) {
-      for (var i = 0; i < closeObjectLabels.length; i++) {
-        scene.remove(closeObjectLabels[i]);
-      }
-    }
+    // removeCloseLabels();
     closeObjectLabels = [];
     for (var i = 0; i < parentTutorial.children.length; i++) {
       if (distancesFromReticleToObject[i] > 2 && distancesFromReticleToObject[i] < MAX_DISTANCE) {
@@ -300,6 +296,14 @@
         addCloseLabelToChild(parentTutorial.children[i].position);
       } else {
         changeColor(parentTutorial.children[i], utils.objectColors.closest);
+      }
+    }
+  }
+
+  function removeCloseLabels() {
+    if (closeObjectLabels && closeObjectLabels.length > 0) {
+      for (var i = 0; i < closeObjectLabels.length; i++) {
+        scene.remove(closeObjectLabels[i]);
       }
     }
   }
@@ -349,6 +353,7 @@
         if (tutorialFinished) {
           goHome();
         } else {
+          removeCloseLabels();
           var position = getPositionInTutorial(object);
           movement(position, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
             movements++;
