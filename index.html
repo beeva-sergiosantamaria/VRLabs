@@ -311,7 +311,6 @@
   var closeLabel;
   function addCloseLabelToChild(childObjectPosition) {
     var fileName = tutorialFinished ? "tutorialFinished" : "isClose";
-    console.log('debug', 'entro ' + fileName);
     var img = new THREE.MeshBasicMaterial({
       map: textureLoader.load(utils.rootDirectory + fileName + utils.extension),
       transparent: true,
@@ -328,16 +327,11 @@
   }
 
   function addMesh(geo, x, y, z, i) {
-
     var object = new THREE.Mesh( geo, new THREE.MeshLambertMaterial( { color: utils.objectColors.closest } ) );
-    
     object.position.x = x;
     object.position.y = y;
     object.position.z = z;
     
-    // *******************************
-    // --- Reticulum ---
-    // have the object react when user looks at it
     Reticulum.add( object, {
       reticleHoverColor: 0x00fff6,
       fuseVisible: true,
@@ -1311,9 +1305,7 @@
         removeMembers();
         removeInfoSection();
         movement({x: 3, y: 1.8, z: 6}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
-          console.log('finished moving to agora')
           updateLabelSizes();
-          console.log('exit sign')
           addExitSign(utils.agoraName);
           updateHomeButtonPosition();
           changeScaleSingle(agoraLabel, 1);
