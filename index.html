@@ -1211,10 +1211,12 @@
     var normal = 1;
     var threshold = 2;
     for (var i = 0; i < labelArray.length; i++) {
-      if (distance(cameraPosition, labelArray[i].position) > threshold) {
-        changeScaleSingle(labelArray[i], big);
-      } else {
-        changeScaleSingle(labelArray[i], normal);
+      if (labelArray[i] != undefined) {
+        if (distance(cameraPosition, labelArray[i].position) > threshold) {
+          changeScaleSingle(labelArray[i], big);
+        } else {
+          changeScaleSingle(labelArray[i], normal);
+        }
       }
     }
   }
