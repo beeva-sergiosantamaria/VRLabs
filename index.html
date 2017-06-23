@@ -293,16 +293,20 @@
       addMesh(boxGeometry, x, 0, z, i);
     }
     parentTutorial.position.set(utils.initialPositionTutorial.x, 0, utils.initialPositionTutorial.z);
-    calculateDistances(parentTutorial);
+    calculateDistances();
   }
 
   var closeObjectLabels;
   function highlightClosestObjects() {
+    var added = false;
     closeObjectLabels = [];
     for (var i = 0; i < parentTutorial.children.length; i++) {
-      if (distancesFromReticleToObject[i] > 2 && distancesFromReticleToObject[i] < MAX_DISTANCE) {
+      if (distancesFromReticleToObject[i] < MAX_DISTANCE) {
         changeColor(parentTutorial.children[i], utils.objectColors.initial);
-        if (i == 0) addProximityLabelToChild(parentTutorial.children[i].position);
+        if (!added && distancesFromReticleToObject[i] > 2) {
+          addProximityLabelToChild(parentTutorial.children[i].position);
+          added = true;
+        }
       } else {
         changeColor(parentTutorial.children[i], utils.objectColors.closest);
       }
@@ -363,6 +367,8 @@
             if (movements >= 2) {
               tutorialFinished = true;
             }
+            updateHomeButtonPosition();
+            calculateDistances();
           });
           if (controls) controls.target.set(position.x - 0.2, position.y, position.z);
         }
@@ -1832,9 +1838,6 @@
         if (callback) {
           callback();
         }
-        if (!tutorialFinished) {
-          calculateDistances(parentTutorial);
-        }
       })
       .start();
   }
@@ -1853,11 +1856,11 @@
     return Math.sqrt(difX*difX + difY*difY + difZ*difZ);
   }
 
-  function calculateDistances(parentObject) {
+  function calculateDistances() {
     distancesFromReticleToObject = [];
     var objectPosition;
-    for (var i = 0; i < parentObject.children.length; i++) {
-      objectPosition = {x:parentTutorial.position.x + parentObject.children[i].position.x, y:parentTutorial.position.y + parentObject.children[i].position.y, z:parentTutorial.position.z + parentObject.children[i].position.z};
+    for (var i = 0; i < parentTutorial.children.length; i++) {
+      objectPosition = {x:parentTutorial.position.x + parentTutorial.children[i].position.x, y:parentTutorial.position.y + parentTutorial.children[i].position.y, z:parentTutorial.position.z + parentTutorial.children[i].position.z};
       var dist = distance(camera.position, objectPosition);
       distancesFromReticleToObject.push(dist);
     }
