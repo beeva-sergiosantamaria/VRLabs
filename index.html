@@ -359,6 +359,7 @@
       onGazeLong: function(){
         if (tutorialFinished) {
           goHome();
+          deleteTutorialScene();
         } else {
           removeCloseLabels();
           var position = getPositionInTutorial(object);
@@ -375,6 +376,13 @@
       }
     });
     parentTutorial.add( object );
+  }
+
+  function deleteTutorialScene() {
+    for (var i = 0; i < parentTutorial.children.length; i++) {
+      Reticulum.remove(parentTutorial.children[i]);
+    }
+    scene.remove(parentTutorial);
   }
 
   function getPositionInTutorial(object) {
@@ -930,24 +938,6 @@
     });
   }
 
-  var t;
-  function inflateObject(mesh, callback) {
-    clock = new THREE.Clock();
-    t = 0;
-    while (t < 3.0) {
-      t = clock.getElapsedTime();
-      
-        mesh.scale.x = 1-(t/3.0);
-        mesh.scale.y = 1-(t/3.0);
-        mesh.scale.z = 1-(t/3.0);
-        render();  
-      
-    }
-    if (callback) {
-      callback();
-    }
-  }
-
   function hideWallInfoText() {
     if (!wallMenuIsOpen && !wallInfoTextIsDeflating) {
       wallInfoTextIsDeflating = true;
@@ -1143,11 +1133,8 @@
     homeButton = new THREE.Mesh(new THREE.PlaneGeometry(scale, scale), img);
     homeButton.position.set(camera.position.x, 0.2, camera.position.z);
     var xAxis = new THREE.Vector3(1,0,0);
-    // var yAxis = new THREE.Vector3(0,1,0);
-    // var zAxis = new THREE.Vector3(0,0,1);
     rotateAroundWorldAxis(homeButton, xAxis, 90 * Math.PI / 180);
     
-    //homeButton.visible = isTutorialFinished;
     scene.add(homeButton);
 
     Reticulum.add( homeButton, {
@@ -1162,6 +1149,10 @@
       },
       onGazeLong: function() {
         goHome();
+        if (!tutorialFinished) {
+          deleteTutorialScene();
+          tutorialFinished = true;
+        }
       }
     });
   }
