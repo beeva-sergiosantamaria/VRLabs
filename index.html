@@ -303,9 +303,10 @@
     for (var i = 0; i < parentTutorial.children.length; i++) {
       if (distancesFromReticleToObject[i] < MAX_DISTANCE) {
         changeColor(parentTutorial.children[i], utils.objectColors.initial);
-        if (!added && distancesFromReticleToObject[i] > 2) {
+        // if (i % 2 == 0 && !added && distancesFromReticleToObject[i] > 2) {
+        if (distancesFromReticleToObject[i] > 2) {
           addProximityLabelToChild(parentTutorial.children[i].position);
-          added = true;
+          // if (!tutorialFinished) added = true;
         }
       } else {
         changeColor(parentTutorial.children[i], utils.objectColors.closest);
@@ -324,6 +325,7 @@
   var closeLabel;
   function addProximityLabelToChild(childObjectPosition) {
     var fileName = tutorialFinished ? "tutorialFinished" : "isClose";
+    if (movements == 1) fileName = "isClose_2";
     var img = new THREE.MeshBasicMaterial({
       map: textureLoader.load(utils.rootDirectory + fileName + utils.extension),
       transparent: true,
@@ -331,9 +333,9 @@
       color: 0xffffff
     });
     img.map.needsUpdate = false;
-    var scale = 2;
+    var scale = tutorialFinished || (movements == 1) ? 0.5 : 2;
     closeLabel = new THREE.Mesh(new THREE.PlaneGeometry(scale, scale), img);
-    closeLabel.position.set(utils.initialPositionTutorial.x + childObjectPosition.x, 2, utils.initialPositionTutorial.z + childObjectPosition.z);
+    closeLabel.position.set(utils.initialPositionTutorial.x + childObjectPosition.x, tutorialFinished || (movements == 1) ? 1 : 2, utils.initialPositionTutorial.z + childObjectPosition.z);
     
     closeObjectLabels.push(closeLabel);
     scene.add(closeLabel);
