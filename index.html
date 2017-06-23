@@ -144,7 +144,7 @@
   var screensAdded = false;
   var tutorialFinished = false;
   var distancesFromReticleToObject = [];
-  var MAX_DISTANCE = 7;
+  var MAX_DISTANCE = utils.reticulumFar;
 
   var acceptVideo = document.getElementById('allowVideoScreen');
 
@@ -257,7 +257,7 @@
     addWallMenu();
     addWallInfo();
     scene.add(ambientLight);
-    updateLabelSizes();
+    updateLabelSizesAndColor();
     
     buildShape();
 
@@ -265,7 +265,7 @@
   }
 
   var parentTutorial = new THREE.Object3D();
-  var boxCount = 3;
+  var boxCount = 30;
   var boxSize = 1;
   var radius = MAX_DISTANCE - 1;
   var movements;
@@ -280,24 +280,29 @@
     
     var boxGeometry = new THREE.BoxGeometry( boxSize, boxSize, boxSize );
 
-    for( var i = 0; i < boxCount; i++ ) {
+    for( var i = 0; i < 3; i++ ) {
         var x = radius;
         // var z = 0 + radius * Math.sin(2 * Math.PI * i / boxCount);  
-        var z = i*radius;
+        var z = i * radius;
         addMesh(boxGeometry, x, 0, z, i);
     }
+    radius = 10;
+    for( var i = 0; i < boxCount; i++ ) {
+      var x = 0 + Math.ceil(radius * Math.cos(2 * Math.PI * i / boxCount));
+      var z = 0 + Math.ceil(radius * Math.sin(2 * Math.PI * i / boxCount));  
+      addMesh(boxGeometry, x, 0, z, i);
+    }
     parentTutorial.position.set(utils.initialPositionTutorial.x, 0, utils.initialPositionTutorial.z);
-    calculateDistances();
+    calculateDistances(parentTutorial);
   }
 
   var closeObjectLabels;
   function highlightClosestObjects() {
-    // removeCloseLabels();
     closeObjectLabels = [];
     for (var i = 0; i < parentTutorial.children.length; i++) {
       if (distancesFromReticleToObject[i] > 2 && distancesFromReticleToObject[i] < MAX_DISTANCE) {
         changeColor(parentTutorial.children[i], utils.objectColors.initial);
-        addProximityLabelToChild(parentTutorial.children[i].position);
+        if (i == 0) addProximityLabelToChild(parentTutorial.children[i].position);
       } else {
         changeColor(parentTutorial.children[i], utils.objectColors.closest);
       }
@@ -525,7 +530,7 @@
       video.pause();
       video2.pause();
       movement({x: -1.5, y: 2, z: screen1Mesh.position.z}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
-        updateLabelSizes();
+        updateLabelSizesAndColor();
         addMediaControls(screen1Mesh, video);
         updateHomeButtonPosition();
       });
@@ -572,7 +577,7 @@
       video.pause();
       video2.pause();
       movement({x: -1.4, y: 2, z: screen2Mesh.position.z}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
-        updateLabelSizes();
+        updateLabelSizesAndColor();
         addMediaControls(screen2Mesh, video2);
         updateHomeButtonPosition();
       });
@@ -648,10 +653,10 @@
       fuseColor: utils.reticleColors.red.dark,
       fuseVisible: true,
       onGazeOver: function() {
-        if (this.material.color) this.material.color.setHex( 0xffcc00 );
+        if (this.material.color) changeColor(closeButton, 0xffcc00 );
       },
       onGazeOut: function() {
-        if (this.material.color) this.material.color.setHex( 0xffffff );
+        if (this.material.color) changeColor(closeButton, 0xffffff );
       },
       onGazeLong: function() {
         videoObject.pause();
@@ -672,10 +677,10 @@
       fuseColor: utils.reticleColors.yellow.dark,
       fuseVisible: true,
       onGazeOver: function() {
-        if (this.material.color) this.material.color.setHex( 0xffcc00 );
+        if (this.material.color) changeColor(playButton, 0xffcc00 );
       },
       onGazeOut: function() {
-        if (this.material.color) this.material.color.setHex( 0xffffff );
+        if (this.material.color) changeColor(playButton, 0xffffff );
       },
       onGazeLong: function() {
         videoObject.play();
@@ -701,10 +706,10 @@
       fuseColor: utils.reticleColors.yellow.dark,
       fuseVisible: true,
       onGazeOver: function() {
-        if (this.material.color) this.material.color.setHex( 0xffcc00 );
+        if (this.material.color) changeColor(pauseButton, 0xffcc00 );
       },
       onGazeOut: function() {
-        if (this.material.color) this.material.color.setHex( 0xffffff );
+        if (this.material.color) changeColor(pauseButton, 0xffffff );
       },
       onGazeLong: function() {
         videoObject.pause();
@@ -727,10 +732,10 @@
       fuseColor: utils.reticleColors.yellow.dark,
       fuseVisible: true,
       onGazeOver: function() {
-        if (this.material.color) this.material.color.setHex( 0xffcc00 );
+        if (this.material.color) changeColor(stopButton, 0xffcc00 );
       },
       onGazeOut: function() {
-        if (this.material.color) this.material.color.setHex( 0xffffff );
+        if (this.material.color) changeColor(stopButton, 0xffffff );
       },
       onGazeLong: function() {
         videoObject.pause();
@@ -760,19 +765,19 @@
   function exitScreen(videoObject) {
     if (videoObject === video) {
       movement({x: researchLabel.position.x + 1.6, y: 1.8, z: researchLabel.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
-        updateLabelSizes();
+        updateLabelSizesAndColor();
         updateHomeButtonPosition();
       });
       if (controls) controls.target.set(researchLabel.position.x + 0.2, 2, researchLabel.position.z);
     } else if (videoObject === video2) {
       movement({x: nobodyLabel.position.x + 1.6, y: 1.8, z: nobodyLabel.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
-        updateLabelSizes();
+        updateLabelSizesAndColor();
         updateHomeButtonPosition();
       });
       if (controls) controls.target.set(nobodyLabel.position.x + 0.2, 2, nobodyLabel.position.z);
     }
     videoObject.pause();
-    updateLabelSizes();
+    updateLabelSizesAndColor();
     addAgoraLabelToReticulum();
   }
 
@@ -859,15 +864,13 @@
       onGazeOver: function() {
         if (!wallMenuIsOpen) {
           changeScaleSingle(wallMenu, 1.5);
-          if (this.material.color) this.material.color.setHex( 0xffcc00 );
-          if (this.material.emissive) this.material.emissive.setHex( 0xffcc00 );
+          if (this.material.color) changeColor(wallMenu, 0xffcc00 );
         }
       },
       onGazeOut: function() {
         if (!wallMenuIsOpen) {
           changeScaleSingle(wallMenu, 1);
-          if (this.material.color) this.material.color.setHex( 0xffffff );
-          if (this.material.emissive) this.material.emissive.setHex( 0xffffff );
+          if (this.material.color) changeColor(wallMenu, 0xffffff );
         }
       },
       onGazeLong: function() {
@@ -901,11 +904,11 @@
       fuseVisible: true,
       onGazeOver: function() {
         changeScaleSingle(wallInfo, 1.5);
-        if (this.material.color) this.material.color.setHex( 0xffcc00 );
+        if (this.material.color) changeColor(wallInfo, 0xffcc00 );
       },
       onGazeOut: function() {
         changeScaleSingle(wallInfo, 1);
-        if (this.material.color) this.material.color.setHex( 0xffffff );
+        if (this.material.color) changeColor(wallInfo, 0xffffff );
       },
       onGazeLong: function() {
         if (!wallInfoIsVisible && !wallInfoTextIsInflating) {
@@ -914,14 +917,6 @@
           }
           wallInfoTextIsInflating = true;
           anAnimationHasStarted = true;
-//          inflateObject(wallInfoText, function () {
-//            wallInfoText.visible = true;
-//            wallInfoIsVisible = true;
-//          });
-//          movement({y: 1, z: 1}, wallInfoText.scale, 0, 1500, TWEEN.Easing.Cubic.In, function () {
-//            wallInfoText.visible = true;
-//            wallInfoIsVisible = true;
-//          });
         } else {
           hideWallInfoText();
         }
@@ -949,10 +944,6 @@
 
   function hideWallInfoText() {
     if (!wallMenuIsOpen && !wallInfoTextIsDeflating) {
-//      movement({y: 0, z: 0}, wallInfoText.scale, 0, 1500, TWEEN.Easing.Cubic.Out, function () {
-//        wallInfoText.visible = false;
-//        wallInfoIsVisible = false;
-//      });
       wallInfoTextIsDeflating = true;
       anAnimationHasStarted = true;
     }
@@ -1041,11 +1032,11 @@
       fuseDuration: 1,
       fuseVisible: true,
       onGazeOver: function() {
-        if (this.material.color) this.material.color.setHex( 0xffcc00 );
+        if (this.material.color) changeColor(plane, 0xffcc00 );
         changeScaleSingle(plane, 1.2);
       },
       onGazeOut: function() {
-        if (this.material.color) this.material.color.setHex( 0xffffff );
+        if (this.material.color) changeColor(plane, 0xffffff );
         changeScaleSingle(plane, 1);
       },
       onGazeLong: function() {
@@ -1053,34 +1044,34 @@
         if (object.name === utils.researchName) {
           movement({x: researchLabel.position.x + 1.6, y: 1.8, z: researchLabel.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
             addMembers(utils.researchMembers);
-            updateLabelSizes();
+            updateLabelSizesAndColor();
             updateHomeButtonPosition();
           });
           if (controls) controls.target.set(researchLabel.position.x + 0.2, 2, researchLabel.position.z);
         } else if (object.name === utils.radicalName) {
           movement({x: radicalLabel.position.x + 1.6, y: 1.8, z: radicalLabel.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
             addMembers(utils.radicalMembers);
-            updateLabelSizes();
+            updateLabelSizesAndColor();
             updateHomeButtonPosition();
           });
           if (controls) controls.target.set(radicalLabel.position.x + 0.2, 2, radicalLabel.position.z);
         } else if (object.name === utils.jefesName) {
           movement({x: jefesLabel.position.x + 1.6, y: 1.8, z: jefesLabel.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
             addMembers(utils.jefesAndVenturesMembers);
-            updateLabelSizes();
+            updateLabelSizesAndColor();
             updateHomeButtonPosition();
           });
           if (controls) controls.target.set(jefesLabel.position.x + 0.2, 2, jefesLabel.position.z);
         } else if (object.name === utils.comunicacionName) {
           movement({x: comunicacionLabel.position.x + 1.6, y: 1.8, z: comunicacionLabel.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
             addMembers(utils.comunicacionMembers);
-            updateLabelSizes();
+            updateLabelSizesAndColor();
             updateHomeButtonPosition();
           });
           if (controls) controls.target.set(comunicacionLabel.position.x + 0.2, 2, comunicacionLabel.position.z);
         } else if (object.name === utils.nobodyName) {
           movement({x: nobodyLabel.position.x + 1.6, y: 1.8, z: nobodyLabel.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
-            updateLabelSizes();
+            updateLabelSizesAndColor();
             updateHomeButtonPosition();
           });
           if (controls) controls.target.set(nobodyLabel.position.x + 0.2, 2, nobodyLabel.position.z);
@@ -1088,7 +1079,7 @@
           moveToMaker();
         } else if (object.name === utils.agoraName) {
           movement({x: 3, y: 1.8, z: 6}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
-            updateLabelSizes();
+            updateLabelSizesAndColor();
             updateHomeButtonPosition();
             changeScaleSingle(agoraLabel, 1);
           });
@@ -1104,7 +1095,7 @@
 
   function moveToMaker() {
     movement({x: -4, y: 1.8, z: -10}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
-      updateLabelSizes();
+      updateLabelSizesAndColor();
       addExitSign(utils.makerName);
       updateHomeButtonPosition();
       Reticulum.remove(wallMenu);
@@ -1175,7 +1166,7 @@
       removeInfoSection();
     }
     movement({x: utils.initialPosition.x, y: utils.initialPosition.y, z: utils.initialPosition.z}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
-      updateLabelSizes();
+      updateLabelSizesAndColor();
       updateHomeButtonPosition();
       if (controls) controls.target.set(camera.position.x, camera.position.y, camera.position.z + 0.5);
     });
@@ -1223,10 +1214,10 @@
         fuseDuration: 1,
         fuseVisible: true,
         onGazeOver: function() {
-          if (this.material.color) this.material.color.setHex( 0xffcc00 );
+          if (this.material.color) changeColor(plane, 0xffcc00 );
         },
         onGazeOut: function() {
-          if (this.material.color) this.material.color.setHex( 0xffffff );
+          if (this.material.color) changeColor(plane, 0xffffff );
         },
         onGazeLong: function() {
           if (exitSignAdded) {
@@ -1256,7 +1247,7 @@
               moveToScreen2();
             } else {
               movement({x: plane.position.x + 1.6, y: 1.8, z: plane.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
-                updateLabelSizes();
+                updateLabelSizesAndColor();
                 updateHomeButtonPosition();
               });
               if (controls) controls.target.set(plane.position.x + 0.2, 2, plane.position.z);
@@ -1302,7 +1293,7 @@
       onGazeLong: function() {
         if (name === utils.agoraName) {
           movement({x: researchLabel.position.x + 1.6, y: 1.8, z: researchLabel.position.z - 0.3}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
-            updateLabelSizes();
+            updateLabelSizesAndColor();
             updateHomeButtonPosition();
             Reticulum.remove(exitSign);
             scene.remove(exitSign);
@@ -1325,10 +1316,10 @@
       fuseDuration: 1,
       fuseVisible: true,
       onGazeOver: function() {
-        if (this.material.color) this.material.color.setHex( 0xffcc00 );
+        if (this.material.color) changeColor(agoraLabel, 0xffcc00 );
       },
       onGazeOut: function() {
-        if (this.material.color) this.material.color.setHex( 0xffffff );
+        if (this.material.color) changeColor(agoraLabel, 0xffffff );
       },
       onGazeLong: function() {
         if (wallMenuIsOpen) {
@@ -1338,7 +1329,7 @@
         removeMembers();
         removeInfoSection();
         movement({x: 3, y: 1.8, z: 6}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
-          updateLabelSizes();
+          updateLabelSizesAndColor();
           addExitSign(utils.agoraName);
           updateHomeButtonPosition();
           changeScaleSingle(agoraLabel, 1);
@@ -1348,7 +1339,7 @@
     });
   }
 
-  function updateLabelSizes() {
+  function updateLabelSizesAndColor() {
     var labelArray = [researchLabel, radicalLabel, makerLabel, nobodyLabel, jefesLabel, comunicacionLabel, agoraLabel, tele1Label, tele2Label];
     var cameraPosition = camera.position;
     var big = 4;
@@ -1360,6 +1351,11 @@
           changeScaleSingle(labelArray[i], big);
         } else {
           changeScaleSingle(labelArray[i], normal);
+        }
+        if (distance(cameraPosition, labelArray[i].position) > utils.reticulumFar) {
+          changeColor(labelArray[i], 0x74726c);
+        } else {
+          changeColor(labelArray[i], 0xffffff);
         }
       }
     }
@@ -1408,10 +1404,10 @@
       fuseColor: utils.reticleColors.green.dark,
       fuseVisible: true,
       onGazeOver: function() {
-        if (this.material.color) this.material.color.setHex( 0xffcc00 );
+        if (this.material.color) changeColor(plane, 0xffcc00 );
       },
       onGazeOut: function() {
-        if (this.material.color) this.material.color.setHex( 0xffffff );
+        if (this.material.color) changeColor(plane, 0xffffff );
       },
       onGazeLong: function() {
         if (!infoGroupIsShowing) {
@@ -1498,10 +1494,10 @@
       fuseDuration: 1,
       fuseVisible: true,
       onGazeOver: function() {
-        if (this.material.color) this.material.color.setHex( 0xffcc00 );
+        if (this.material.color) changeColor(closeButtonMesh, 0xffcc00 );
       },
       onGazeOut: function() {
-        if (this.material.color) this.material.color.setHex( 0xffffff );
+        if (this.material.color) changeColor(closeButtonMesh, 0xffffff );
       },
       onGazeLong: function() {
         if (!infoIsOpening) {
@@ -1537,10 +1533,10 @@
       fuseColor: utils.reticleColors.basic,
       fuseVisible: true,
       onGazeOver: function() {
-        if (this.material.color) this.material.color.setHex( 0xffcc00 );
+        if (this.material.color) changeColor(infoEmailButton, 0xffcc00 );
       },
       onGazeOut: function() {
-        if (this.material.color) this.material.color.setHex( 0xffffff );
+        if (this.material.color) changeColor(infoEmailButton, 0xffffff );
       },
       onGazeLong: function() {
       }
@@ -1562,10 +1558,10 @@
       fuseColor: utils.reticleColors.basic,
       fuseVisible: true,
       onGazeOver: function() {
-        if (this.material.color) this.material.color.setHex( 0xffcc00 );
+        if (this.material.color) changeColor(infoCalendarButton, 0xffcc00 );
       },
       onGazeOut: function() {
-        if (this.material.color) this.material.color.setHex( 0xffffff );
+        if (this.material.color) changeColor(infoCalendarButton, 0xffffff );
       },
       onGazeLong: function() {
       }
@@ -1587,10 +1583,10 @@
       fuseColor: utils.reticleColors.basic,
       fuseVisible: true,
       onGazeOver: function() {
-        if (this.material.color) this.material.color.setHex( 0xffcc00 );
+        if (this.material.color) changeColor(infoCallButton, 0xffcc00 );
       },
       onGazeOut: function() {
-        if (this.material.color) this.material.color.setHex( 0xffffff );
+        if (this.material.color) changeColor(infoCallButton, 0xffffff );
       },
       onGazeLong: function() {
       }
@@ -1794,10 +1790,8 @@
     if (anAnimationHasStarted) {
       clock = new THREE.Clock();
       anAnimationHasStarted = false;
-      console.log('debug', 'new clock!');
     }
     if (wallInfoTextIsDeflating) {
-      console.log('debug', 'wallInfoTextIsDeflating');
       var t = clock.getElapsedTime();
       if (t >= 3.0) {
         wallInfoTextIsDeflating = false;
@@ -1811,7 +1805,6 @@
     }
 
     if (wallInfoTextIsInflating) {
-      console.log('debug', 'wallInfoTextIsInflating');
       var t = clock.getElapsedTime();
       wallInfoText.visible = true;
       if (t >= 3.0) {
@@ -1839,7 +1832,9 @@
         if (callback) {
           callback();
         }
-        calculateDistances();
+        if (!tutorialFinished) {
+          calculateDistances(parentTutorial);
+        }
       })
       .start();
   }
@@ -1858,11 +1853,11 @@
     return Math.sqrt(difX*difX + difY*difY + difZ*difZ);
   }
 
-  function calculateDistances() {
+  function calculateDistances(parentObject) {
     distancesFromReticleToObject = [];
     var objectPosition;
-    for (var i = 0; i < parentTutorial.children.length; i++) {
-      objectPosition = {x:parentTutorial.position.x + parentTutorial.children[i].position.x, y:parentTutorial.position.y + parentTutorial.children[i].position.y, z:parentTutorial.position.z + parentTutorial.children[i].position.z};
+    for (var i = 0; i < parentObject.children.length; i++) {
+      objectPosition = {x:parentTutorial.position.x + parentObject.children[i].position.x, y:parentTutorial.position.y + parentObject.children[i].position.y, z:parentTutorial.position.z + parentObject.children[i].position.z};
       var dist = distance(camera.position, objectPosition);
       distancesFromReticleToObject.push(dist);
     }
