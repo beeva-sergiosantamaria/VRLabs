@@ -81,9 +81,6 @@
 <script type="text/javascript" src="libs/OrbitControls.js"></script>
 <script type="text/javascript" src="libs/labsUtils.js"></script>
 <script type="text/javascript" src="libs/SubdivisionModifier.js"></script>
-<!--<script type="text/javascript" src="scene/logoAnim.js"></script> -->
-<!-- A simple gaze interaction manager for VR -->
-<!--<script src="https://skezo.github.io/Reticulum/reticulum.js"></script>-->
 <script src="./libs/reticulum.js"></script>
 <script type="x-shader/x-vertex" id="vertexshader">
   uniform float amplitude;
@@ -232,7 +229,6 @@
         if (!e.alpha) {
           return;
         }
-        // controlsdevice = new THREE.DeviceOrientationControls(camera, true);
         controlsdevice.connect();
         controlsdevice.update();
         element.addEventListener('click', fullscreen, false);
@@ -303,10 +299,8 @@
     for (var i = 0; i < parentTutorial.children.length; i++) {
       if (distancesFromReticleToObject[i] < MAX_DISTANCE) {
         changeColor(parentTutorial.children[i], utils.objectColors.initial);
-        // if (i % 2 == 0 && !added && distancesFromReticleToObject[i] > 2) {
         if (distancesFromReticleToObject[i] > 2) {
           addProximityLabelToChild(parentTutorial.children[i].position);
-          // if (!tutorialFinished) added = true;
         }
       } else {
         changeColor(parentTutorial.children[i], utils.objectColors.closest);
@@ -333,7 +327,7 @@
       color: 0xffffff
     });
     img.map.needsUpdate = false;
-    var scale = tutorialFinished || (movements == 1) ? 0.5 : 2;
+    var scale = (tutorialFinished || (movements == 1)) ? 0.5 : 2;
     closeLabel = new THREE.Mesh(new THREE.PlaneGeometry(scale, scale), img);
     closeLabel.position.set(utils.initialPositionTutorial.x + childObjectPosition.x, tutorialFinished || (movements == 1) ? 1 : 2, utils.initialPositionTutorial.z + childObjectPosition.z);
     
@@ -1465,7 +1459,7 @@
     scene.remove(infoGroup);
     infoGroup = new THREE.Object3D();
     infoGroup.name = 'infoGroup';
-    var texture = textureLoader.load(utils.rootDirectory + "info_board.png");
+    var texture = textureLoader.load(utils.rootDirectory + "info_board" + utils.extension);
     var geometry = new THREE.PlaneGeometry(3, 1.8, 3);
     var material = new THREE.MeshBasicMaterial({
       map: texture,
@@ -1477,7 +1471,7 @@
     plane.name = name;
 
     var closeButtonMaterial = new THREE.MeshBasicMaterial({
-      map: textureLoader.load(utils.subFolderMediaControls + "close.png"),
+      map: textureLoader.load(utils.subFolderMediaControls + "close" + utils.extension),
       transparent: true,
       side: THREE.DoubleSide
     });
@@ -1517,7 +1511,7 @@
     plane.add(closeButtonMesh);
 
     var emailButtonMaterial = new THREE.MeshBasicMaterial({
-      map: textureLoader.load(utils.subFolderInfoBox + "email.png"),
+      map: textureLoader.load(utils.subFolderInfoBox + "email" + utils.extension),
       transparent: true,
       side: THREE.DoubleSide
     });
@@ -1543,7 +1537,7 @@
     plane.add(infoEmailButton);
 
     var calendarButtonMaterial = new THREE.MeshBasicMaterial({
-      map: textureLoader.load(utils.subFolderInfoBox + "calendar.png"),
+      map: textureLoader.load(utils.subFolderInfoBox + "calendar" + utils.extension),
       transparent: true,
       side: THREE.DoubleSide
     });
@@ -1568,7 +1562,7 @@
     plane.add(infoCalendarButton);
 
     var callButtonMaterial = new THREE.MeshBasicMaterial({
-      map: textureLoader.load(utils.subFolderInfoBox + "call.png"),
+      map: textureLoader.load(utils.subFolderInfoBox + "call" + utils.extension),
       transparent: true,
       side: THREE.DoubleSide
     });
@@ -1823,6 +1817,8 @@
       addWallMenuToReticulum();
       addWallInfoLogoToReticulum();
     }
+    if (videoPlaying) video.pause();
+    if (video2Playing) video2.pause();
     var tween = new TWEEN.Tween(object)
       .to(value, duration)
       .easing(easingType)
