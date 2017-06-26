@@ -1062,12 +1062,7 @@
         } else if (object.name === utils.makerName) {
           moveToMaker();
         } else if (object.name === utils.agoraName) {
-          movement({x: 3, y: 1.8, z: 6}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
-            updateLabelSizesAndColor();
-            updateHomeButtonPosition();
-            changeScaleSingle(agoraLabel, 1);
-          });
-          if (controls) controls.target.set(3, 2, 6);
+          moveToAgora();
         } else if (object.name === utils.tele1Name) {
           moveToScreen1();
         } else if (object.name === utils.tele2Name) {
@@ -1075,6 +1070,16 @@
         }
       }
     });
+  }
+
+  function moveToAgora() {
+    movement({x: 3, y: 1.8, z: 6}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
+      updateLabelSizesAndColor();
+      addExitSign(utils.agoraName);
+      updateHomeButtonPosition();
+      changeScaleSingle(agoraLabel, 1);
+    });
+    if (controls) controls.target.set(3, 2, 6);
   }
 
   function moveToMaker() {
@@ -1258,9 +1263,9 @@
     var scale = 0.5;
     exitSign = new THREE.Mesh(new THREE.PlaneGeometry(scale, scale), img);
     if (name === utils.agoraName) {
-      exitSign.position.set(2, 1.2, 3.5);
+      exitSign.position.set(2, 1.8, 3.5);
     } else if (name === utils.makerName) {
-      exitSign.position.set(-3.6, 1.2, -11);
+      exitSign.position.set(-3.6, 1.8, -11);
     }
     scene.add(exitSign);
 
@@ -1289,6 +1294,7 @@
           Reticulum.remove(exitSign);
           scene.remove(exitSign);
         }
+        exitSignAdded = false;
       }
     });
     exitSignAdded = true;
@@ -1313,13 +1319,7 @@
         changeScaleSingle(agoraLabel, 1);
         removeMembers();
         removeInfoSection();
-        movement({x: 3, y: 1.8, z: 6}, camera.position, 0, 2000, TWEEN.Easing.Quartic.Out, function () {
-          updateLabelSizesAndColor();
-          addExitSign(utils.agoraName);
-          updateHomeButtonPosition();
-          changeScaleSingle(agoraLabel, 1);
-        });
-        if (controls) controls.target.set(3, 2, 6);
+        moveToAgora();
       }
     });
   }
