@@ -13,6 +13,12 @@ LabsUtils = function() {
     this.extension = ".png";
     this.initialPosition = {x: -1.6, y: 1.8, z: -10};
     this.initialPositionTutorial = {x: 200, y: 1.8, z: -400};
+    this.defaultObjectElevation = 1.8;
+    this.objectScale = {
+        normal: 1,
+        big: 1.5,
+        huge: 4
+    };
     this.makerName = 'maker';
     this.radicalName = 'radical';
     this.researchName = 'research';
@@ -26,15 +32,23 @@ LabsUtils = function() {
     this.mediaNamePause = 'media-pause';
     this.mediaNameClose = 'media-close';
     this.mediaNamePlay = 'media-play';
+    this.reticulumRestPoint = 1;
+    this.reticulumDefaultVibrate = 0;
     this.reticulumNear = 0.2;
     this.reticulumFar = 8;
+    this.reticulumDefaultProximity = false;
+    this.reticulumDefaultReticleVisibility = true;
+    this.reticulumDefaultFuseVisibility = true;
+    this.reticulumDefaultClickCancelFuse = false;
     this.reticleDurations = {
         slow: 2,
         medium: 1.5,
         fast: 1,
-        fastest: 0.5
+        fastest: 0.5,
+        hoverChange: 5
     };
     this.reticleColors = {
+        pink: 0xff00e7,
         basic: 0x00fff6,
         blue: {
             light: 0x9DB7DA,
@@ -50,13 +64,64 @@ LabsUtils = function() {
         },
         yellow: {
             light: 0xFFD087,
-            dark: 0xD89939
-        }
+            dark: 0xD89939,
+            bright: 0xfdff00
+        },
+        purple: 0x660066
     };
     this.objectColors = {
         initial: this.reticleColors.yellow.dark,
         highlight: 0xffd53a,
         closest: 0xffd53a
+    };
+    this.reticleSizes = {
+        normal: {
+            inner: 0.001,
+            outer: 0.006
+        }, 
+        hover: {
+            inner: 0.02,
+            outer: 0.024
+        },
+        fuse: {
+            inner: 0.045,
+            outer: 0.06
+        }
+    };
+    this.reticulumDefaultConfig = {
+      proximity: this.reticulumDefaultProximity,
+      near: this.reticulumNear, // near factor of the raycaster (shouldn't be negative and should be smaller than the far property)
+      far: this.reticulumFar,
+      vibrate: this.reticulumDefaultVibrate,
+      reticle: {
+        visible: this.reticulumDefaultReticleVisibility,
+        restPoint: this.reticulumRestPoint, // Defines the reticle's resting point when no object has been targeted
+        color: this.reticleColors.pink,
+        innerRadius: this.reticleSizes.normal.inner, // inner reticle radius when nothing is selected
+        outerRadius: this.reticleSizes.normal.outer, // outer reticle radius when nothing is selected
+        hover: {
+          color: this.reticleColors.pink,
+          innerRadius: this.reticleSizes.hover.inner, // inner reticle radius when reticle passes over the object
+          outerRadius: this.reticleSizes.hover.outer, // outer reticle radius when reticle passes over the object
+          speed: this.reticleDurations.hoverChange,
+          vibrate: this.reticulumDefaultVibrate // Set to 0 or [] to disable
+        }
+      },
+      click: {
+        vibrate: this.reticulumDefaultVibrate
+      },
+      hover: {
+        vibrate: this.reticulumDefaultVibrate
+      },
+      fuse: {
+        visible: this.reticulumDefaultFuseVisibility,
+        duration: this.reticleDurations.medium,
+        color: this.reticleColors.basic,
+        innerRadius: this.reticleSizes.fuse.inner, // inner fuse radius when reticle is loading the interaction
+        outerRadius: this.reticleSizes.fuse.outer, // outer fuse radius when reticle is loading the interaction
+        vibrate: this.reticulumDefaultVibrate, // Set to 0 or [] to disable
+        clickCancelFuse: this.reticulumDefaultClickCancelFuse // If users clicks on targeted object fuse is canceled
+      }
     };
 
     this.radicalMembers = [
