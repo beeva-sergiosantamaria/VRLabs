@@ -66,7 +66,6 @@
 <script src="https://skezo.github.io/Reticulum/examples/js/lib/webvr-polyfill.js"></script>
 <script src="https://skezo.github.io/Reticulum/examples/js/lib/webvr-manager.js"></script>
 
-
 <script type="text/javascript" src="libs/three78.js"></script>
 <script type="text/javascript" src="libs/progressbar.js"></script>
 <script type="text/javascript" src="libs/DDSLoader.js"></script>
@@ -115,6 +114,7 @@
 
   var isMobile = false;
   var wallMenuHasBeenRemoved = false;
+  var white = 0xffffff;
 
   var videoMP4, videoOgg, video, videoTexture, video2, videoTexture2, screen1Mesh, screen2Mesh;
 
@@ -164,7 +164,7 @@
     renderer.sortObjects = false;
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(width, height);
-    renderer.setClearColor(0xffffff, 0);
+    renderer.setClearColor(white, 0);
     renderer.setViewport(0, 0, width, height);
     renderer.getMaxAnisotropy();
     element = renderer.domElement;
@@ -209,7 +209,7 @@
 
     addHomeButton(tutorialFinished);
     addTravelPoints();
-    ambientLight = new THREE.AmbientLight(0xffffff);
+    ambientLight = new THREE.AmbientLight(white);
     ambientLight.position.set(0, 1.2, 0);
     addWallMenu();
     addWallInfo();
@@ -239,7 +239,6 @@
 
     for( var i = 0; i < 3; i++ ) {
         var x = radius;
-        // var z = 0 + radius * Math.sin(2 * Math.PI * i / boxCount);  
         var z = i * radius;
         addMesh(boxGeometry, x, 0, z, i);
     }
@@ -255,7 +254,6 @@
 
   var closeObjectLabels;
   function highlightClosestObjects() {
-    var added = false;
     closeObjectLabels = [];
     for (var i = 0; i < parentTutorial.children.length; i++) {
       if (distancesFromReticleToObject[i] < MAX_DISTANCE) {
@@ -285,7 +283,7 @@
       map: textureLoader.load(utils.rootDirectory + fileName + utils.extension),
       transparent: true,
       side: THREE.DoubleSide,
-      color: 0xffffff
+      color: white
     });
     img.map.needsUpdate = false;
     var scale = (tutorialFinished || (movements == 1)) ? 0.5 : 2;
@@ -303,7 +301,9 @@
     object.position.z = z;
     
     Reticulum.add( object, {
-      reticleHoverColor: 0x00fff6,
+      fuseDuration: utils.reticleDurations.medium,
+      fuseColor: utils.reticleColors.blue.dark,
+      reticleHoverColor: utils.reticleColors.basic,
       fuseVisible: true,
       onGazeOver: function(){
         changeScaleSingle(object, utils.objectScale.big);
@@ -351,7 +351,7 @@
       side: THREE.DoubleSide,
       transparent: true,
       opacity: 1,
-      color: 0xFFFFFF,
+      color: white,
       depthWrite: true
     });
     sky = new THREE.Mesh(skyGeometry, skyMaterial);
@@ -465,7 +465,7 @@
       map: textureLoader.load(utils.rootDirectory + "screenBack" + utils.extension),
       transparent: false,
       side: THREE.DoubleSide,
-      color: 0xffffff
+      color: white
     });
     img.map.needsUpdate = false;
     var scale = 0.9;
@@ -512,7 +512,7 @@
       map: textureLoader.load(utils.rootDirectory + "screenBack" + utils.extension),
       transparent: false,
       side: THREE.DoubleSide,
-      color: 0xffffff
+      color: white
     });
     img.map.needsUpdate = false;
     var scale = 0.9;
@@ -625,7 +625,7 @@
         if (this.material.color) changeColor(closeButton, 0xffcc00 );
       },
       onGazeOut: function() {
-        if (this.material.color) changeColor(closeButton, 0xffffff );
+        if (this.material.color) changeColor(closeButton, white );
       },
       onGazeLong: function() {
         videoObject.pause();
@@ -649,7 +649,7 @@
         if (this.material.color) changeColor(playButton, 0xffcc00 );
       },
       onGazeOut: function() {
-        if (this.material.color) changeColor(playButton, 0xffffff );
+        if (this.material.color) changeColor(playButton, white );
       },
       onGazeLong: function() {
         videoObject.play();
@@ -678,7 +678,7 @@
         if (this.material.color) changeColor(pauseButton, 0xffcc00 );
       },
       onGazeOut: function() {
-        if (this.material.color) changeColor(pauseButton, 0xffffff );
+        if (this.material.color) changeColor(pauseButton, white );
       },
       onGazeLong: function() {
         videoObject.pause();
@@ -704,7 +704,7 @@
         if (this.material.color) changeColor(stopButton, 0xffcc00 );
       },
       onGazeOut: function() {
-        if (this.material.color) changeColor(stopButton, 0xffffff );
+        if (this.material.color) changeColor(stopButton, white );
       },
       onGazeLong: function() {
         videoObject.pause();
@@ -759,7 +759,7 @@
       map: textureLoader.load(utils.rootDirectory + "beevaLabs" + utils.extension),
       transparent: true,
       side: THREE.DoubleSide,
-      color: 0xffffff
+      color: white
     });
     img.map.needsUpdate = true;
 
@@ -777,7 +777,7 @@
       map: textureLoader.load(utils.rootDirectory + "beevaLabs_clickMe" + utils.extension),
       transparent: true,
       side: THREE.DoubleSide,
-      color: 0xffffff
+      color: white
     });
     img.map.needsUpdate = false;
     clickMeHint = new THREE.Mesh(new THREE.PlaneGeometry(scale, scale), img);
@@ -794,7 +794,7 @@
       map: textureLoader.load(utils.rootDirectory + "infoText" + utils.extension),
       transparent: false,
       side: THREE.DoubleSide,
-      color: 0xffffff
+      color: white
     });
     img.map.needsUpdate = true;
     scale = 1;
@@ -809,7 +809,7 @@
       map: textureLoader.load(utils.rootDirectory + "info" + utils.extension),
       transparent: true,
       side: THREE.DoubleSide,
-      color: 0xffffff
+      color: white
     });
     img.map.needsUpdate = true;
 
@@ -839,7 +839,7 @@
       onGazeOut: function() {
         if (!wallMenuIsOpen) {
           changeScaleSingle(wallMenu, utils.objectScale.normal);
-          if (this.material.color) changeColor(wallMenu, 0xffffff );
+          if (this.material.color) changeColor(wallMenu, white );
         }
       },
       onGazeLong: function() {
@@ -877,7 +877,7 @@
       },
       onGazeOut: function() {
         changeScaleSingle(wallInfo, utils.objectScale.normal);
-        if (this.material.color) changeColor(wallInfo, 0xffffff );
+        if (this.material.color) changeColor(wallInfo, white );
       },
       onGazeLong: function() {
         if (!wallInfoIsVisible && !wallInfoTextIsInflating) {
@@ -947,7 +947,7 @@
       map: textureLoader.load(utils.labelsDirectory + object.name + utils.extension),
       transparent: true,
       side: THREE.DoubleSide,
-      color: 0xffffff
+      color: white
     });
     img.map.needsUpdate = false;
     var scale = 0.45;
@@ -987,7 +987,7 @@
         changeScaleSingle(plane, utils.objectScale.big);
       },
       onGazeOut: function() {
-        if (this.material.color) changeColor(plane, 0xffffff );
+        if (this.material.color) changeColor(plane, white );
         changeScaleSingle(plane, utils.objectScale.normal);
       },
       onGazeLong: function() {
@@ -1084,7 +1084,7 @@
     var img = new THREE.MeshBasicMaterial({
       map: textureLoader.load(utils.rootDirectory + "home_button" + utils.extension),
       transparent: true,
-      color: 0xffffff,
+      color: white,
       side: THREE.DoubleSide
     });
     img.map.needsUpdate = true;
@@ -1134,7 +1134,7 @@
     var img = new THREE.MeshBasicMaterial({
       map: textureLoader.load(utils.labelsDirectory + name + utils.extension),
       transparent: true,
-      color: 0xffffff
+      color: white
     });
     img.map.needsUpdate = true;
 
@@ -1174,7 +1174,7 @@
           if (this.material.color) changeColor(plane, 0xffcc00 );
         },
         onGazeOut: function() {
-          if (this.material.color) changeColor(plane, 0xffffff );
+          if (this.material.color) changeColor(plane, white );
         },
         onGazeLong: function() {
           if (exitSignAdded) {
@@ -1223,7 +1223,7 @@
     var img = new THREE.MeshBasicMaterial({
       map: textureLoader.load(utils.rootDirectory + 'exit' + utils.extension),
       transparent: true,
-      color: 0xffffff
+      color: white
     });
     img.map.needsUpdate = true;
 
@@ -1277,7 +1277,7 @@
         if (this.material.color) changeColor(agoraLabel, 0xffcc00 );
       },
       onGazeOut: function() {
-        if (this.material.color) changeColor(agoraLabel, 0xffffff );
+        if (this.material.color) changeColor(agoraLabel, white );
       },
       onGazeLong: function() {
         if (wallMenuIsOpen) {
@@ -1305,7 +1305,7 @@
         if (distance(cameraPosition, labelArray[i].position) > utils.reticulumFar - 1) {
           changeColor(labelArray[i], 0x74726c);
         } else {
-          changeColor(labelArray[i], 0xffffff);
+          changeColor(labelArray[i], white);
         }
       }
     }
@@ -1336,7 +1336,7 @@
       map: textureLoader.load(utils.subFolderCircular + member.name + utils.extension),
       transparent: true,
       depthWrite: false,
-      color: 0xffffff
+      color: white
     });
     img.map.needsUpdate = true;
     var scale = 0.7;
@@ -1357,7 +1357,7 @@
         if (this.material.color) changeColor(plane, 0xffcc00 );
       },
       onGazeOut: function() {
-        if (this.material.color) changeColor(plane, 0xffffff );
+        if (this.material.color) changeColor(plane, white );
       },
       onGazeLong: function() {
         if (!infoGroupIsShowing) {
@@ -1422,7 +1422,7 @@
       map: texture,
       transparent: true,
       opacity: 1,
-      color: 0xffffff
+      color: white
     });
     var plane = new THREE.Mesh(geometry, material);
     plane.name = name;
@@ -1447,7 +1447,7 @@
         if (this.material.color) changeColor(closeButtonMesh, 0xffcc00 );
       },
       onGazeOut: function() {
-        if (this.material.color) changeColor(closeButtonMesh, 0xffffff );
+        if (this.material.color) changeColor(closeButtonMesh, white );
       },
       onGazeLong: function() {
         if (!infoIsOpening) {
@@ -1486,7 +1486,7 @@
         if (this.material.color) changeColor(infoEmailButton, 0xffcc00 );
       },
       onGazeOut: function() {
-        if (this.material.color) changeColor(infoEmailButton, 0xffffff );
+        if (this.material.color) changeColor(infoEmailButton, white );
       },
       onGazeLong: function() {
       }
@@ -1511,7 +1511,7 @@
         if (this.material.color) changeColor(infoCalendarButton, 0xffcc00 );
       },
       onGazeOut: function() {
-        if (this.material.color) changeColor(infoCalendarButton, 0xffffff );
+        if (this.material.color) changeColor(infoCalendarButton, white );
       },
       onGazeLong: function() {
       }
@@ -1536,7 +1536,7 @@
         if (this.material.color) changeColor(infoCallButton, 0xffcc00 );
       },
       onGazeOut: function() {
-        if (this.material.color) changeColor(infoCallButton, 0xffffff );
+        if (this.material.color) changeColor(infoCallButton, white );
       },
       onGazeLong: function() {
       }
@@ -1547,7 +1547,7 @@
       map: textureLoader.load(utils.subFolderCircular + memberObject.name + utils.extension),
       transparent: true,
       depthWrite: false,
-      color: 0xffffff
+      color: white
     });
 
     var memberPicture = new THREE.Mesh(new THREE.PlaneGeometry(0.5, 0.5), img);
@@ -1561,7 +1561,7 @@
       map: textureLoader.load(utils.subFolderInfo + memberName + utils.extension),
       transparent: true,
       depthWrite: false,
-      color: 0xffffff
+      color: white
     });
 
     var memberInfo = new THREE.Mesh(new THREE.PlaneGeometry(1.1, 1.1), img);
