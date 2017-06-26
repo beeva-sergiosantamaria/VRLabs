@@ -127,15 +127,10 @@
   var mtlLoader = new THREE.MTLLoader();
 
   var planta = new THREE.Object3D();
-  planta.name = "estructura";
   var mesas = new THREE.Object3D();
-  mesas.name = "mesasInteractivas";
   var screensGroup = new THREE.Object3D();
-  screensGroup.name = "screens";
   var membersGroup = new THREE.Object3D();
-  membersGroup.name = 'members';
   var infoGroup = new THREE.Object3D();
-  infoGroup.name = 'infoGroup';
 
   var infoGroupIsShowing = false;
   var screensAdded = false;
@@ -176,11 +171,10 @@
     var container = document.getElementById('container');
     container.appendChild(element);
     camera = new THREE.PerspectiveCamera(60, (width / height), 0.01, 10000000);
-    // camera.position.set(utils.initialPosition.x, utils.initialPosition.y, utils.initialPosition.z);
     camera.position.set(utils.initialPositionTutorial.x, utils.initialPositionTutorial.y, utils.initialPositionTutorial.z);
 
     Reticulum.init(camera, {
-      proximity: true,
+      proximity: false,
       near: utils.reticulumNear, // near factor of the raycaster (shouldn't be negative and should be smaller than the far property)
       far: utils.reticulumFar,
       vibrate: 0,
@@ -206,7 +200,7 @@
       },
       fuse: {
         visible: false,
-        duration: 1.5,
+        duration: utils.reticleDurations.medium,
         color: utils.reticleColors.basic,
         innerRadius: 0.045, // inner fuse radius when reticle is loading the interaction
         outerRadius: 0.06, // outer fuse radius when reticle is loading the interaction
@@ -261,7 +255,7 @@
   }
 
   var parentTutorial = new THREE.Object3D();
-  var boxCount = 30;
+  var boxCount = 10;
   var boxSize = 1;
   var radius = MAX_DISTANCE - 1;
   var movements;
@@ -298,12 +292,12 @@
     closeObjectLabels = [];
     for (var i = 0; i < parentTutorial.children.length; i++) {
       if (distancesFromReticleToObject[i] < MAX_DISTANCE) {
-        changeColor(parentTutorial.children[i], utils.objectColors.initial);
+        changeColor(parentTutorial.children[i], utils.objectColors.highlight);
         if (distancesFromReticleToObject[i] > 2) {
           addProximityLabelToChild(parentTutorial.children[i].position);
         }
       } else {
-        changeColor(parentTutorial.children[i], utils.objectColors.closest);
+        changeColor(parentTutorial.children[i], utils.objectColors.initial);
       }
     }
   }
@@ -336,7 +330,7 @@
   }
 
   function addMesh(geo, x, y, z, i) {
-    var object = new THREE.Mesh( geo, new THREE.MeshLambertMaterial( { color: utils.objectColors.closest } ) );
+    var object = new THREE.Mesh( geo, new THREE.MeshLambertMaterial( { color: utils.objectColors.initial } ) );
     object.position.x = x;
     object.position.y = y;
     object.position.z = z;
@@ -346,11 +340,9 @@
       fuseVisible: true,
       onGazeOver: function(){
         changeScaleSingle(object, 1.5)
-        if (this.material.color) changeColor(object, utils.objectColors.highlight);
       },
       onGazeOut: function(){
         changeScaleSingle(object, 1)
-        if (this.material.color) changeColor(object, utils.objectColors.initial);
       },
       onGazeLong: function(){
         if (tutorialFinished) {
@@ -382,7 +374,7 @@
   }
 
   function getPositionInTutorial(object) {
-    return {x: utils.initialPositionTutorial.x + object.position.x, y: 2, z: utils.initialPositionTutorial.z + object.position.z};
+    return { x: utils.initialPositionTutorial.x + object.position.x, y: 2, z: utils.initialPositionTutorial.z + object.position.z };
   }
 
   function buildShape() {
@@ -658,7 +650,7 @@
 
   function addCloseButtonToReticulum(videoObject) {
     Reticulum.add( closeButton, {
-      fuseDuration: 0.5,
+      fuseDuration: utils.reticleDurations.fastest,
       reticleHoverColor: utils.reticleColors.red.light,
       fuseColor: utils.reticleColors.red.dark,
       fuseVisible: true,
@@ -682,7 +674,7 @@
 
   function addPlayButtonToReticulum(videoObject) {
     Reticulum.add( playButton, {
-      fuseDuration: 0.5,
+      fuseDuration: utils.reticleDurations.fastest,
       reticleHoverColor: utils.reticleColors.yellow.light,
       fuseColor: utils.reticleColors.yellow.dark,
       fuseVisible: true,
@@ -711,7 +703,7 @@
 
   function addPauseButtonToReticulum(videoObject) {
     Reticulum.add( pauseButton, {
-      fuseDuration: 0.5,
+      fuseDuration: utils.reticleDurations.fastest,
       reticleHoverColor: utils.reticleColors.yellow.light,
       fuseColor: utils.reticleColors.yellow.dark,
       fuseVisible: true,
@@ -737,7 +729,7 @@
 
   function addStopButtonToReticulum(videoObject) {
     Reticulum.add( stopButton, {
-      fuseDuration: 0.5,
+      fuseDuration: utils.reticleDurations.fastest,
       reticleHoverColor: utils.reticleColors.yellow.light,
       fuseColor: utils.reticleColors.yellow.dark,
       fuseVisible: true,
@@ -869,7 +861,7 @@
     Reticulum.add( wallMenu, {
       reticleHoverColor: 0xfdff00,
       fuseColor: 0x660066,
-      fuseDuration: 1,
+      fuseDuration: utils.reticleDurations.fast,
       fuseVisible: true,
       onGazeOver: function() {
         if (!wallMenuIsOpen) {
@@ -910,7 +902,7 @@
     Reticulum.add( wallInfo, {
       reticleHoverColor: 0xfdff00,
       fuseColor: 0x660066,
-      fuseDuration: 1,
+      fuseDuration: utils.reticleDurations.fast,
       fuseVisible: true,
       onGazeOver: function() {
         changeScaleSingle(wallInfo, 1.5);
@@ -1021,7 +1013,7 @@
     Reticulum.add( plane, {
       reticleHoverColor: 0xfdff00,
       fuseColor: 0x660066,
-      fuseDuration: 1,
+      fuseDuration: utils.reticleDurations.fast,
       fuseVisible: true,
       onGazeOver: function() {
         if (this.material.color) changeColor(plane, 0xffcc00 );
@@ -1204,7 +1196,7 @@
       Reticulum.add( plane, {
         reticleHoverColor: utils.reticleColors.blue.light,
         fuseColor: utils.reticleColors.blue.dark,
-        fuseDuration: 1,
+        fuseDuration: utils.reticleDurations.medium,
         fuseVisible: true,
         onGazeOver: function() {
           if (this.material.color) changeColor(plane, 0xffcc00 );
@@ -1275,7 +1267,7 @@
     Reticulum.add( exitSign, {
       reticleHoverColor: utils.reticleColors.green.light,
       fuseColor: utils.reticleColors.green.dark,
-      fuseDuration: 1,
+      fuseDuration: utils.reticleDurations.fast,
       fuseVisible: true,
       onGazeOver: function() {
         changeScaleSingle(exitSign, 1.5);
@@ -1306,7 +1298,7 @@
     Reticulum.add( agoraLabel, {
       reticleHoverColor: utils.reticleColors.blue.light,
       fuseColor: utils.reticleColors.blue.dark,
-      fuseDuration: 1,
+      fuseDuration: utils.reticleDurations.medium,
       fuseVisible: true,
       onGazeOver: function() {
         if (this.material.color) changeColor(agoraLabel, 0xffcc00 );
@@ -1345,7 +1337,7 @@
         } else {
           changeScaleSingle(labelArray[i], normal);
         }
-        if (distance(cameraPosition, labelArray[i].position) > utils.reticulumFar) {
+        if (distance(cameraPosition, labelArray[i].position) > utils.reticulumFar - 1) {
           changeColor(labelArray[i], 0x74726c);
         } else {
           changeColor(labelArray[i], 0xffffff);
@@ -1484,7 +1476,7 @@
     Reticulum.add( closeButtonMesh, {
       reticleHoverColor: utils.reticleColors.red.light,
       fuseColor: utils.reticleColors.red.dark,
-      fuseDuration: 1,
+      fuseDuration: utils.reticleDurations.fast,
       fuseVisible: true,
       onGazeOver: function() {
         if (this.material.color) changeColor(closeButtonMesh, 0xffcc00 );

@@ -28,6 +28,12 @@ LabsUtils = function() {
     this.mediaNamePlay = 'media-play';
     this.reticulumNear = 0.2;
     this.reticulumFar = 8;
+    this.reticleDurations = {
+        slow: 2,
+        medium: 1.5,
+        fast: 1,
+        fastest: 0.5
+    };
     this.reticleColors = {
         basic: 0x00fff6,
         blue: {
@@ -48,9 +54,9 @@ LabsUtils = function() {
         }
     };
     this.objectColors = {
-        initial: 0x079a07,
-        highlight: 0xff00f4,
-        closest: 0xaa0052
+        initial: this.reticleColors.yellow.dark,
+        highlight: 0xffd53a,
+        closest: 0xffd53a
     };
 
     this.radicalMembers = [
@@ -95,7 +101,7 @@ LabsUtils = function() {
         {name: this.nobodyName, position: {x: -2.6, y: 1.2, z: 8.7}}, 
         {name: this.jefesName, position: {x: -2.6, y: 1.2, z: 5}},
         {name: this.researchName, position: {x: -2.6, y: 1.2, z: 1}},
-        {name: this.agoraName, position: {x: 2, y: 1.2, z: 1}}, 
+        {name: this.agoraName, position: {x: 2.5, y: 1.2, z: 1}}, 
         {name: this.radicalName, position: {x: -3.1, y: 1.2, z: -5}}, 
         {name: this.makerName, position: {x: -2.6, y: 1.2, z: -11}}, 
         {name: this.tele1Name, position: {x: -1.4, y: 2.4, z: 1}}, 

@@ -309,7 +309,6 @@ var Reticulum = (function () {
 
         }
         reticle.mesh.visible = showReticle;
-
     };
 
     var detectHit = function() {
