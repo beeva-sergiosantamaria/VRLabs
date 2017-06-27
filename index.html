@@ -762,28 +762,25 @@
     });
     img.map.needsUpdate = true;
 
-    var scale = 0.4;
-    wallMenu = new THREE.Mesh(new THREE.PlaneGeometry(scale, scale), img);
+    wallMenu = new THREE.Mesh(new THREE.PlaneGeometry(utils.wallMenu.scale, utils.wallMenu.scale), img);
     wallMenu.name = name;
-    wallMenu.position.set(0, 1.5, -10);
+    wallMenu.position.set(utils.wallMenu.position.x, utils.wallMenu.position.y, utils.wallMenu.position.z);
     wallMenu.rotateY(-Math.PI / 2);
-    
     scene.add(wallMenu);
 
     addWallMenuToReticulum();
 
-    img = new THREE.MeshBasicMaterial({
-      map: textureLoader.load(utils.rootDirectory + "beevaLabs_clickMe" + utils.extension),
-      transparent: true,
-      side: THREE.DoubleSide,
-      color: utils.white
-    });
-    img.map.needsUpdate = false;
-    clickMeHint = new THREE.Mesh(new THREE.PlaneGeometry(scale, scale), img);
-    clickMeHint.position.set(0, 1, -9.7);
-    clickMeHint.rotateY(-Math.PI / 2);
-    
-    scene.add(clickMeHint);
+//    img = new THREE.MeshBasicMaterial({
+//      map: textureLoader.load(utils.rootDirectory + "beevaLabs_clickMe" + utils.extension),
+//      transparent: true,
+//      side: THREE.DoubleSide,
+//      color: utils.white
+//    });
+//    img.map.needsUpdate = false;
+//    clickMeHint = new THREE.Mesh(new THREE.PlaneGeometry(utils.wallMenu.hint.scale, utils.wallMenu.hint.scale), img);
+//    clickMeHint.position.set(utils.wallMenu.hint.position.x, utils.wallMenu.hint.position.y, utils.wallMenu.hint.position.z);
+//    clickMeHint.rotateY(-Math.PI / 2);
+//    scene.add(clickMeHint);
   }
 
   var wallInfo, wallInfoText;
@@ -796,10 +793,9 @@
       color: utils.white
     });
     img.map.needsUpdate = true;
-    scale = 1;
-    wallInfoText = new THREE.Mesh(new THREE.PlaneGeometry(scale, scale), img);
+    wallInfoText = new THREE.Mesh(new THREE.PlaneGeometry(utils.wallInfo.text.scale, utils.wallInfo.text.scale), img);
     wallInfoText.name = name;
-    wallInfoText.position.set(0.1, 1.5, -9);
+    wallInfoText.position.set(utils.wallInfo.text.position.x, utils.wallInfo.text.position.y, utils.wallInfo.text.position.z);
     wallInfoText.rotateY(-Math.PI / 2);
     
     scene.add(wallInfoText);
@@ -812,10 +808,9 @@
     });
     img.map.needsUpdate = true;
 
-    var scale = 0.25;
-    wallInfo = new THREE.Mesh(new THREE.PlaneGeometry(scale, scale), img);
+    wallInfo = new THREE.Mesh(new THREE.PlaneGeometry(utils.wallInfo.icon.scale, utils.wallInfo.icon.scale), img);
     wallInfo.name = name;
-    wallInfo.position.set(0, 2, -8.5);
+    wallInfo.position.set(utils.wallInfo.icon.position.x, utils.wallInfo.icon.position.y, utils.wallInfo.icon.position.z);
     wallInfo.rotateY(-Math.PI / 2);
     
     scene.add(wallInfo);
@@ -915,6 +910,8 @@
         }, 100 * ind);
       })(i);
     }
+    wallInfoTextIsInflating = true;
+    anAnimationHasStarted = true;
   }
 
   var researchLabelDirect, radicalLabelDirect, makerLabelDirect, nobodyLabelDirect, jefesLabelDirect, comunicacionLabelDirect, agoraLabelDirect, tele1Direct, tele2Direct;
@@ -1629,9 +1626,9 @@
     sky.rotation.y += 0.0003;
 
     if (wallMenuIsOpen || wallMenuIsMoving) {
-      clickMeHint.visible = false;
+      if (clickMeHint != undefined) clickMeHint.visible = false;
     } else {
-      clickMeHint.visible = true;
+      if (clickMeHint != undefined) clickMeHint.visible = true;
     }
 
     if (videoTexture != undefined) videoTexture.update();

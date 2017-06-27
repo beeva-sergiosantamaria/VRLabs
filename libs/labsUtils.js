@@ -200,6 +200,24 @@ LabsUtils = function() {
         {name: this.tele1Name, position: {x: -1.4, y: 2.4, z: 1}}, 
         {name: this.tele2Name, position: {x: -1.4, y: 2.4, z: 8.4}}
     ];
+    this.wallMenu = {
+        scale: 0.75,
+        position: {x: 0, y: 1.5, z: -10},
+        hint: {
+            scale: 0.4,
+            position: {x: 0, y: 1, z: -9.7}
+        }
+    };
+    this.wallInfo = {
+        icon: {
+            scale: 0.25,
+            position: {x: 0, y: 2, z: -8.4}
+        },
+        text: {
+            scale: 1,
+            position: {x: 0.1, y: 1.5, z: -9}
+        }
+    };
 
     this.isRadicalMember = function(memberObject) {
         for (var i = 0; i < this.radicalMembers.length; i++) {
