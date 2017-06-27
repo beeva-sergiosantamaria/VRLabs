@@ -1,7 +1,5 @@
 LabsUtils = function() {
 
-    // var scope = this;
-
     this.rootDirectory = "images/";
     this.membersDirectory = this.rootDirectory + "membersPhoto/";
     this.labelsDirectory = this.rootDirectory + "labels/";
@@ -69,6 +67,8 @@ LabsUtils = function() {
         },
         purple: 0x660066
     };
+    this.darkLabelColor = 0x74726c;
+    this.white = 0xffffff;
     this.objectColors = {
         initial: this.reticleColors.yellow.dark,
         highlight: 0xffd53a,
@@ -86,6 +86,34 @@ LabsUtils = function() {
         fuse: {
             inner: 0.045,
             outer: 0.06
+        }
+    };
+    this.infoBoardButtons = {
+        close: {
+            position: { x: 1.2, y: 0.65, z: 0.1 },
+            scale: 0.2
+        },
+        email: {
+            position: { x: -1, y: -0.6, z: 0.1 },
+            scale: 0.3
+        },
+        calendar: {
+            position: { x: 0, y: -0.6, z: 0.1 },
+            scale: 0.3
+        },
+        call: {
+            position: { x: 1, y: -0.6, z: 0.1 },
+            scale: 0.3
+        },
+        member: {
+            picture: {
+                position: { x: -1, y: 0.5, z: 0.1 },
+                scale: 0.5
+            },
+            info: {
+                position: { x: 0, y: 0.2, z: 0.1 },
+                scale: 1.1
+            }
         }
     };
     this.reticulumDefaultConfig = {
@@ -175,38 +203,37 @@ LabsUtils = function() {
 
     this.isRadicalMember = function(memberObject) {
         for (var i = 0; i < this.radicalMembers.length; i++) {
-          if (memberObject.name === this.radicalMembers[i].name) {
-            return true;
-          }
+            if (memberObject.name === this.radicalMembers[i].name) {
+                return true;
+            }
         }
         return false;
     }
 
     this.isResearchMember = function(memberObject) {
         for (var i = 0; i < this.researchMembers.length; i++) {
-          if (memberObject.name === this.researchMembers[i].name) {
-            return true;
-          }
+            if (memberObject.name === this.researchMembers[i].name) {
+                return true;
+            }
         }
         return false;
     }
 
     this.isJefesAndVenturesMember = function(memberObject) {
         for (var i = 0; i < this.jefesAndVenturesMembers.length; i++) {
-          if (memberObject.name === this.jefesAndVenturesMembers[i].name) {
-            return true;
-          }
+            if (memberObject.name === this.jefesAndVenturesMembers[i].name) {
+                return true;
+            }
         }
         return false;
     }
 
     this.isComunicacionMember = function(memberObject) {
         for (var i = 0; i < this.comunicacionMembers.length; i++) {
-          if (memberObject.name === this.comunicacionMembers[i].name) {
-            return true;
-          }
+            if (memberObject.name === this.comunicacionMembers[i].name) {
+                return true;
+            }
         }
         return false;
     }
-
 };
