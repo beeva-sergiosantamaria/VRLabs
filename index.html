@@ -762,8 +762,8 @@
     });
     img.map.needsUpdate = true;
 
+    console.log('debug', utils.wallMenu);
     wallMenu = new THREE.Mesh(new THREE.PlaneGeometry(utils.wallMenu.scale, utils.wallMenu.scale), img);
-    wallMenu.name = name;
     wallMenu.position.set(utils.wallMenu.position.x, utils.wallMenu.position.y, utils.wallMenu.position.z);
     wallMenu.rotateY(-Math.PI / 2);
     wallMenu.visible = false;
