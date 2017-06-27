@@ -762,7 +762,6 @@
     });
     img.map.needsUpdate = true;
 
-    console.log('debug', utils.wallMenu);
     wallMenu = new THREE.Mesh(new THREE.PlaneGeometry(utils.wallMenu.scale, utils.wallMenu.scale), img);
     wallMenu.position.set(utils.wallMenu.position.x, utils.wallMenu.position.y, utils.wallMenu.position.z);
     wallMenu.rotateY(-Math.PI / 2);
@@ -784,17 +783,6 @@
 
     addWallMenuToReticulum();
 
-//    img = new THREE.MeshBasicMaterial({
-//      map: textureLoader.load(utils.rootDirectory + "beevaLabs_clickMe" + utils.extension),
-//      transparent: true,
-//      side: THREE.DoubleSide,
-//      color: utils.white
-//    });
-//    img.map.needsUpdate = false;
-//    clickMeHint = new THREE.Mesh(new THREE.PlaneGeometry(utils.wallMenu.hint.scale, utils.wallMenu.hint.scale), img);
-//    clickMeHint.position.set(utils.wallMenu.hint.position.x, utils.wallMenu.hint.position.y, utils.wallMenu.hint.position.z);
-//    clickMeHint.rotateY(-Math.PI / 2);
-//    scene.add(clickMeHint);
   }
 
   var wallInfo, wallInfoText;
