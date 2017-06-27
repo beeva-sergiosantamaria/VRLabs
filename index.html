@@ -749,7 +749,7 @@
     addAgoraLabelToReticulum();
   }
 
-  var wallMenu, clickMeHint;
+  var wallMenuOff, wallMenu, clickMeHint;
   var wallMenuIsMoving = false;
   var wallMenuIsOpen = false;
   var deviceAlphaValueForWallMenu;
@@ -766,7 +766,21 @@
     wallMenu.name = name;
     wallMenu.position.set(utils.wallMenu.position.x, utils.wallMenu.position.y, utils.wallMenu.position.z);
     wallMenu.rotateY(-Math.PI / 2);
+    wallMenu.visible = false;
     scene.add(wallMenu);
+
+    img = new THREE.MeshBasicMaterial({
+      map: textureLoader.load(utils.rootDirectory + "beevaLabsOff" + utils.extension),
+      transparent: true,
+      side: THREE.DoubleSide,
+      color: utils.white
+    });
+    img.map.needsUpdate = true;
+
+    wallMenuOff = new THREE.Mesh(new THREE.PlaneGeometry(utils.wallMenu.scale, utils.wallMenu.scale), img);
+    wallMenuOff.position.set(utils.wallMenu.position.x, utils.wallMenu.position.y, utils.wallMenu.position.z);
+    wallMenuOff.rotateY(-Math.PI / 2);
+    scene.add(wallMenuOff);
 
     addWallMenuToReticulum();
 
@@ -819,27 +833,27 @@
   }
 
   function addWallMenuToReticulum() {
-    Reticulum.add( wallMenu, {
+    Reticulum.add( wallMenuOff, {
       reticleHoverColor: utils.reticleColors.yellow.bright,
       fuseColor: utils.reticleColors.purple,
       fuseDuration: utils.reticleDurations.fast,
       fuseVisible: true,
       onGazeOver: function() {
         if (!wallMenuIsOpen) {
-          changeScaleSingle(wallMenu, utils.objectScale.big);
-          if (this.material.color) changeColor(wallMenu, 0xffcc00 );
+          changeScaleSingle(wallMenuOff, utils.objectScale.big);
+          if (this.material.color) changeColor(wallMenuOff, 0xffcc00 );
         }
       },
       onGazeOut: function() {
         if (!wallMenuIsOpen) {
-          changeScaleSingle(wallMenu, utils.objectScale.normal);
-          if (this.material.color) changeColor(wallMenu, utils.white );
+          changeScaleSingle(wallMenuOff, utils.objectScale.normal);
+          if (this.material.color) changeColor(wallMenuOff, utils.white );
         }
       },
       onGazeLong: function() {
         if (!wallMenuIsMoving) {
           if (!wallMenuIsOpen) {
-            removeFromReticulum(wallMenu);
+            removeFromReticulum(wallMenuOff);
             var labelPoints = [
               {name: utils.makerName, position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z + 0.05}}, 
               {name: utils.radicalName, position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z + 0.05}},
@@ -852,6 +866,8 @@
               {name: utils.tele2Name, position: {x: -1.6, y: wallMenu.position.y, z: wallMenu.position.z + 0.05}}
             ];
             distributeObjectsAcrossCircumference(wallMenu, labelPoints);
+            wallMenuOff.visible = false;
+            wallMenu.visible = true;
           }
         }
       }
@@ -910,6 +926,8 @@
         }, 100 * ind);
       })(i);
     }
+    wallMenuOff.visible = true;
+    wallMenu.visible = false;
     wallInfoTextIsInflating = true;
     anAnimationHasStarted = true;
   }
@@ -1050,7 +1068,7 @@
       updateLabelSizesAndColor();
       addExitSign(utils.makerName);
       updateHomeButtonPosition();
-      removeFromReticulum(wallMenu);
+      removeFromReticulum(wallMenuOff);
       removeFromReticulum(wallInfo);
       wallMenuHasBeenRemoved = true;
     });
