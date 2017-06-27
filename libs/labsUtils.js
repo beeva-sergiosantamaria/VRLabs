@@ -174,13 +174,13 @@ LabsUtils = function() {
         {name: 'jesus', position: {x: -4.6, y: 1.6, z: 4}},
         {name: 'carlosg', position: {x: -3.6, y: 1.6, z: 6.3}},
         {name: 'marian', position: {x: -3.2, y: 1.3, z: 5.5}},
-        // {name: 'pablo', position: {x: -3.6, y: 1.6, z: 4}}
+        {name: 'pablo', position: {x: -3.6, y: 1.6, z: 4}}
     ];
     this.comunicacionMembers = [
         // {name: 'marta', position: {x: -6, y: 1.6, z: 12}},
         // {name: 'javi', position: {x: -4.6, y: 1.6, z: 13.7}},
         // {name: 'patri', position: {x: -4.6, y: 1.6, z: 11.8}},
-        // {name: 'ade', position: {x: -3.4, y: 1.6, z: 14.1}},
+        {name: 'ade', position: {x: -3.4, y: 1.6, z: 14.1}},
         // {name: 'kat', position: {x: -3.4, y: 1.6, z: 11.5}}
     ];
     this.mediaControls = [
