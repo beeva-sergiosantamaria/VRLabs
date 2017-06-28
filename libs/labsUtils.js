@@ -72,7 +72,8 @@ LabsUtils = function() {
     this.objectColors = {
         initial: this.reticleColors.yellow.dark,
         highlight: 0xffd53a,
-        closest: 0xffd53a
+        closest: 0xffd53a,
+        furthest: 0xb27d2c
     };
     this.reticleSizes = {
         normal: {
@@ -178,10 +179,10 @@ LabsUtils = function() {
     ];
     this.comunicacionMembers = [
         // {name: 'marta', position: {x: -6, y: 1.6, z: 12}},
-        // {name: 'javi', position: {x: -4.6, y: 1.6, z: 13.7}},
-        // {name: 'patri', position: {x: -4.6, y: 1.6, z: 11.8}},
-        // {name: 'ade', position: {x: -3.4, y: 1.6, z: 14.1}},
-        // {name: 'kat', position: {x: -3.4, y: 1.6, z: 11.5}}
+        {name: 'javi', position: {x: -4.1, y: 1.6, z: 13.9}},
+        {name: 'patri', position: {x: -4.1, y: 1.6, z: 11.7}},
+        {name: 'ade', position: {x: -3, y: 1.6, z: 14.1}},
+        {name: 'kat', position: {x: -3, y: 1.6, z: 11.6}}
     ];
     this.mediaControls = [
         {name: this.mediaNameStop, path: 'stop.png', position: {x: 0, y: 0, z: -1}},

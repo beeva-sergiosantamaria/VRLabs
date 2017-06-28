@@ -260,6 +260,8 @@
         if (distancesFromReticleToObject[i] > 2) {
           addProximityLabelToChild(parentTutorial.children[i].position);
         }
+      } else if (distancesFromReticleToObject[i] > MAX_DISTANCE + 2) {
+        changeColor(parentTutorial.children[i], utils.objectColors.furthest);
       } else {
         changeColor(parentTutorial.children[i], utils.objectColors.initial);
       }
@@ -284,7 +286,7 @@
       side: THREE.DoubleSide,
       color: utils.white
     });
-    img.map.needsUpdate = false;
+    img.map.needsUpdate = true;
     var scale = (tutorialFinished || (movements == 1)) ? 0.5 : 2;
     closeLabel = new THREE.Mesh(new THREE.PlaneGeometry(scale, scale), img);
     closeLabel.position.set(utils.initialPositionTutorial.x + childObjectPosition.x, tutorialFinished || (movements == 1) ? 1 : 2, utils.initialPositionTutorial.z + childObjectPosition.z);
@@ -466,7 +468,7 @@
       side: THREE.DoubleSide,
       color: utils.white
     });
-    img.map.needsUpdate = false;
+    img.map.needsUpdate = true;
     var scale = 0.9;
     var screen1Back = new THREE.Mesh(new THREE.CubeGeometry(scale, scale - 0.3, 0.1), img);
     screen1Back.name = name;
@@ -513,7 +515,7 @@
       side: THREE.DoubleSide,
       color: utils.white
     });
-    img.map.needsUpdate = false;
+    img.map.needsUpdate = true;
     var scale = 0.9;
     var screen2Back = new THREE.Mesh(new THREE.CubeGeometry(scale, scale - 0.3, 0.1), img);
     screen2Back.name = name;
@@ -782,7 +784,6 @@
     scene.add(wallMenuOff);
 
     addWallMenuToReticulum();
-
   }
 
   var wallInfo, wallInfoText;
@@ -951,7 +952,7 @@
       side: THREE.DoubleSide,
       color: utils.white
     });
-    img.map.needsUpdate = false;
+    img.map.needsUpdate = true;
     var scale = 0.45;
     var plane = new THREE.Mesh(new THREE.PlaneGeometry((object.name === utils.tele1Name || object.name === utils.tele2Name) ? scale - 0.1 : scale, (object.name === utils.tele1Name || object.name === utils.tele2Name) ? scale/4 : scale/4.76), img);
     plane.name = object.name;
