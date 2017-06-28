@@ -1778,6 +1778,7 @@
       video.pause();
       videoPlaying = false;
       removeMediaControls();
+      addAgoraLabelToReticulum();
     }
     if (video2Playing && !controlsAreMoving){
       video2.pause();
@@ -1786,6 +1787,7 @@
       video2.pause();
       video2Playing = false;
       removeMediaControls();
+      addAgoraLabelToReticulum();
    }
     var tween = new TWEEN.Tween(object)
       .to(value, duration)
