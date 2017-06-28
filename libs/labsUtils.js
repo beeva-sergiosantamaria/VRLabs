@@ -69,11 +69,11 @@ LabsUtils = function() {
     };
     this.darkLabelColor = 0x74726c;
     this.white = 0xffffff;
+    this.selectedLabelColor = 0xffcc00;
     this.objectColors = {
         initial: this.reticleColors.yellow.dark,
         highlight: 0xffd53a,
-        closest: 0xffd53a,
-        furthest: 0xb27d2c
+        closest: 0xffd53a
     };
     this.reticleSizes = {
         normal: {
