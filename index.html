@@ -260,7 +260,7 @@
         if (distancesFromReticleToObject[i] > 2) {
           addProximityLabelToChild(parentTutorial.children[i].position);
         }
-      } else if (distancesFromReticleToObject[i] > MAX_DISTANCE + 2) {
+      } else if (distancesFromReticleToObject[i] > MAX_DISTANCE + 1.5) {
         changeColor(parentTutorial.children[i], utils.objectColors.furthest);
       } else {
         changeColor(parentTutorial.children[i], utils.objectColors.initial);

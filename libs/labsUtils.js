@@ -178,7 +178,7 @@ LabsUtils = function() {
         {name: 'pablo', position: {x: -3.6, y: 1.4, z: 4}}
     ];
     this.comunicacionMembers = [
-        // {name: 'marta', position: {x: -6, y: 1.6, z: 12}},
+        {name: 'marta', position: {x: -5.2, y: 1.6, z: 12}},
         {name: 'javi', position: {x: -4.1, y: 1.6, z: 13.9}},
         {name: 'patri', position: {x: -4.1, y: 1.6, z: 11.7}},
         {name: 'ade', position: {x: -3, y: 1.6, z: 14.1}},
@@ -191,7 +191,7 @@ LabsUtils = function() {
         {name: this.mediaNamePlay, path: 'play.png', position: {x: 0, y: 0, z: 0}}
     ];
     this.labelPoints = [
-        {name: this.comunicacionName, position: {x: -2.6, y: 1.2, z: 12.7}}, 
+        {name: this.comunicacionName, position: {x: -2.6, y: 1.2, z: 12.9}}, 
         {name: this.nobodyName, position: {x: -2.6, y: 1.2, z: 8.7}}, 
         {name: this.jefesName, position: {x: -2.6, y: 1.2, z: 5}},
         {name: this.researchName, position: {x: -2.6, y: 1.2, z: 1}},
