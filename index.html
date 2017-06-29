@@ -1349,6 +1349,7 @@
     var scale = 0.7;
     var plane = new THREE.Mesh(new THREE.PlaneGeometry(scale, scale), img);
     plane.name = member.name;
+    plane.ventureLogo = member.ventureLogo;
     plane.position.set(member.position.x, member.position.y, member.position.z);
     
     membersGroup.add(plane);
@@ -1431,7 +1432,6 @@
       color: utils.white
     });
     var plane = new THREE.Mesh(geometry, material);
-    plane.name = name;
 
     var closeButtonMaterial = new THREE.MeshBasicMaterial({
       map: textureLoader.load(utils.subFolderMediaControls + "close" + utils.extension),
@@ -1566,6 +1566,20 @@
     memberInfo.position.set(utils.infoBoardButtons.member.info.position.x, utils.infoBoardButtons.member.info.position.y, utils.infoBoardButtons.member.info.position.z);
 
     plane.add(memberInfo);
+
+    if (memberObject.ventureLogo !== undefined) {
+      img = new THREE.MeshBasicMaterial({
+        map: textureLoader.load(utils.newVenturesDirectory + memberObject.ventureLogo + utils.extension),
+        transparent: true,
+        depthWrite: false,
+        color: utils.white
+      });
+
+      var ventureLogo = new THREE.Mesh(new THREE.PlaneGeometry(utils.infoBoardButtons.member.ventureLogo.scale, utils.infoBoardButtons.member.ventureLogo.scale), img);
+      ventureLogo.position.set(utils.infoBoardButtons.member.ventureLogo.position.x, utils.infoBoardButtons.member.ventureLogo.position.y, utils.infoBoardButtons.member.ventureLogo.position.z);
+
+      plane.add(ventureLogo);
+    }
 
     infoGroup.add(plane);
 

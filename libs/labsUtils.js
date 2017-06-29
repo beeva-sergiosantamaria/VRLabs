@@ -3,6 +3,7 @@ LabsUtils = function() {
     this.rootDirectory = "images/";
     this.membersDirectory = this.rootDirectory + "membersPhoto/";
     this.labelsDirectory = this.rootDirectory + "labels/";
+    this.newVenturesDirectory = this.rootDirectory + "newVentures/";
     this.subFolder = this.membersDirectory + "recortadas/";
     this.subFolderCircular = this.membersDirectory + "circular/";
     this.subFolderInfo = this.membersDirectory + "info/";
@@ -114,6 +115,10 @@ LabsUtils = function() {
             info: {
                 position: { x: 0, y: 0.2, z: 0.1 },
                 scale: 1.1
+            },
+            ventureLogo: {
+                position: { x: 0, y: 0.6, z: 0.1 },
+                scale: 0.4
             }
         }
     };
@@ -173,8 +178,8 @@ LabsUtils = function() {
         {name: 'lucas', position: {x: -6, y: 1.6, z: 4.5}},
         {name: 'nieves', position: {x: -4.6, y: 1.6, z: 6.2}},
         {name: 'jesus', position: {x: -4.6, y: 1.6, z: 4}},
-        {name: 'carlosg', position: {x: -3.6, y: 1.6, z: 6.3}},
-        {name: 'marian', position: {x: -3.2, y: 1.3, z: 5.5}},
+        {name: 'carlosg', position: {x: -3.6, y: 1.6, z: 6.3}, ventureLogo: 'fasterCity'},
+        {name: 'marian', position: {x: -3.2, y: 1.3, z: 5.5}, ventureLogo: 'fasterCity'},
         {name: 'pablo', position: {x: -3.6, y: 1.4, z: 4}}
     ];
     this.comunicacionMembers = [
