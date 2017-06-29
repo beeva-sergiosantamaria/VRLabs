@@ -37,7 +37,7 @@ LabsUtils = function() {
     this.reticulumFar = 8;
     this.reticulumDefaultProximity = false;
     this.reticulumDefaultReticleVisibility = true;
-    this.reticulumDefaultFuseVisibility = true;
+    this.reticulumDefaultFuseVisibility = false;
     this.reticulumDefaultClickCancelFuse = false;
     this.reticleDurations = {
         slow: 2,
@@ -117,8 +117,8 @@ LabsUtils = function() {
                 scale: 1.1
             },
             ventureLogo: {
-                position: { x: 0, y: 0.6, z: 0.1 },
-                scale: 0.4
+                position: { x: -1, y: 0.05, z: 0.1 },
+                scale: 0.5
             }
         }
     };
@@ -175,9 +175,9 @@ LabsUtils = function() {
     ];
     this.jefesAndVenturesMembers = [
         {name: 'carlosm', position: {x: -6, y: 1.6, z: 6}},
-        {name: 'lucas', position: {x: -6, y: 1.6, z: 4.5}},
+        {name: 'lucas', position: {x: -6, y: 1.6, z: 4.5}, ventureLogo: 'theJuice'},
         {name: 'nieves', position: {x: -4.6, y: 1.6, z: 6.2}},
-        {name: 'jesus', position: {x: -4.6, y: 1.6, z: 4}},
+        {name: 'jesus', position: {x: -4.6, y: 1.6, z: 4}, ventureLogo: 'theJuice'},
         {name: 'carlosg', position: {x: -3.6, y: 1.6, z: 6.3}, ventureLogo: 'fasterCity'},
         {name: 'marian', position: {x: -3.2, y: 1.3, z: 5.5}, ventureLogo: 'fasterCity'},
         {name: 'pablo', position: {x: -3.6, y: 1.4, z: 4}}
