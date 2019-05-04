@@ -1,8 +1,5 @@
-var camera, crosshair, loadcrosshair, scene, renderer, controls, controlsdevice, uniforms,
-    numVertices, effect, intersected, intersectedScreens, intersectedTravel, intersectedInfo, intersectedMembers,
-    intersectedExit, sky, plane, particleCube, radicalText,
-    radicalTextNParticles, researchText, researchTextNParticles, interval, radicallight, researchlight, designlight,
-    screen1Light, screen2Light, actualLab, exitIcon, arrowIconGeometry,
+var camera, scene, renderer, controls, controlsdevice, 
+    effect, sky, plane, radicalText, researchText, pointingLight, designlight, exitIcon,
     width = window.innerWidth,
     height = window.innerHeight;
 
@@ -19,12 +16,6 @@ var utils = new LabsUtils();
 
 var clock = new THREE.Clock();
 var mouse = new THREE.Vector2();
-var raycasterMesas = new THREE.Raycaster();
-var raycasterTravel = new THREE.Raycaster();
-var raycasterScreens = new THREE.Raycaster();
-var raycasterInfo = new THREE.Raycaster();
-var raycasterMembers = new THREE.Raycaster();
-var raycasterExit = new THREE.Raycaster();
 
 var manager = new THREE.LoadingManager();
 
@@ -36,6 +27,22 @@ var checkstatus = {
     screens: false
 };
 
+var lightValues = {
+    positions: {
+        radical: {x: -2.5, y: 0.8, z: -2},
+        research: {x: -2.5, y: 0.8, z: 0.5},
+        design: {x: -2.5, y: 0.8, z: 2.5},
+        screen1: {x: -0.4, y: 1.1, z: 0.74},
+        screen2: {x: -0.4, y: 1.1, z: 4.15}
+    },
+    colors: {
+        research: 0xff9999,
+        radical: 0xffee66,
+        design: 0x9999ff,
+        screen1: 0xffffff,
+        screen2: 0xffffff
+    }
+}
 
 var membersAdded = false;
 var sectionInfoAdded = false;
@@ -65,18 +72,8 @@ exitGroup.name = 'exitGroup';
 
 var activeLetters;
 
-var numeroParticulas = 2000;
-var disperseParticles = {nParticles: numeroParticulas, path: 'disperse'};
-var min = -3, max = 3;
-var verticesArray = [];
-var particlesAnimation = true;
-
-
 $(document).ready(function () {
-    // startLogoAnim();
     $('#container').addClass('displayOn');
-    $('#logoBox').css('display', 'none');
-    $('#fireWorks').css('display', 'none');
     initRender();
     animate();
 });
@@ -107,40 +104,25 @@ function initRender() {
 
     if (window.DeviceOrientationEvent && /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
         isMobile = true;
-        console.log('navigator: ', navigator);
-        console.log("Oriented device");
+        $('#allowVideoScreen').css('display', 'block');
         effect = new THREE.StereoEffect(renderer);
-        effect.setSize(window.innerWidth, window.innerHeight);
+        effect.setSize(width, height);
         effect.setEyeSeparation = 0.5;
-
-        controls = new THREE.OrbitControls(camera, element);
-        controls.target.set(
-            camera.position.x + 0.1,
-            camera.position.y,
-            camera.position.z
-        );
-
-        function setOrientationControls(e) {
-            if (!e.alpha) {
-                return;
-            }
-
-            controls = new THREE.DeviceOrientationControls(camera, true);
-            controls.connect();
-            controls.update();
-
-            element.addEventListener('click', fullscreen, false);
-
-            window.removeEventListener('deviceorientation', setOrientationControls, true);
-        }
-
-        window.addEventListener('deviceorientation', setOrientationControls, true);
-
+        
         controlsdevice = new THREE.DeviceOrientationControls(camera, true);
         controlsdevice.connect();
-
-
-    } else {
+        function setOrientationControls(e) {
+          if (!e.alpha) {
+            return;
+          }
+          controlsdevice.connect();
+          controlsdevice.update();
+          element.addEventListener('click', fullscreen, false);
+          window.removeEventListener('deviceorientation', setOrientationControls, true);
+        }
+        
+      } else {
+        $('#allowVideoScreen').css('display', 'block');
         controls = new THREE.OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
         controls.dampingFactor = 0.70;
@@ -152,38 +134,26 @@ function initRender() {
     ambientLight.position.set(0, 0.6, 0);
     scene.add(ambientLight);
 
-    radicallight = new THREE.PointLight(0xffee66, 0, 2.5, 1);
-    radicallight.position.set(-2.5, 0.8, -2);
-    scene.add(radicallight);
-
-    if (!isMobile) {
-        researchlight = new THREE.PointLight(0xff9999, 0, 2.5, 1);
-        researchlight.position.set(-2.5, 0.8, 0.5);
-        scene.add(researchlight);
-
-        designlight = new THREE.PointLight(0x9999ff, 0, 2.5, 1);
-        designlight.position.set(-2.5, 0.8, 2.5);
-        scene.add(designlight);
-
-        screen1Light = new THREE.PointLight(0xffffff, 0, 1, 1);
-        screen1Light.position.set(-0.4, 1.1, 0.74);
-        scene.add(screen1Light);
-
-        screen2Light = new THREE.PointLight(0xffffff, 0, 1, 1);
-        screen2Light.position.set(-0.4, 1.1, 4.15);
-        scene.add(screen2Light);
-    }
+    pointingLight = new THREE.PointLight(0xffee66, 0, 2.5, 1);
+    pointingLight.position.set(-2.5, 0.8, -2);
+    scene.add(pointingLight);
 
     buildShape();
 
     $(document).on({
         'touchstart': function () {
-            console.log('detecta touch');
             video.play();
             video2.play();
             video.pause();
             video2.pause();
         }
+    });
+    $( "#acceptButton" ).on( "click", function() {
+        $('#allowVideoScreen').css('display', 'none');
+        video.play();
+        video2.play();
+        video.pause();
+        video2.pause();
     });
 }
 
@@ -385,6 +355,31 @@ function addLetters3D(lettersArray, position, object) {
     scene.add(object);
 }
 
+function playVideo(videoOpen){
+    switch (videoOpen) {
+        case "video1":
+            video.play();
+            video2.pause();
+            movement({x: -0.98, y: 1.1, z: 0.74}, controls.target, 0, 1000, TWEEN.Easing.Quartic.Out);
+            movement({x: -1, y: 1.1, z: 0.74}, camera.position, 0, 1000, TWEEN.Easing.Quartic.Out);
+            pointingLight.color.setHex( lightValues.colors.screen1 );
+            pointingLight.position.set( lightValues.positions.screen1.x, lightValues.positions.screen1.y, lightValues.positions.screen1.z );
+            movement({intensity: 1.5}, pointingLight, 0, 2000, TWEEN.Easing.Quartic.Out);
+            movement({intensity: 0.1}, ambientLight, 0, 2000, TWEEN.Easing.Quartic.Out);
+        break;
+        case "video2":
+            video.pause();
+            video2.play();
+            movement({x: -0.98, y: 1.1, z: 4.15}, controls.target, 0, 1000, TWEEN.Easing.Quartic.Out);
+            movement({x: -1, y: 1.1, z: 4.15}, camera.position, 0, 1000, TWEEN.Easing.Quartic.Out);
+            pointingLight.color.setHex( lightValues.colors.screen2 );
+            pointingLight.position.set( lightValues.positions.screen2.x, lightValues.positions.screen2.y, lightValues.positions.screen2.z );
+            movement({intensity: 1.5}, pointingLight, 0, 2000, TWEEN.Easing.Quartic.Out);
+            movement({intensity: 0.1}, ambientLight, 0, 2000, TWEEN.Easing.Quartic.Out);
+        break;
+    }
+}
+
 function addScreens() {
 
     videoMP4 = document.createElement('video').canPlayType('video/mp4') !== '';
@@ -427,8 +422,7 @@ function addScreens() {
         reticleHoverColor: utils.reticleColors.pink,
         fuseVisible: true,
         onGazeLong: function(){
-            video2.pause();
-            video.play();
+           playVideo("video1");
         }
     });
 
@@ -451,8 +445,7 @@ function addScreens() {
         reticleHoverColor: utils.reticleColors.pink,
         fuseVisible: true,
         onGazeLong: function(){
-            video.pause();
-            video2.play();
+            playVideo("video2");
         }
     });
 
@@ -483,24 +476,25 @@ function addMembers(members) {
                 color: utils.white
               });
             img.map.needsUpdate = true;
-          
-            var scale = 0.5;
+            var scale = 0.3;
             var sprite = new THREE.Mesh(new THREE.PlaneGeometry(scale, scale), img);
             sprite.position.set(members[a].position.x, members[a].position.y - 2, members[a].position.z);
             sprite.name = members[a].name;
-            sprite.lookAt(camera.position);
+            sprite.lookAt({ x: camera.position.x, y: sprite.position.y, z: camera.position.z });
             membersGroup.add(sprite);
             movement({y: members[a].position.y}, sprite.position, 300 * a, 500, TWEEN.Easing.Back.Out);
-            Reticulum.add( sprite, {
+        }
+        membersGroup.children.map(function(element){
+            Reticulum.add( element, {
                 fuseDuration: utils.reticleDurations.medium,
                 fuseColor: utils.reticleColors.yellow.dark,
                 reticleHoverColor: utils.reticleColors.pink,
                 fuseVisible: true,
                 onGazeLong: function(){
-                    console.log(sprite);
+                    console.log(element.name);
                 }
             });
-        }
+        })
         scene.add(membersGroup);
     }, 1000);
 }
@@ -640,86 +634,31 @@ function openSection(sectionName){
         case 'centro':
             object = utils.radicalMembers;
             position = utils.cameraPositions.radical;
-            movement({intensity: 2}, radicallight, 0, 2000, TWEEN.Easing.Quartic.Out);
-            movement({intensity: 0}, researchlight, 0, 2000, TWEEN.Easing.Quartic.Out);
-            movement({intensity: 0}, designlight, 0, 2000, TWEEN.Easing.Quartic.Out);
+            pointingLight.color.setHex( lightValues.colors.radical );
+            pointingLight.position.set( lightValues.positions.radical.x, lightValues.positions.radical.y, lightValues.positions.radical.z );
+            movement({intensity: 1.5}, pointingLight, 0, 2000, TWEEN.Easing.Quartic.Out);
             movement({intensity: 0.1}, ambientLight, 0, 2000, TWEEN.Easing.Quartic.Out);
-            movement({intensity: 0}, screen1Light, 0, 2000, TWEEN.Easing.Quartic.Out);
-            movement({intensity: 0}, screen2Light, 0, 2000, TWEEN.Easing.Quartic.Out);
         break;
         case 'research':
             object = utils.researchMembers;
             position = utils.cameraPositions.research;
-            movement({intensity: 0}, radicallight, 0, 2000, TWEEN.Easing.Quartic.Out);
-            movement({intensity: 2}, researchlight, 0, 2000, TWEEN.Easing.Quartic.Out);
-            movement({intensity: 0}, designlight, 0, 2000, TWEEN.Easing.Quartic.Out);
+            pointingLight.color.setHex( lightValues.colors.research );
+            pointingLight.position.set( lightValues.positions.research.x, lightValues.positions.research.y, lightValues.positions.research.z );
+            movement({intensity: 1.5}, pointingLight, 0, 2000, TWEEN.Easing.Quartic.Out);
             movement({intensity: 0.1}, ambientLight, 0, 2000, TWEEN.Easing.Quartic.Out);
-            movement({intensity: 0}, screen1Light, 0, 2000, TWEEN.Easing.Quartic.Out);
-            movement({intensity: 0}, screen2Light, 0, 2000, TWEEN.Easing.Quartic.Out);
         break;
         case 'design':
             object = utils.jefesAndVenturesMembers;
             position = utils.cameraPositions.design;
-            movement({intensity: 0}, radicallight, 0, 2000, TWEEN.Easing.Quartic.Out);
-            movement({intensity: 0}, researchlight, 0, 2000, TWEEN.Easing.Quartic.Out);
-            movement({intensity: 2}, designlight, 0, 2000, TWEEN.Easing.Quartic.Out);
+            pointingLight.color.setHex( lightValues.colors.design );
+            pointingLight.position.set( lightValues.positions.design.x, lightValues.positions.design.y, lightValues.positions.design.z );
+            movement({intensity: 1.5}, pointingLight, 0, 2000, TWEEN.Easing.Quartic.Out);
             movement({intensity: 0.1}, ambientLight, 0, 2000, TWEEN.Easing.Quartic.Out);
-            movement({intensity: 0}, screen1Light, 0, 2000, TWEEN.Easing.Quartic.Out);
-            movement({intensity: 0}, screen2Light, 0, 2000, TWEEN.Easing.Quartic.Out);
         break;
     }
     movement({ x: position.x - 0.02, y: position.y, z: position.z }, controls.target, 0, 1000, TWEEN.Easing.Quartic.Out);
     movement(position, camera.position, 0, 1000, TWEEN.Easing.Quartic.Out);
     addMembers(object);
-}
-
-function onDocumentMouseDown(e) {
-
-    //-------------- SCREEN INTERACTION ---------------------
-    if (checkstatus.screens) {
-        var raycaster = new THREE.Raycaster();
-        raycaster.setFromCamera(mouse, camera);
-        var intersects = raycaster.intersectObjects(screensGroup.children);
-        if (intersects.length > 0) {
-            if (intersected != intersects[0].object) {
-                intersected = intersects[0].object;
-                if (intersected.name == 'screen1') {
-                    if (video != undefined) {
-                        video2.pause();
-                        video.play();
-                        movement({
-                            x: intersected.position.x,
-                            y: intersected.position.y,
-                            z: intersected.position.z
-                        }, controls.target, 0, 1000, TWEEN.Easing.Quartic.Out);
-                        movement({
-                            x: intersected.position.x - 0.3,
-                            y: intersected.position.y,
-                            z: intersected.position.z
-                        }, camera.position, 0, 1000, TWEEN.Easing.Quartic.Out);
-                    }
-                }
-                if (intersected.name == 'screen2') {
-                    if (video2 != undefined) {
-                        video.pause();
-                        video2.play();
-                        movement({
-                            x: intersected.position.x,
-                            y: intersected.position.y,
-                            z: intersected.position.z
-                        }, controls.target, 0, 1000, TWEEN.Easing.Quartic.Out);
-                        movement({
-                            x: intersected.position.x - 0.3,
-                            y: intersected.position.y,
-                            z: intersected.position.z
-                        }, camera.position, 0, 1000, TWEEN.Easing.Quartic.Out);
-                    }
-                }
-                ;
-                console.log('inters ', intersected);
-            }
-        }
-    }
 }
 
 function onWindowResize() {
@@ -743,7 +682,6 @@ function animate() {
     if (controls) controls.update(clock.getDelta());
     if (controlsdevice) {
         controlsdevice.update();
-        /*console.log('device control: ', controlsdevice.deviceOrientation.gamma);*/
     }
 }
 
