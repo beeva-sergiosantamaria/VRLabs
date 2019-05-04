@@ -199,6 +199,39 @@ function addModel() {
     };
 
     THREE.Loader.Handlers.add(/\.dds$/i, new THREE.DDSLoader());
+    var indicadoresLoader = new THREE.MTLLoader();
+    indicadoresLoader.setPath('models/vrLabsModel/');
+    indicadoresLoader.load('indicadores.mtl', function (materials) {
+        materials.preload();
+        var indicadoresObj = new THREE.OBJLoader();
+        indicadoresObj.setMaterials(materials);
+        indicadoresObj.setPath('models/vrLabsModel/');
+        indicadoresObj.load('indicadores.obj', function (elements) {
+            for (var a = elements.children.length; a>=0; a-- ){
+                if(elements.children[a])interactivos.add(elements.children[a]);
+            }
+            interactivos.children.map(function(interactiveObject) {
+                interactiveObject.name = interactiveObject.name.replace(/_[a-z]*.[0-9]*/gi, "");
+                Reticulum.add( interactiveObject, {
+                    fuseDuration: utils.reticleDurations.medium,
+                    fuseColor: utils.reticleColors.yellow.dark,
+                    reticleHoverColor: utils.reticleColors.pink,
+                    fuseVisible: true,
+                    onGazeOver: function(){
+                        moveLetters3d(interactiveObject.name, activeLetters);
+                    },
+                    onGazeOut: function(){
+                        removeLetters3D(interactiveObject.name);
+                    },
+                    onGazeLong: function(){
+                        openSection(interactiveObject.name);
+                    }
+                });
+            });
+        }, onProgress, onError);
+        scene.add(interactivos);
+    });
+    
     var mtlLoader = new THREE.MTLLoader();
     mtlLoader.setPath('models/vrLabsModel/');
     mtlLoader.load('planta6.mtl', function (materials) {
@@ -207,6 +240,7 @@ function addModel() {
         objLoader.setMaterials(materials);
         objLoader.setPath('models/vrLabsModel/');
         objLoader.load('planta6.obj', function (elements) {
+
             techo = elements.children[12];
             techo.renderOrder = 0;
             techo.name = "techo";
@@ -241,31 +275,31 @@ function addModel() {
             centro.renderOrder = 0;
             centro.name = "centro";
 
-            interactivos.add(centro);
+            planta.add(centro);
 
             research = elements.children[6];
             research.renderOrder = 0;
             research.name = "research";
 
-            interactivos.add(research);
+            planta.add(research);
 
             design = elements.children[5];
             design.renderOrder = 0;
             design.name = "design";
 
-            interactivos.add(design);
+            planta.add(design);
 
             comunicacion = elements.children[4];
             comunicacion.renderOrder = 0;
             comunicacion.name = "comunicacion";
 
-            interactivos.add(comunicacion);
+            planta.add(comunicacion);
 
             clever = elements.children[3];
             clever.renderOrder = 0;
             clever.name = "clever";
 
-            interactivos.add(clever);
+            planta.add(clever);
 
             cristaleraFrontal = elements.children[2];
             cristaleraFrontal.renderOrder = 2;
@@ -286,25 +320,6 @@ function addModel() {
             planta.add(teles);
 
             scene.add(planta);
-            scene.add(interactivos);
-
-            interactivos.children.map(function(interactiveObject) {
-                Reticulum.add( interactiveObject, {
-                    fuseDuration: utils.reticleDurations.medium,
-                    fuseColor: utils.reticleColors.yellow.dark,
-                    reticleHoverColor: utils.reticleColors.pink,
-                    fuseVisible: true,
-                    onGazeOver: function(){
-                        moveLetters3d(interactiveObject.name, activeLetters);
-                    },
-                    onGazeOut: function(){
-                        removeLetters3D(interactiveObject.name);
-                    },
-                    onGazeLong: function(){
-                        openSection(interactiveObject.name);
-                    }
-                });
-             });
         }, onProgress, onError);
     });
 }
@@ -455,19 +470,22 @@ function addScreens() {
 }
 
 function removeMembers() {
-    var nummemberActually = membersGroup.children.length;
-    for (var a = 0; a < nummemberActually; a++) {
-        movement({y: -1}, membersGroup.children[a].position, 0, 500, TWEEN.Easing.Back.In);
-        Reticulum.remove(  membersGroup.children[a] );
-        if (a == nummemberActually - 1) {
-            membersGroup = new THREE.Object3D();
-            membersGroup.name = 'members';
-            membersAdded = false;
+    if(membersGroup.children) {
+        var nummemberActually = membersGroup.children.length;
+        for (var a = 0; a < nummemberActually; a++) {
+            movement({y: -1}, membersGroup.children[a].position, 0, 500, TWEEN.Easing.Back.In);
+            Reticulum.remove(  membersGroup.children[a] );
+            if (a == nummemberActually - 1) {
+                membersGroup = new THREE.Object3D();
+                membersGroup.name = 'members';
+                membersAdded = false;
+            }
         }
     }
 }
 function addMembers(members) {
-    if(membersGroup.children) removeMembers();
+    removeMembers();
+    removeInfoSection();
     setTimeout(function () {
         for (var a = 0; a < members.length; a++) {
             var img = new THREE.MeshBasicMaterial({
@@ -492,6 +510,7 @@ function addMembers(members) {
                 fuseVisible: true,
                 onGazeLong: function(){
                     console.log(element.name);
+                    addInfoSection(element.name,element.name);
                 }
             });
         })
@@ -499,87 +518,66 @@ function addMembers(members) {
     }, 1000);
 }
 
-function addInfoSection(images, name, timeout) {
-    sectionInfoAdded = true;
-    if (infoGroup.children.length > 0) {
-        hideInfo();
-    }
+function addInfoSection(image, name) {
+    removeInfoSection();
+    infoGroup = new THREE.Object3D();
+    infoGroup.name = 'infoGroup';
+    var texture = THREE.ImageUtils.loadTexture("images/info_board.png");
+    var geometry = new THREE.PlaneGeometry(1, 0.6, 1);
+    var material = new THREE.MeshBasicMaterial({
+        map: texture,
+        transparent: true,
+        opacity: 1,
+        color: 0xffffff
+    });
+    var plane = new THREE.Mesh(geometry, material);
+    plane.name = name;
+    infoGroup.add(plane);
+    var infoTexture = THREE.ImageUtils.loadTexture("images/membersPhoto/info/"+image+".png");
+    var infoGeometry = new THREE.PlaneGeometry(0.5, 0.45, 0.5);
+    var infoMaterial = new THREE.MeshBasicMaterial({
+        map: infoTexture,
+        transparent: true,
+        opacity: 1,
+        color: 0xffffff
+    });
+    var planeInfo = new THREE.Mesh(infoGeometry, infoMaterial);
+    infoGroup.add(planeInfo);
+    planeInfo.position.set(0,0,0.03);
 
-    setTimeout(function () {
-        scene.remove(infoGroup);
-        infoGroup = new THREE.Object3D();
-        infoGroup.name = 'infoGroup';
-        for (var a = 0; a < 3; a++) {
-            var texture = THREE.ImageUtils.loadTexture("images/sectionInfo/info/" + images[a] + ".png");
-            var geometry = new THREE.PlaneGeometry(1, 0.6, 1);
-            var material = new THREE.MeshBasicMaterial({
-                map: texture,
-                transparent: true,
-                opacity: 1,
-                color: 0xffffff
-            });
-            var plane = new THREE.Mesh(geometry, material);
-            plane.name = name;
-            infoGroup.add(plane);
+    var closeTexture = THREE.ImageUtils.loadTexture("images/mediaControls/close.png");
+    var closeGeometry = new THREE.PlaneGeometry(0.07, 0.07, 0.07);
+    var closeMaterial = new THREE.MeshBasicMaterial({
+        map: closeTexture,
+        transparent: true,
+        opacity: 1,
+        color: 0xffffff
+    });
+    var closeButton = new THREE.Mesh(closeGeometry, closeMaterial);
+    infoGroup.add(closeButton);
+    closeButton.position.set(0.4,0.23,0.05);
+
+    Reticulum.add( closeButton, {
+        fuseDuration: utils.reticleDurations.medium,
+        fuseColor: utils.reticleColors.yellow.dark,
+        reticleHoverColor: utils.reticleColors.pink,
+        fuseVisible: true,
+        onGazeLong: function(){
+            removeInfoSection();
         }
-        infoGroup.position.set(-2.3, 0.35 - 2, -1.95);
-        infoGroup.rotation.y = Math.PI / 2;
-        movement({y: 0.35}, infoGroup.position, 1, 500, TWEEN.Easing.Back.Out);
-        scene.add(infoGroup);
-    }, timeout);
+    });
 
-}
-
-function openInfo() {
-    checkstatus.members = false;
-    checkstatus.infoCard = false;
+    infoGroup.rotation.y = Math.PI / 2;
+    infoGroup.position.set(camera.position.x-2, 5, camera.position.z);
     movement({y: 1}, infoGroup.position, 1, 500, TWEEN.Easing.Back.Out);
-    movement({x: -1.8}, infoGroup.position, 1, 500, TWEEN.Easing.Quartic.Out);
-    setTimeout(function () {
-        movement({x: 1}, infoGroup.children[1].position, 1, 1000, TWEEN.Easing.Quartic.Out);
-        movement({x: -1}, infoGroup.children[2].position, 1, 1000, TWEEN.Easing.Quartic.Out);
-    }, 700);
-    setTimeout(function () {
-        movement({x: 0.77}, infoGroup.children[1].position, 1, 1000, TWEEN.Easing.Quartic.Out);
-        movement({y: -1}, infoGroup.children[1].rotation, 1, 1000, TWEEN.Easing.Quartic.Out);
-        movement({z: 0.42}, infoGroup.children[1].position, 1, 1000, TWEEN.Easing.Quartic.Out);
-        movement({x: -0.77}, infoGroup.children[2].position, 1, 1000, TWEEN.Easing.Quartic.Out);
-        movement({y: 1}, infoGroup.children[2].rotation, 1, 1000, TWEEN.Easing.Quartic.Out);
-        movement({z: 0.42}, infoGroup.children[2].position, 1, 1000, TWEEN.Easing.Quartic.Out);
-        addExitIcon({x: -1.7, y: 0.5, z: -1.95});
-    }, 1700);
+    scene.add(infoGroup);
 }
 
-function hideInfo() {
-    checkstatus.members = true;
-    checkstatus.infoCard = true;
-    if (exitGroup.children.length > 0) movement({y: exitIcon.position.y - 1}, exitIcon.position, 1, 500, TWEEN.Easing.Quartic.Out);
-    if (infoGroup.children[1].position.x > 0) movement({x: 1}, infoGroup.children[1].position, 1, 1000, TWEEN.Easing.Quartic.Out);
-    movement({y: 0}, infoGroup.children[1].rotation, 1, 1000, TWEEN.Easing.Quartic.Out);
-    movement({z: -0.01}, infoGroup.children[1].position, 1, 1000, TWEEN.Easing.Quartic.Out);
-    if (infoGroup.children[2].position.x < 0) movement({x: -1}, infoGroup.children[2].position, 1, 1000, TWEEN.Easing.Quartic.Out);
-    movement({y: 0}, infoGroup.children[2].rotation, 1, 1000, TWEEN.Easing.Quartic.Out);
-    movement({z: 0.01}, infoGroup.children[2].position, 1, 1000, TWEEN.Easing.Quartic.Out);
-    setTimeout(function () {
-        movement({x: 0}, infoGroup.children[1].position, 1, 1000, TWEEN.Easing.Quartic.Out);
-        movement({x: 0}, infoGroup.children[2].position, 1, 1000, TWEEN.Easing.Quartic.Out);
-    }, 1000)
-    setTimeout(function () {
-        movement({y: 0.35}, infoGroup.position, 500, 500, TWEEN.Easing.Back.Out);
-        movement({x: -2.3}, infoGroup.position, 0, 500, TWEEN.Easing.Quartic.Out);
-        scene.remove(exitGroup);
-    }, 2200);
-}
-
-function removeInfoSection() {
-    hideInfo();
-    movement({y: -1}, infoGroup.position, 1200, 500, TWEEN.Easing.Back.In);
-    setTimeout(function () {
+function removeInfoSection(){
+    console.log(infoGroup.children.length);
+    if(infoGroup.children.length > 0) {
         scene.remove(infoGroup);
-        infoGroup = new THREE.Object3D();
-        infoGroup.name = 'infoGroup';
-        sectionInfoAdded = false;
-    }, 1300);
+    }
 }
 
 function moveLetters3d(objectName, prevObject) {
@@ -655,10 +653,14 @@ function openSection(sectionName){
             movement({intensity: 1.5}, pointingLight, 0, 2000, TWEEN.Easing.Quartic.Out);
             movement({intensity: 0.1}, ambientLight, 0, 2000, TWEEN.Easing.Quartic.Out);
         break;
+        default:
+        break;
     }
-    movement({ x: position.x - 0.02, y: position.y, z: position.z }, controls.target, 0, 1000, TWEEN.Easing.Quartic.Out);
-    movement(position, camera.position, 0, 1000, TWEEN.Easing.Quartic.Out);
-    addMembers(object);
+    if(position){
+        movement({ x: position.x - 0.02, y: position.y, z: position.z }, controls.target, 0, 1000, TWEEN.Easing.Quartic.Out);
+        movement(position, camera.position, 0, 1000, TWEEN.Easing.Quartic.Out);
+        addMembers(object);
+    }
 }
 
 function onWindowResize() {
