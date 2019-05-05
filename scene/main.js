@@ -73,9 +73,15 @@ exitGroup.name = 'exitGroup';
 var activeLetters;
 
 $(document).ready(function () {
-    $('#container').addClass('displayOn');
     initRender();
     animate();
+    $("#allowVideoScreen").on('click', function(){
+        $('#allowVideoScreen').css('display', 'none');
+        video.play();
+        video2.play();
+        video.pause();
+        video2.pause();
+    })
 });
 
 function initRender() {
@@ -96,15 +102,17 @@ function initRender() {
     container.appendChild(element);
 
     camera = new THREE.PerspectiveCamera(60, (width / height), 0.01, 10000000);
-    camera.position.set(-0.8, 1.1, -0.8);
+    camera.position.set(-0.8, 1.1, -5);
 
     Reticulum.init(camera, utils.reticulumDefaultConfig);
 
     scene.add(camera);
 
-    if (window.DeviceOrientationEvent && /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-        isMobile = true;
+    if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
         $('#allowVideoScreen').css('display', 'block');
+        isMobile = true;
+        console.log('navigator: ', navigator);
+        console.log("Oriented device");
         effect = new THREE.StereoEffect(renderer);
         effect.setSize(width, height);
         effect.setEyeSeparation = 0.5;
@@ -112,22 +120,21 @@ function initRender() {
         controlsdevice = new THREE.DeviceOrientationControls(camera, true);
         controlsdevice.connect();
         function setOrientationControls(e) {
-          if (!e.alpha) {
+        if (!e.alpha) {
             return;
-          }
-          controlsdevice.connect();
-          controlsdevice.update();
-          element.addEventListener('click', fullscreen, false);
-          window.removeEventListener('deviceorientation', setOrientationControls, true);
         }
-        
-      } else {
-        $('#allowVideoScreen').css('display', 'block');
+        controlsdevice.connect();
+        controlsdevice.update();
+        element.addEventListener('click', fullscreen, false);
+        window.removeEventListener('deviceorientation', setOrientationControls, true);
+    }
+    } else {
+        $('#allowVideoScreen').css('display', 'none');
         controls = new THREE.OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
         controls.dampingFactor = 0.70;
         controls.enableZoom = false;
-        controls.target.set(camera.position.x, camera.position.y, camera.position.z + 0.5);
+        controls.target.set(camera.position.x, camera.position.y, camera.position.z + 0.05);
     }
 
     ambientLight = new THREE.AmbientLight(0xffffff);
@@ -139,22 +146,8 @@ function initRender() {
     scene.add(pointingLight);
 
     buildShape();
-
-    $(document).on({
-        'touchstart': function () {
-            video.play();
-            video2.play();
-            video.pause();
-            video2.pause();
-        }
-    });
-    $( "#acceptButton" ).on( "click", function() {
-        $('#allowVideoScreen').css('display', 'none');
-        video.play();
-        video2.play();
-        video.pause();
-        video2.pause();
-    });
+    window.addEventListener('resize', onWindowResize, false);
+   
 }
 
 function buildShape() {
@@ -168,6 +161,7 @@ function buildShape() {
         color: 0xFFFFFF,
         depthWrite: true
     });
+    skyMaterial.map.minFilter = THREE.LinearFilter;
     sky = new THREE.Mesh(skyGeometry, skyMaterial);
     sky.renderOrder = 0;
     sky.rotation.y = 1.7;
@@ -176,6 +170,7 @@ function buildShape() {
     scene.add(sky);
 
     addModel();
+    addScreens();
 }
 
 function addModel() {
@@ -189,8 +184,6 @@ function addModel() {
                     addLetters3D(['R', 'a', 'd', 'i', 'c', 'a', 'l'], {x: -2.7, y: 1, z: -1.7}, letrasRadical);
                     addLetters3D(['R', 'e', 's', 'e', 'a', 'r', 'c', 'h'], {x: -2.7, y: 1, z: 1}, letrasResearch);
                     addLetters3D(['D', 'e', 's', 'i', 'g', 'n'], {x: -2.7, y: 1, z: 3}, letrasDesign);
-
-                    addScreens();
                 }, 1000);
             }
         }
@@ -320,23 +313,8 @@ function addModel() {
             planta.add(teles);
 
             scene.add(planta);
-        }, onProgress, onError);
-    });
-}
-
-function addExitIcon(position) {
-    var objLoader = new THREE.OBJLoader();
-    objLoader.setPath('models/');
-    objLoader.load('exitModel.obj', function (elements) {
-        console.log('icono exit: ', elements);
-        var exitMaterial = new THREE.MeshBasicMaterial({color: 0xffdd44});
-        exitIcon = new THREE.Mesh(elements.children[0].geometry, exitMaterial);
-        exitIcon.position.set(position.x, position.y + 1, position.z);
-        //exitIcon.position.set(-2.5, 0.8, -2);
-        exitIcon.scale.set(0.1, 0.2, 0.2);
-        exitGroup.add(exitIcon);
-        scene.add(exitGroup);
-        movement({y: position.y}, exitIcon.position, 300, 1000, TWEEN.Easing.Back.Out);
+        }, onProgress, onError); 
+        $('#container').addClass('displayOn');
     });
 }
 
@@ -370,6 +348,58 @@ function addLetters3D(lettersArray, position, object) {
     scene.add(object);
 }
 
+function addScreens() {
+
+    videoMP4 = document.createElement('video').canPlayType('video/mp4') !== '';
+    videoOgg = document.createElement('video').canPlayType('video/ogg') !== '';
+
+    var url, url2;
+    if (videoMP4) {
+        url = 'videos/bots.mp4';
+        url2 = 'videos/vr_ar.mp4';
+    } else if (videoOgg) {
+        url = 'videos/bots.mp4';
+        url2 = 'videos/vr_ar.mp4';
+    } else alert('cant play mp4 or ogv');
+
+    videoTexture = new THREEx.VideoTexture(url);
+    video = videoTexture.video;
+
+    videoTexture2 = new THREEx.VideoTexture(url2);
+    video2 = videoTexture2.video;
+    video.pause();
+    video2.pause();
+
+    var screen1Geometry = new THREE.PlaneGeometry(0.4, 0.25, 1, 1);
+    var screen1Material = new THREE.MeshBasicMaterial({
+        map: videoTexture.texture,
+        overdraw: true,
+        side: THREE.DoubleSide
+    });
+    screen1Material.map.minFilter = THREE.LinearFilter;
+    screen1Mesh = new THREE.Mesh(screen1Geometry, screen1Material);
+    screen1Mesh.position.set(-0.225, 1.13, 0.74);
+    screen1Mesh.rotateY(-Math.PI / 2);
+    screen1Mesh.name = 'screen1';
+
+    var screen2Geometry = new THREE.PlaneGeometry(0.4, 0.25, 1, 1);
+    var screen2Material = new THREE.MeshBasicMaterial({
+        map: videoTexture2.texture,
+        overdraw: true,
+        side: THREE.DoubleSide
+    });
+    screen2Material.map.minFilter = THREE.LinearFilter;
+    var screen2mesh = new THREE.Mesh(screen2Geometry, screen2Material);
+    screen2mesh.position.set(-0.225, 1.13, 4.15);
+    screen2mesh.rotateY(-Math.PI / 2);
+    screen2mesh.name = 'screen2';
+
+    screensGroup.add(screen1Mesh);
+    screensGroup.add(screen2mesh);
+
+    scene.add(screensGroup);
+}
+
 function playVideo(videoOpen){
     switch (videoOpen) {
         case "video1":
@@ -394,81 +424,6 @@ function playVideo(videoOpen){
         break;
     }
 }
-
-function addScreens() {
-
-    videoMP4 = document.createElement('video').canPlayType('video/mp4') !== '';
-    videoOgg = document.createElement('video').canPlayType('video/ogg') !== '';
-
-    var url, url2;
-    if (videoMP4) {
-        url = 'videos/bots.mp4';
-        url2 = 'videos/vr_ar.mp4';
-        console.log('play mp4');
-    } else if (videoOgg) {
-        url = 'videos/bots.mp4';
-        url2 = 'videos/vr_ar.mp4';
-        console.log('play ogg');
-    } else alert('cant play mp4 or ogv');
-
-    videoTexture = new THREEx.VideoTexture(url);
-    video = videoTexture.video;
-
-    videoTexture2 = new THREEx.VideoTexture(url2);
-    video2 = videoTexture2.video;
-
-    video.pause();
-    video2.pause();
-
-    var screen1Geometry = new THREE.PlaneGeometry(0.4, 0.25, 1, 1);
-    var screen1Material = new THREE.MeshBasicMaterial({
-        map: videoTexture.texture,
-        overdraw: true,
-        side: THREE.DoubleSide
-    });
-    screen1Mesh = new THREE.Mesh(screen1Geometry, screen1Material);
-    screen1Mesh.position.set(-0.225, 1.13, 0.74);
-    screen1Mesh.rotateY(-Math.PI / 2);
-    screen1Mesh.name = 'screen1';
-    
-    Reticulum.add( screen1Mesh, {
-        fuseDuration: utils.reticleDurations.medium,
-        fuseColor: utils.reticleColors.yellow.dark,
-        reticleHoverColor: utils.reticleColors.pink,
-        fuseVisible: true,
-        onGazeLong: function(){
-           playVideo("video1");
-        }
-    });
-
-    var screen2Geometry = new THREE.PlaneGeometry(0.4, 0.25, 1, 1);
-    var screen2Material = new THREE.MeshBasicMaterial({
-        map: videoTexture2.texture,
-        overdraw: true,
-        side: THREE.DoubleSide
-    });
-    var screen2mesh = new THREE.Mesh(screen2Geometry, screen2Material);
-    screen2mesh.position.set(-0.225, 1.13, 4.15);
-    screen2mesh.rotateY(-Math.PI / 2);
-    screen2mesh.name = 'screen2';
-
-    screensGroup.add(screen1Mesh);
-    screensGroup.add(screen2mesh);
-    Reticulum.add( screen2mesh, {
-        fuseDuration: utils.reticleDurations.medium,
-        fuseColor: utils.reticleColors.yellow.dark,
-        reticleHoverColor: utils.reticleColors.pink,
-        fuseVisible: true,
-        onGazeLong: function(){
-            playVideo("video2");
-        }
-    });
-
-    scene.add(screensGroup);
-
-    $("#allowVideo").css('display', 'block');
-}
-
 function removeMembers() {
     if(membersGroup.children) {
         var nummemberActually = membersGroup.children.length;
@@ -493,6 +448,7 @@ function addMembers(members) {
                 transparent: true,
                 color: utils.white
               });
+            img.map.minFilter = THREE.LinearFilter;
             img.map.needsUpdate = true;
             var scale = 0.3;
             var sprite = new THREE.Mesh(new THREE.PlaneGeometry(scale, scale), img);
@@ -530,6 +486,7 @@ function addInfoSection(image, name) {
         opacity: 1,
         color: 0xffffff
     });
+    material.map.minFilter = THREE.LinearFilter;
     var plane = new THREE.Mesh(geometry, material);
     plane.name = name;
     infoGroup.add(plane);
@@ -541,6 +498,7 @@ function addInfoSection(image, name) {
         opacity: 1,
         color: 0xffffff
     });
+    infoMaterial.map.minFilter = THREE.LinearFilter;
     var planeInfo = new THREE.Mesh(infoGeometry, infoMaterial);
     infoGroup.add(planeInfo);
     planeInfo.position.set(0,0,0.03);
@@ -553,6 +511,7 @@ function addInfoSection(image, name) {
         opacity: 1,
         color: 0xffffff
     });
+    closeMaterial.map.minFilter = THREE.LinearFilter;
     var closeButton = new THREE.Mesh(closeGeometry, closeMaterial);
     infoGroup.add(closeButton);
     closeButton.position.set(0.4,0.23,0.05);
@@ -653,6 +612,15 @@ function openSection(sectionName){
             movement({intensity: 1.5}, pointingLight, 0, 2000, TWEEN.Easing.Quartic.Out);
             movement({intensity: 0.1}, ambientLight, 0, 2000, TWEEN.Easing.Quartic.Out);
         break;
+        case 'tv1':
+            playVideo("video1");
+        break;
+        case 'tv2':
+            playVideo("video2");
+        break;
+        case 'main':
+            returnToMain();
+        break;
         default:
         break;
     }
@@ -663,6 +631,17 @@ function openSection(sectionName){
     }
 }
 
+function returnToMain() {
+    removeMembers();
+    removeInfoSection();
+    movement({x: -0.8, y: 1.1, z: -5}, camera.position, 0, 1000, TWEEN.Easing.Quartic.Out);
+    movement({x: -0.8, y: 1.1, z: -4.98}, controls.target, 0, 1000, TWEEN.Easing.Quartic.Out);
+    movement({intensity: 0}, pointingLight, 0, 2000, TWEEN.Easing.Quartic.Out);
+    movement({intensity: 0.8}, ambientLight, 0, 2000, TWEEN.Easing.Quartic.Out);
+    video.pause();
+    video2.pause();
+}
+
 function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
@@ -671,24 +650,21 @@ function onWindowResize() {
 }
 
 function animate() {
-
-    setTimeout(function () {
-        requestAnimationFrame(animate);
-
-    }, 1000 / 30);
-
-    render();
-
-    TWEEN.update();
-
-    if (controls) controls.update(clock.getDelta());
-    if (controlsdevice) {
-        controlsdevice.update();
-    }
+  requestAnimationFrame(animate);
+  Reticulum.update();
+  camera.updateMatrixWorld();
+  
+  if (controls) {
+    controls.update(clock.getDelta());
+  }
+  if (controlsdevice) {
+    controlsdevice.update();
+  }
+  render();
+  TWEEN.update();
 }
 
 function render() {
-    Reticulum.update();
 
     if (effect) {
         try {

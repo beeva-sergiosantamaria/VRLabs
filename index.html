@@ -17,12 +17,10 @@
 <div id="container" class="displayOff"></div>
 
 <script type="text/javascript" src="libs/jquery-2.1.0.min.js"></script>
-<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.19.0/TweenMax.min.js"></script>-->
-<script type="text/javascript" src="libs/greensock/src/uncompressed/TweenMax.js"></script>
 
 <!-- WebVR polyfill and manager -->
-<script src="https://skezo.github.io/Reticulum/examples/js/lib/webvr-polyfill.js"></script>
-<script src="https://skezo.github.io/Reticulum/examples/js/lib/webvr-manager.js"></script>
+<script src="libs/webvr-polyfill.js"></script>
+<script src="libs/webvr-manager.js"></script>
 
 <script type="text/javascript" src="libs/three78.js"></script>
 <script type="text/javascript" src="libs/progressbar.js"></script>
@@ -38,32 +36,7 @@
 <script type="text/javascript" src="libs/OrbitControls.js"></script>
 <script type="text/javascript" src="libs/labsUtils.js"></script>
 <script type="text/javascript" src="libs/SubdivisionModifier.js"></script>
-<script src="./libs/reticulum.js"></script>
+<script src="./libs/reticulum_old.js"></script>
 <script src="./scene/main.js"></script>
-<script type="x-shader/x-vertex" id="vertexshader">
-  uniform float amplitude;
-  attribute vec3 customColor;
-  attribute vec3 displacement;
-  varying vec3 vNormal;
-  varying vec3 vColor;
-  void main() {
-    vNormal = normal;
-    vColor = customColor;
-    vec3 newPosition = position + normal * amplitude * displacement;
-    gl_Position = projectionMatrix * modelViewMatrix * vec4( newPosition, 1.0 );
-  }
-</script>
-
-<script type="x-shader/x-fragment" id="fragmentshader">
-  varying vec3 vNormal;
-  varying vec3 vColor;
-  void main() {
-    const float ambient = 0.4;
-    vec3 light = vec3( 1.0 );
-    light = normalize( light );
-    float directional = max( dot( vNormal, light ), 0.0 );
-    gl_FragColor = vec4( ( directional + ambient ) * vColor, 1.0 );
-  }
-</script>
 </body>
 </html>
