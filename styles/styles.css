@@ -19,6 +19,21 @@ html,body {
     transition: all ease-out 4s;
 }
 
+.displayOff{
+  opacity: 0;
+  -webkit-transition: all ease-out 10s;
+  -moz-transition: all ease-out 10s;
+  -o-transition: all  ease-out 10s;
+  transition: all ease-out 10s;
+}
+
+.displayOn{
+  opacity: 1;
+  -webkit-transition: all ease-out 10s;
+  -moz-transition: all ease-out 10s;
+  -o-transition: all  ease-out 10s;
+  transition: all ease-out 10s;
+}
 .allowVideo{
   padding: 15px;
   width: 200px;

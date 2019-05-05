@@ -120,14 +120,14 @@ function initRender() {
         controlsdevice = new THREE.DeviceOrientationControls(camera, true);
         controlsdevice.connect();
         function setOrientationControls(e) {
-        if (!e.alpha) {
-            return;
-        }
-        controlsdevice.connect();
-        controlsdevice.update();
-        element.addEventListener('click', fullscreen, false);
-        window.removeEventListener('deviceorientation', setOrientationControls, true);
-    }
+            if (!e.alpha) {
+              return;
+            }
+            controlsdevice.connect();
+            controlsdevice.update();
+            element.addEventListener('click', fullscreen, false);
+            window.removeEventListener('deviceorientation', setOrientationControls, true);
+          }
     } else {
         $('#allowVideoScreen').css('display', 'none');
         controls = new THREE.OrbitControls(camera, renderer.domElement);
