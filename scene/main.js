@@ -117,14 +117,14 @@ function initRender() {
         effect.setSize(width, height);
         effect.setEyeSeparation = 0.5;
         
-        controlsdevice = new THREE.DeviceOrientationControls(camera, true);
-        controlsdevice.connect();
+        controls = new THREE.DeviceOrientationControls(camera, true);
+        controls.connect();
         function setOrientationControls(e) {
             if (!e.alpha) {
               return;
             }
-            controlsdevice.connect();
-            controlsdevice.update();
+            controls.connect();
+            controls.update();
             element.addEventListener('click', fullscreen, false);
             window.removeEventListener('deviceorientation', setOrientationControls, true);
           }
@@ -656,9 +656,6 @@ function animate() {
   
   if (controls) {
     controls.update(clock.getDelta());
-  }
-  if (controlsdevice) {
-    controlsdevice.update();
   }
   render();
   TWEEN.update();
