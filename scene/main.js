@@ -117,14 +117,14 @@ function initRender() {
         effect.setSize(width, height);
         effect.setEyeSeparation = 0.5;
         
-        controls = new THREE.DeviceOrientationControls(camera, true);
-        controls.connect();
+        controlsdevice = new THREE.DeviceOrientationControls(camera, true);
+        controlsdevice.connect();
         function setOrientationControls(e) {
             if (!e.alpha) {
               return;
             }
-            controls.connect();
-            controls.update();
+            controlsdevice.connect();
+            controlsdevice.update();
             element.addEventListener('click', fullscreen, false);
             window.removeEventListener('deviceorientation', setOrientationControls, true);
           }
@@ -405,7 +405,7 @@ function playVideo(videoOpen){
         case "video1":
             video.play();
             video2.pause();
-            movement({x: -0.98, y: 1.1, z: 0.74}, controls.target, 0, 1000, TWEEN.Easing.Quartic.Out);
+            if(controls) movement({x: -0.98, y: 1.1, z: 0.74}, controls.target, 0, 1000, TWEEN.Easing.Quartic.Out);
             movement({x: -1, y: 1.1, z: 0.74}, camera.position, 0, 1000, TWEEN.Easing.Quartic.Out);
             pointingLight.color.setHex( lightValues.colors.screen1 );
             pointingLight.position.set( lightValues.positions.screen1.x, lightValues.positions.screen1.y, lightValues.positions.screen1.z );
@@ -415,7 +415,7 @@ function playVideo(videoOpen){
         case "video2":
             video.pause();
             video2.play();
-            movement({x: -0.98, y: 1.1, z: 4.15}, controls.target, 0, 1000, TWEEN.Easing.Quartic.Out);
+            if(controls)movement({x: -0.98, y: 1.1, z: 4.15}, controls.target, 0, 1000, TWEEN.Easing.Quartic.Out);
             movement({x: -1, y: 1.1, z: 4.15}, camera.position, 0, 1000, TWEEN.Easing.Quartic.Out);
             pointingLight.color.setHex( lightValues.colors.screen2 );
             pointingLight.position.set( lightValues.positions.screen2.x, lightValues.positions.screen2.y, lightValues.positions.screen2.z );
@@ -625,7 +625,7 @@ function openSection(sectionName){
         break;
     }
     if(position){
-        movement({ x: position.x - 0.02, y: position.y, z: position.z }, controls.target, 0, 1000, TWEEN.Easing.Quartic.Out);
+        if(controls)movement({ x: position.x - 0.02, y: position.y, z: position.z }, controls.target, 0, 1000, TWEEN.Easing.Quartic.Out);
         movement(position, camera.position, 0, 1000, TWEEN.Easing.Quartic.Out);
         addMembers(object);
     }
@@ -635,7 +635,7 @@ function returnToMain() {
     removeMembers();
     removeInfoSection();
     movement({x: -0.8, y: 1.1, z: -5}, camera.position, 0, 1000, TWEEN.Easing.Quartic.Out);
-    movement({x: -0.8, y: 1.1, z: -4.98}, controls.target, 0, 1000, TWEEN.Easing.Quartic.Out);
+    if(controls) movement({x: -0.8, y: 1.1, z: -4.98}, controls.target, 0, 1000, TWEEN.Easing.Quartic.Out);
     movement({intensity: 0}, pointingLight, 0, 2000, TWEEN.Easing.Quartic.Out);
     movement({intensity: 0.8}, ambientLight, 0, 2000, TWEEN.Easing.Quartic.Out);
     video.pause();
@@ -656,6 +656,9 @@ function animate() {
   
   if (controls) {
     controls.update(clock.getDelta());
+  }
+  if (controlsdevice) {
+    controlsdevice.update();
   }
   render();
   TWEEN.update();
