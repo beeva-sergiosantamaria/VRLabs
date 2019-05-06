@@ -104,7 +104,41 @@ function initRender() {
     camera = new THREE.PerspectiveCamera(60, (width / height), 0.01, 10000000);
     camera.position.set(-0.8, 1.1, -5);
 
-    Reticulum.init(camera, utils.reticulumDefaultConfig);
+    Reticulum.init(camera, {
+        proximity: true,
+        near: 0.01, //near factor of the raycaster (shouldn't be negative and should be smaller than the far property)
+        far: 10, //far factor of the raycaster (shouldn't be negative and should be larger than the near property)
+        vibrate: 0,
+        reticle: {
+            visible: true,
+            restPoint: 1, //Defines the reticle's resting point when no object has been targeted
+            color: 0xF9Ec8D,
+            innerRadius: 0.004,
+            outerRadius: 0.006,
+            hover: {
+                color: 0xF9Ec8D,
+                innerRadius: 0.008,
+                outerRadius: 0.012,
+                speed: 5,
+                vibrate: 1 //Set to 0 or [] to disable
+            }
+        },
+        click: {
+          vibrate: 0
+        },
+        hover: {
+          vibrate: 0
+        },
+        fuse: {
+            visible: true,
+            duration: 2.5,
+            color: 0xF9Ec8D,
+            innerRadius: 0.015,
+            outerRadius: 0.025,
+            vibrate: 1, //Set to 0 or [] to disable
+            clickCancelFuse: false //If users clicks on targeted object fuse is canceled
+        }
+    });
 
     scene.add(camera);
 
@@ -206,9 +240,6 @@ function addModel() {
             interactivos.children.map(function(interactiveObject) {
                 interactiveObject.name = interactiveObject.name.replace(/_[a-z]*.[0-9]*/gi, "");
                 Reticulum.add( interactiveObject, {
-                    fuseDuration: utils.reticleDurations.medium,
-                    fuseColor: utils.reticleColors.yellow.dark,
-                    reticleHoverColor: utils.reticleColors.pink,
                     fuseVisible: true,
                     onGazeOver: function(){
                         moveLetters3d(interactiveObject.name, activeLetters);
@@ -429,7 +460,7 @@ function removeMembers() {
         var nummemberActually = membersGroup.children.length;
         for (var a = 0; a < nummemberActually; a++) {
             movement({y: -1}, membersGroup.children[a].position, 0, 500, TWEEN.Easing.Back.In);
-            Reticulum.remove(  membersGroup.children[a] );
+            //Reticulum.remove(  membersGroup.children[a] );
             if (a == nummemberActually - 1) {
                 membersGroup = new THREE.Object3D();
                 membersGroup.name = 'members';
@@ -460,9 +491,6 @@ function addMembers(members) {
         }
         membersGroup.children.map(function(element){
             Reticulum.add( element, {
-                fuseDuration: utils.reticleDurations.medium,
-                fuseColor: utils.reticleColors.yellow.dark,
-                reticleHoverColor: utils.reticleColors.pink,
                 fuseVisible: true,
                 onGazeLong: function(){
                     console.log(element.name);
@@ -517,9 +545,6 @@ function addInfoSection(image, name) {
     closeButton.position.set(0.4,0.23,0.05);
 
     Reticulum.add( closeButton, {
-        fuseDuration: utils.reticleDurations.medium,
-        fuseColor: utils.reticleColors.yellow.dark,
-        reticleHoverColor: utils.reticleColors.pink,
         fuseVisible: true,
         onGazeLong: function(){
             removeInfoSection();
