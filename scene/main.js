@@ -1,3 +1,4 @@
+
 var camera, scene, renderer, controls, controlsdevice, 
     effect, sky, plane, radicalText, researchText, pointingLight, designlight, exitIcon,
     width = window.innerWidth,

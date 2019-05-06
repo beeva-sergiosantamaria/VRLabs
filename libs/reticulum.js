@@ -546,4 +546,4 @@ var Reticulum = (function () {
     };
 })();
 
-export default Reticulum
+export default Reticulum;
